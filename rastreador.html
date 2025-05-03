@@ -1,103 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classificação Gincana</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+  <title>Gráfico de Progresso da Gincana</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <link href="rastreador.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container text-center">
-    <img src="logo.jpg" alt="Logo" class="img-fluid mb-4">
-    <h2>GRÁFICO TEMPORAL</h2>
-    <br><br>
-    <!-- Gráfico 1: Classificação Geral -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <h3>Classificação Geral</h3>
-        <canvas id="graficoClassificacaoGeral"></canvas>
-      </div>
-      <div class="legendas-times">
-      </div>
+  <div class="container">
+    <h1>ESSE GRÁFICO AINDA NÃO TÁ VALENDO</h1>
+    <h2>Progresso da Gincana - Pontuação Total por Time</h2>
+    
+    <div class="chart-container">
+      <canvas id="gincanaChart"></canvas>
     </div>
     
-    <!-- Gráfico 2: Espadas para o Ar -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <h3>Classificação: Espadas para o ar</h3>
-        <h6>Pontuação: 20</h6>
-        <canvas id="graficoEspadasParaOAr"></canvas>
-      </div>
-      <div class="legendas-times">
+    <div>
+      <h3>Pontuações por Time:</h3>
+      <div class="cards-container" id="teamsContainer">
+        <!-- Cards dos times serão inseridos aqui via JavaScript -->
       </div>
     </div>
-    
-    <!-- Gráfico 3: Quiz Bíblico -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <h3>Classificação: Quiz Bíblico</h3>
-        <h6>Pontuação para respostas SEM múltipla escolha: 100</h6>
-        <h6>Pontuação para respostas COM múltipla escolha: 50</h6>
-        <canvas id="graficoQuiz"></canvas>
-      </div>
-      <div class="legendas-times">
-      </div>
-    </div>
-
-        <!-- Gráfico 4: Bíblias -->
-        <div class="row mb-4">
-            <div class="col-12">
-              <h3>Classificação: Pontuação de Bíblias levadas para a Igreja</h3>
-              <h6>O critério de pontuação para essa classificação será por percentual de Bíblias</h6>
-              <h6>O cálculo da porcentagem de participação da equipe</h6>
-              <h6>Pontuação = (Número de pessoas que levaram Bíblia ÷ Total de pessoas na equipe) × 100</h6>
-              <h6>Exemplo:</h6>
-              <h6>Equipe A: 5 pessoas, 4 levaram → 4 ÷ 5 = 0,8 × 100 → 80%</h6>
-              <h6>Equipe B: 10 pessoas, 6 levaram → 6 ÷ 10 = 0,6 × 100 → 60%</h6>
-              <h6>Pontuação: 40</h6>
-              <canvas id="graficoBiblias"></canvas>
-            </div>
-            <div class="legendas-times">
-            </div>
-          </div>
-
-            <!-- Gráfico 5: Visitantes -->
-            <div class="row mb-4">
-              <div class="col-12">
-                <h3>Classificação: Pontuação por equipe que trouxeram visitantes</h3>
-                <canvas id="graficoVisitantes"></canvas>
-              </div>
-              <div class="legendas-times">
-              </div>
-            </div>
-            <!-- Gráfico 6: Caracterização -->
-            <div class="row mb-4">
-              <div class="col-12">
-                <h3>Classificação: Pontuação por caracterização</h3>
-                <h6>Pontuação: 20</h6>
-                <canvas id="graficoCaracterizacao"></canvas>
-              </div>
-              <div class="legendas-times">
-              </div>
-            </div>
-          <!-- Gráfico 5: Visitantes -->
-          <div class="row mb-4">
-            <div class="col-12">
-              <h3>Classificação: Grito de Guerra</h3>
-              <canvas id="graficoGrito"></canvas>
-            </div>
-            <div class="legendas-times">
-            </div>
-          </div>
   </div>
-  
-  <!-- Script JS -->
-  <script type="module" src="js/rastreador.js"></script>
-  
-  <!-- Bootstrap JS (Opcional para funcionalidades adicionais) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="js/progressbar.js"></script>
 </body>
 </html>

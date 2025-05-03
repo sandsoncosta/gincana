@@ -48,7 +48,7 @@ export const pontuacoesPorTime = [
   {
     time: "Adultos",
     espadas: 20,
-    versiculo: 330, // QUIZ
+    versiculo: 300, // QUIZ
     biblia: 0, // Percentual de bíblias
     visitantes: 0,
     caracterizacao: 0,
