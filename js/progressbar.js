@@ -293,9 +293,9 @@ function criarGrafico() {
           card.innerHTML = `
             <h4>${time}</h4>
             <div class="team-points">
-              <span>01/05: ${pontos01_05} pontos</span>
-              <span>04/05: ${pontos04_05} pontos</span>
-              <span>05/05: ${pontos05_05} pontos</span>
+              <span>01/05:<br>${pontos01_05} pontos</span>
+              <span>04/05:<br>${pontos04_05} pontos</span>
+              <span>05/05:<br>${pontos05_05} pontos</span>
             </div>
           `;
           
