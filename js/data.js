@@ -2,57 +2,57 @@
 const dadosBrutos = [
   {
     time: "Adultos",
-    espadas: 30,
-    versiculo: 300,
-    biblia: 0,
-    visitantes: 0,
+    espadas: [20,10],
+    versiculo: [300,50],
+    biblia: [0,0],
+    visitantes: [0,10],
     caracterizacao: 0,
-    grito: 10
+    grito: [10,10]
   },
   {
     time: "Liga",
-    espadas: [10],
-    versiculo: [150],
-    biblia: [30],
-    visitantes: 0,
-    caracterizacao: [20],
-    grito: [10]
+    espadas: [0,10],
+    versiculo: [150,100],
+    biblia: [30,0],
+    visitantes: [0,5],
+    caracterizacao: [20,20],
+    grito: [10,10]
   },
   {
     time: "Liga Teen",
-    espadas: [60],
-    versiculo: [300],
-    biblia: 0,
-    visitantes: 0,
-    caracterizacao: [20],
-    grito: 10
+    espadas: [60,10],
+    versiculo: [300,50],
+    biblia: [0,40],
+    visitantes: [0,15],
+    caracterizacao: [20,20],
+    grito: [10,10]
   },
   {
     time: "Novos Convertidos",
-    espadas: 0, 
-    versiculo: [250],
-    biblia: 0,
+    espadas: [0,10], 
+    versiculo: [250,100],
+    biblia: [0,30],
     visitantes: 0,
-    caracterizacao: 0,
-    grito: [10]
+    caracterizacao: [0,20],
+    grito: [10,10]
   },
   {
     time: "Novos Membros",
-    espadas: [20],
-    versiculo: 200,
-    biblia: 0,
+    espadas: [20,10],
+    versiculo: [200,100],
+    biblia: [0,0],
     visitantes: 0,
-    caracterizacao: 0,
-    grito: [10]
+    caracterizacao: [0,20],
+    grito: [10,10]
   },
   {
     time: "Sementes Ágape",
-    espadas: [0, 10, 5],
-    versiculo: [150],
-    biblia: 0,
+    espadas: [0],
+    versiculo: [150,100],
+    biblia: [0,0],
     visitantes: 0,
-    caracterizacao: 0,
-    grito: [10]
+    caracterizacao: [0,20],
+    grito: [10,10]
   }
 ];
 

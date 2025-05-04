@@ -48,7 +48,7 @@ const pontuacoesPorData = {
       time: "Liga",
       espadas: 0,
       versiculo: 150,
-      biblia: 40,
+      biblia: 30,
       porcentagembiblias: 100,
       visitantes: 0,
       caracterizacao: 20,
@@ -88,9 +88,9 @@ const pontuacoesPorData = {
     },
     {
       time: "Novos Convertidos",
-      espadas: 0,
+      espadas: 10,
       versiculo: 100, // QUIZ
-      biblia: 40,
+      biblia: 30,
       porcentagembiblias: 100,
       visitantes: 0,
       caracterizacao: 20,
