@@ -18,6 +18,7 @@ const pontuacoesPorData = {
       espadas: 0,
       versiculo: 150,
       biblia: 0,
+      porcentagembiblias: 68.75,
       visitantes: 0,
       caracterizacao: 0,
       grito: 10
@@ -27,6 +28,7 @@ const pontuacoesPorData = {
       espadas: 0,
       versiculo: 250,
       biblia: 0,
+      porcentagembiblias: 78.26,
       visitantes: 0,
       caracterizacao: 0,
       grito: 10
@@ -36,6 +38,7 @@ const pontuacoesPorData = {
       espadas: 60,
       versiculo: 300,
       biblia: 0,
+      porcentagembiblias: 50,
       visitantes: 0,
       caracterizacao: 20,
       grito: 10
@@ -45,6 +48,7 @@ const pontuacoesPorData = {
       espadas: 0,
       versiculo: 150,
       biblia: 40,
+      porcentagembiblias: 100,
       visitantes: 0,
       caracterizacao: 20,
       grito: 10
@@ -54,6 +58,7 @@ const pontuacoesPorData = {
       espadas: 20,
       versiculo: 200,
       biblia: 0,
+      porcentagembiblias: 82.75,
       visitantes: 0,
       caracterizacao: 0,
       grito: 10
@@ -63,6 +68,7 @@ const pontuacoesPorData = {
       espadas: 20,
       versiculo: 300,
       biblia: 0,
+      porcentagembiblias: 70.58,
       visitantes: 0,
       caracterizacao: 0,
       grito: 10
@@ -100,6 +106,10 @@ function prepararDadosGraficoPorCategoria(categoria) {
       // Para cada time, mapear os pontos por data
       const pontosPorData = datas.map(data => {
         const timeData = pontuacoesPorData[data].find(t => t.time === nomeTime);
+        // Se a categoria for 'biblia', use o valor de 'porcentagembiblias'
+        if (categoria === 'biblia') {
+          return timeData.porcentagembiblias || 0;
+        }
         return getValorCategoria(timeData, categoria);
       });
       
@@ -143,7 +153,7 @@ function criarGraficoPorCategoria(categoria, titulo) {
           suggestedMax: Math.max(...dadosGrafico.datasets.flatMap(dataset => dataset.data)) + 50 || 50,
           title: {
             display: true,
-            text: 'Pontos',
+            text: categoria === 'biblia' ? 'Porcentagem (%)' : 'Pontos',
             color: '#fff'
           },
           ticks: {
@@ -186,6 +196,9 @@ function criarGraficoPorCategoria(categoria, titulo) {
               return context[0].label;
             },
             label: function(context) {
+              if (categoria === 'biblia') {
+                return `${context.dataset.label}: ${context.raw}%`;
+              }
               return `${context.dataset.label}: ${context.raw} pontos`;
             }
           }
@@ -210,7 +223,12 @@ function criarGraficoPorCategoria(categoria, titulo) {
             const totalDatasets = context.chart.data.datasets.length;
             return 5 + (datasetIndex * 20) - ((totalDatasets - 1) * 10);
           },
-          formatter: (value) => value
+          formatter: function(value, context) {
+            if (context.chart.options.scales.x.title.text === 'Porcentagem (%)') {
+              return value + '%';
+            }
+            return value;
+          }
         },
         title: {
           display: true,
@@ -264,6 +282,7 @@ function criarCards(categoria = categoriaAtual) {
     datas.forEach(data => {
       const timeData = pontuacoesPorData[data].find(t => t.time === time);
       if (timeData) {
+        // Sempre use o valor original da categoria para os cards
         const pontos = getValorCategoria(timeData, categoria);
         cardHTML += `<span>${data}:<br>${pontos} pontos</span>`;
       }
@@ -389,6 +408,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Helper para adicionar novas datas facilmente
 function adicionarNovaData(data, pontuacoes) {
+  // Garantir que todas as pontuações tenham o campo 'porcentagembiblias'
+  pontuacoes = pontuacoes.map(time => {
+    if (!('porcentagembiblias' in time)) {
+      time.porcentagembiblias = 0;
+    }
+    return time;
+  });
+  
   pontuacoesPorData[data] = pontuacoes;
   
   // Atualizar a interface após adicionar novos dados
