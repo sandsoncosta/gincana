@@ -18,11 +18,8 @@ export function criarConfiguracaoBase(labels, dados, cores, sufixo = '') {
           display: false
         },
         tooltip: {
-          callbacks: {
-            label: function(tooltipItem) {
-              return `Pontuação: ${tooltipItem.raw}${sufixo}`;
-            }
-          }
+          enabled: false
+
         },
         datalabels: {
           color: '#fff',
@@ -57,7 +54,7 @@ export function criarConfiguracaoBase(labels, dados, cores, sufixo = '') {
             color: '#fff'
           },
           ticks: {
-            display: false,
+            display: true,
             color: '#fff'
           },
           suggestedMax: Math.max(...dados) * 1.2 || 10

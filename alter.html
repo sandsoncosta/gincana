@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="rastreador.css" rel="stylesheet">
-    <title>Gincana - Placar e Progresso</title>
+    <link href="style.css" rel="stylesheet">
+    <title>Gincana - Placar</title>
+    <!-- Carregar Chart.js e o plugin datalabels -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
@@ -12,20 +13,9 @@
   <div class="container">
     <div class="header">
         <img src="image.png" alt="Logo da Gincana" class="logo">
-        <h1>GINCANA EBD 2025</h1>
+        <h1>PLACAR GERAL</h1>
     </div>
-
-    <!-- Sistema de abas -->
-    <div class="tabs-container">
-      <div class="tabs">
-        <button class="tab-button active" data-tab="placar">Placar Geral</button>
-        <button class="tab-button" data-tab="progresso">Progresso da Gincana</button>
-      </div>
-    </div>
-    
-    <!-- Conteúdo da aba Placar Geral (antigo index.html) -->
-    <div class="tab-content active" id="placar">
-      <div class="graficos">
+    <div class="graficos">
         <!-- Classificação Geral -->
         <div class="grafico-container">
             <div class="grafico-titulo">Classificação Geral</div>
@@ -44,19 +34,18 @@
         <!-- Quiz -->
         <div class="grafico-container">
             <div class="grafico-titulo">Classificação: Quiz Bíblico</div>
-            <div class="grafico-titulo">Pontuação:</div>
-            <h5>Quiz SEM múltipla escolha: 100<br>Quiz COM múltipla escolha: 50</h5>
+            <h5>Pontuação para respostas SEM múltipla escolha: 100<br>Pontuação para respostas COM múltipla escolha: 50</h5>
             <canvas id="graficoQuiz"></canvas>
             <div class="legendas-times"></div>
         </div>
         
         <!-- Bíblias -->
         <div class="grafico-container">
-            <div class="grafico-titulo">Classificação: Pontuação de Bíblias</div>
+            <div class="grafico-titulo">Classificação: Pontuação de Bíblias levadas para a Igreja</div>
             <h5>O critério de pontuação para essa classificação será por percentual de Bíblias.<br>Quem tiver o maior percentual, vence.</h5>
             <h5>O cálculo da porcentagem:<br>Pontuação = (Número de pessoas que levaram Bíblia ÷ Total de pessoas na equipe) × 100</h5>
             <h5>Exemplo:<br>Equipe A: 5 pessoas, 4 levaram → 4 ÷ 5 = 0,8 × 100 → 80%<br>Equipe B: 10 pessoas, 6 levaram → 6 ÷ 10 = 0,6 × 100 → 60%</h5>
-            <div class="grafico-titulo">Pontuação: 40 pontos</div>
+            <h5>Pontuação: 40 pontos</h5>
             <canvas id="graficoBiblias"></canvas>
             <div class="legendas-times"></div>
         </div>
@@ -83,32 +72,10 @@
             <canvas id="graficoGrito"></canvas>
             <div class="legendas-times"></div>
         </div>
-      </div>
-    </div>
-    
-    <!-- Conteúdo da aba Progresso da Gincana (antigo rastreador.html) -->
-    <div class="tab-content" id="progresso">
-      <div class="aviso-container">
-        <h2>ESSE GRÁFICO AINDA NÃO TÁ VALENDO</h2>
-        <h3>Progresso da Gincana - Pontuação Total por Time</h3>
-      </div>
-      
-      <div class="chart-container">
-        <canvas id="gincanaChart"></canvas>
-      </div>
-      
-      <div>
-        <h3>Pontuações por Time:</h3>
-        <div class="cards-container" id="teamsContainer">
-          <!-- Cards dos times serão inseridos aqui via JavaScript -->
-        </div>
-      </div>
     </div>
   </div>
 
   <!-- Carregar os módulos JavaScript -->
   <script type="module" src="js/main.js"></script>
-  <script type="module" src="js/progressbar.js"></script>
-  <script src="js/tabs.js"></script>
 </body>
 </html>
