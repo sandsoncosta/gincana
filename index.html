@@ -89,26 +89,33 @@
       </div>
     </div>
     
-    <!-- Conteúdo da aba Progresso da Gincana (antigo rastreador.html) -->
-    <div class="tab-content" id="progresso">
-      <div class="aviso-container">
-        <h2>ESTE GRÁFICO AINDA ESTÁ EM DESENVOLVIMENTO</h2>
-        <h3>O percentual de Bíblias por equipe para acompanhamento será incluso em breve.</h3>
-        <h3>Progresso da Gincana - Pontuação Total por Time</h3>
-      </div>
-      
-      <div class="chart-container">
-        <canvas id="gincanaChart"></canvas>
-      </div>
-      
-      <div>
-        <h3>Pontuações por Time:</h3>
-        <div class="cards-container" id="teamsContainer">
-          <!-- Cards dos times serão inseridos aqui via JavaScript -->
-        </div>
-      </div>
+
+<!-- Conteúdo completo da aba Progresso da Gincana -->
+<div class="tab-content" id="progresso">
+  <div class="aviso-container">
+    <h3>Progresso da Gincana</h3>
+  </div>
+  
+  <!-- Sistema de abas para categorias -->
+  <div class="categorias-tabs-container">
+    <div class="categorias-tabs" id="categoriasTabs">
+      <!-- Abas das categorias serão inseridas aqui via JavaScript -->
     </div>
   </div>
+  
+  <!-- Conteúdo das abas de categorias -->
+  <div class="categorias-content" id="categoriasContent">
+    <!-- Conteúdo de cada categoria será inserido aqui via JavaScript -->
+  </div>
+  
+  <!-- Cards de pontuação por time -->
+  <div>
+    <h3>Pontuações por Time:</h3>
+    <div class="cards-container" id="teamsContainer">
+      <!-- Cards dos times serão inseridos aqui via JavaScript -->
+    </div>
+  </div>
+</div>
 
   <!-- Carregar os módulos JavaScript -->
   <script type="module" src="js/main.js"></script>
