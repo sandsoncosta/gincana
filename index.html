@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="Progresso da Gincana">
-    <meta property="og:description" content="Acompanhe o progresso da gincana e veja os resultados dos times!">
+    <meta property="og:description" content="Acompanhe o progresso da sua equipe!">
     <meta property="og:image" content="https://gincanaagape.vercel.app/og.png">
-    <meta property="og:url" content="https://example.com">
-    <meta property="og:type" content="website">
-    <link href="rastreador.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
     <title>Gincana - Placar e Progresso</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
@@ -58,8 +56,8 @@
         <!-- Bíblias -->
         <div class="grafico-container">
             <div class="grafico-titulo">Classificação: Pontuação de Bíblias</div>
-            <h5>O critério de pontuação para essa classificação será por percentual de Bíblias.<br>Quem tiver o maior percentual, vence.</h5>
-            <h5>O cálculo da porcentagem:<br>Pontuação = (Número de pessoas que levaram Bíblia ÷ Total de pessoas na equipe) × 100</h5>
+            <h5 class="porcentagem">A pontuação irá para a equipe que tiver a maior porcentagem de bíblias</h5>
+            <h5>O cálculo da porcentagem:<br>Pontos = (Nº de pessoas com Bíblia ÷ Total de pessoas na equipe) × 100</h5>
             <h5>Exemplo:<br>Equipe A: 5 pessoas, 4 levaram → 4 ÷ 5 = 0,8 × 100 → 80%<br>Equipe B: 10 pessoas, 6 levaram → 6 ÷ 10 = 0,6 × 100 → 60%</h5>
             <div class="grafico-titulo">Pontuação: 30 pontos</div>
             <canvas id="graficoBiblias"></canvas>
