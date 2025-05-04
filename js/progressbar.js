@@ -88,7 +88,7 @@ const pontuacoesPorData = {
     },
     {
       time: "Novos Convertidos",
-      espadas: 10,
+      espadas: 0,
       versiculo: 100, // QUIZ
       biblia: 40,
       porcentagembiblias: 100,

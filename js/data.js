@@ -1,60 +1,78 @@
 // Dados da gincana com pontuações por categoria
-export const pontuacoesPorTime = [
+const dadosBrutos = [
   {
     time: "Adultos",
-    espadas: 20,
-    versiculo: 300, // QUIZ
-    biblia: 0, // Percentual de bíblias
+    espadas: 30,
+    versiculo: 300,
+    biblia: 0,
     visitantes: 0,
     caracterizacao: 0,
     grito: 10
   },
   {
     time: "Liga",
-    espadas: 0,
-    versiculo: 150, // QUIZ
-    biblia:30,
+    espadas: [10],
+    versiculo: [150],
+    biblia: [30],
     visitantes: 0,
-    caracterizacao: 20,
-    grito: 10
+    caracterizacao: [20],
+    grito: [10]
   },
   {
     time: "Liga Teen",
-    espadas: 60,
-    versiculo: 300, // QUIZ
+    espadas: [60],
+    versiculo: [300],
     biblia: 0,
     visitantes: 0,
-    caracterizacao: 20,
+    caracterizacao: [20],
     grito: 10
   },
   {
     time: "Novos Convertidos",
     espadas: 0, 
-    versiculo: 250, // QUIZ
+    versiculo: [250],
     biblia: 0,
     visitantes: 0,
     caracterizacao: 0,
-    grito: 10
+    grito: [10]
   },
   {
     time: "Novos Membros",
-    espadas: 20,
-    versiculo: 200, // QUIZ
+    espadas: [20],
+    versiculo: 200,
     biblia: 0,
     visitantes: 0,
     caracterizacao: 0,
-    grito: 10
+    grito: [10]
   },
   {
     time: "Sementes Ágape",
-    espadas: 0,
-    versiculo: 150, // QUIZ
+    espadas: [0, 10, 5],
+    versiculo: [150],
     biblia: 0,
     visitantes: 0,
     caracterizacao: 0,
-    grito: 10
+    grito: [10]
   }
 ];
+
+// Função para somar os valores
+const somarCampos = (item) => {
+  const campos = ["espadas", "versiculo", "biblia", "visitantes", "caracterizacao", "grito"];
+  const resultado = { time: item.time };
+  campos.forEach(campo => {
+    const valor = item[campo];
+    if (Array.isArray(valor)) {
+      resultado[campo] = valor.reduce((acc, val) => acc + val, 0);
+    } else {
+      resultado[campo] = valor;
+    }
+  });
+  return resultado;
+};
+
+// Gerando a lista final com os valores somados
+export const pontuacoesPorTime = dadosBrutos.map(somarCampos);
 
 // Definindo as cores dos times
 export const coresTimes = {
