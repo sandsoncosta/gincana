@@ -10,6 +10,7 @@ const coresTimes = {
   "Adultos": "#34495e"
 };
 
+
 // Estrutura de dados dinâmica para as pontuações - organizada por data
 const pontuacoesPorData = {
   "01/05": [
@@ -73,13 +74,78 @@ const pontuacoesPorData = {
       caracterizacao: 0,
       grito: 10
     }
-  ]};
+  ],
+  "04/05": [
+    {
+      time: "Sementes Ágape",
+      espadas: 0,
+      versiculo: 100,
+      biblia: 0,
+      porcentagembiblias: 64.70,
+      visitantes: 0,
+      caracterizacao: 20,
+      grito: 10
+    },
+    {
+      time: "Novos Convertidos",
+      espadas: 10,
+      versiculo: 100, // QUIZ
+      biblia: 40,
+      porcentagembiblias: 100,
+      visitantes: 0,
+      caracterizacao: 20,
+      grito: 10
+    },
+    {
+      time: "Liga Teen",
+      espadas: 10,
+      versiculo: 50, // QUIZ
+      biblia: 40,
+      porcentagembiblias: 100,
+      visitantes: 15,
+      caracterizacao: 20,
+      grito: 10
+    },
+    {
+      time: "Liga",
+      espadas: 10,
+      versiculo: 100, // QUIZ
+      biblia: 0,
+      porcentagembiblias: 77.77,
+      visitantes: 5,
+      caracterizacao: 20,
+      grito: 10
+    },
+    {
+      time: "Novos Membros",
+      espadas: 10,
+      versiculo: 100, // QUIZ
+      biblia: 0,
+      porcentagembiblias: 81.81,
+      visitantes: 0,
+      caracterizacao: 20,
+      grito: 10
+    },
+    {
+      time: "Adultos",
+      espadas: 10,
+      versiculo: 50,
+      biblia: 0,
+      porcentagembiblias: 80,
+      visitantes: 10,
+      caracterizacao: 0,
+      grito: 10
+    }
+  ]
+};
 
 // Variável global para controlar a categoria atualmente selecionada
 let categoriaAtual = 'total';
 
 // Função para calcular o total de cada time
 function calcularTotal(time) {
+  // Somar apenas os campos que devem entrar na pontuação total
+  // Não inclui porcentagembiblias na soma, apenas os campos originais
   return time.espadas + time.versiculo + time.biblia + time.visitantes + time.caracterizacao + time.grito;
 }
 
@@ -203,7 +269,7 @@ function criarGraficoPorCategoria(categoria, titulo) {
             }
           }
         },
-        datalabels: {
+                  datalabels: {
           display: function(context) {
             // Exibir apenas se o valor não for zero
             return context.dataset.data[context.dataIndex] !== 0;
@@ -216,13 +282,10 @@ function criarGraficoPorCategoria(categoria, titulo) {
             weight: 'bold',
             size: 10
           },
+          // Posicionar exatamente no final da barra
           anchor: 'end',
-          align: 'right',
-          offset: function(context) {
-            const datasetIndex = context.datasetIndex;
-            const totalDatasets = context.chart.data.datasets.length;
-            return 5 + (datasetIndex * 20) - ((totalDatasets - 1) * 10);
-          },
+          align: 'end',
+          offset: 5, // Pequeno espaçamento fixo para a direita
           formatter: function(value, context) {
             if (context.chart.options.scales.x.title.text === 'Porcentagem (%)') {
               return value + '%';
