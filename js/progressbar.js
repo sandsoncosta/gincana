@@ -261,19 +261,16 @@ function criarGrafico() {
                   labels: {
                       color: '#fff'  // Cor das legendas (nomes) brancas
                   }
+              },
+              tooltip: {
+                  enabled: false // Desabilitar tooltips para não mostrar pontuações
+              },
+              datalabels: {
+                  display: false // Desabilitar números nos pontos do gráfico
               }
-              // tooltip: {
-              //     callbacks: {
-              //         title: function(tooltipItems) {
-              //             return `Data: ${tooltipItems[0].label}`;
-              //         },
-              //         label: function(context) {
-              //             return `${context.dataset.label}: ${context.raw} pontos`;
-              //         }
-              //     }
-              // }
           }
-      }
+      },
+      plugins: [ChartDataLabels] // Certifique-se de que o plugin ChartDataLabels está carregado
   });
 }
   
@@ -308,4 +305,3 @@ document.addEventListener('DOMContentLoaded', function() {
   criarGrafico();
   criarCards();
 });
-  
