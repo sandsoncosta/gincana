@@ -1,4 +1,6 @@
 // Dados da gincana com pontuações por categoria
+// A pontuação vai sendo incrementada conforme os dias das gincanas vão passando
+// Incluir 0 para o dia de não pontuação
 const dadosBrutos = [
   {
     time: "Adultos",
@@ -6,7 +8,7 @@ const dadosBrutos = [
     versiculo: [300,50],
     biblia: [0,0],
     visitantes: [0,10],
-    caracterizacao: 0,
+    caracterizacao: [0,0],
     grito: [10,10]
   },
   {
@@ -22,7 +24,7 @@ const dadosBrutos = [
     time: "Liga Teen",
     espadas: [60,10],
     versiculo: [300,50],
-    biblia: [0,40],
+    biblia: [0,30],
     visitantes: [0,15],
     caracterizacao: [20,20],
     grito: [10,10]
@@ -32,7 +34,7 @@ const dadosBrutos = [
     espadas: [0,10], 
     versiculo: [250,100],
     biblia: [0,30],
-    visitantes: 0,
+    visitantes: [0,0],
     caracterizacao: [0,20],
     grito: [10,10]
   },
@@ -41,16 +43,16 @@ const dadosBrutos = [
     espadas: [20,10],
     versiculo: [200,100],
     biblia: [0,0],
-    visitantes: 0,
+    visitantes: [0,0],
     caracterizacao: [0,20],
     grito: [10,10]
   },
   {
     time: "Sementes Ágape",
-    espadas: [0],
+    espadas: [0,0],
     versiculo: [150,100],
     biblia: [0,0],
-    visitantes: 0,
+    visitantes: [0,0],
     caracterizacao: [0,20],
     grito: [10,10]
   }

@@ -1,4 +1,4 @@
-// Configuração base para todos os gráficos
+// Configuração base para todos os gráficos - Placar Geral
 export function criarConfiguracaoBase(labels, dados, cores, sufixo = '') {
   return {
     type: 'bar',
