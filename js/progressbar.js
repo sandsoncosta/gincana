@@ -16,7 +16,7 @@ const pontuacoesPorData = {
     {
       time: "Sementes Ágape",
       espadas: 0,
-      versiculo: 150,
+      versiculo: 150, // QUIZ
       biblia: 0,
       porcentagembiblias: 68.75,
       visitantes: 0,
@@ -26,7 +26,7 @@ const pontuacoesPorData = {
     {
       time: "Novos Convertidos",
       espadas: 0,
-      versiculo: 250,
+      versiculo: 250, // QUIZ
       biblia: 0,
       porcentagembiblias: 78.26,
       visitantes: 0,
@@ -36,7 +36,7 @@ const pontuacoesPorData = {
     {
       time: "Liga Teen",
       espadas: 60,
-      versiculo: 300,
+      versiculo: 300, // QUIZ
       biblia: 0,
       porcentagembiblias: 50,
       visitantes: 0,
@@ -45,8 +45,8 @@ const pontuacoesPorData = {
     },
     {
       time: "Liga",
-      espadas: 0,
-      versiculo: 150,
+      espadas: 60,
+      versiculo: 150, // QUIZ
       biblia: 30,
       porcentagembiblias: 100,
       visitantes: 0,
@@ -56,7 +56,7 @@ const pontuacoesPorData = {
     {
       time: "Novos Membros",
       espadas: 20,
-      versiculo: 200,
+      versiculo: 200, // QUIZ
       biblia: 0,
       porcentagembiblias: 82.75,
       visitantes: 0,
@@ -66,7 +66,7 @@ const pontuacoesPorData = {
     {
       time: "Adultos",
       espadas: 20,
-      versiculo: 300,
+      versiculo: 300, // QUIZ
       biblia: 0,
       porcentagembiblias: 70.58,
       visitantes: 0,
@@ -78,7 +78,7 @@ const pontuacoesPorData = {
     {
       time: "Sementes Ágape",
       espadas: 0,
-      versiculo: 100,
+      versiculo: 100, // QUIZ
       biblia: 0,
       porcentagembiblias: 64.70,
       visitantes: 0,
@@ -99,7 +99,7 @@ const pontuacoesPorData = {
       time: "Liga Teen",
       espadas: 10,
       versiculo: 50, // QUIZ
-      biblia: 40,
+      biblia: 30,
       porcentagembiblias: 100,
       visitantes: 15,
       caracterizacao: 20,
@@ -107,7 +107,7 @@ const pontuacoesPorData = {
     },
     {
       time: "Liga",
-      espadas: 10,
+      espadas: 20,
       versiculo: 100, // QUIZ
       biblia: 0,
       porcentagembiblias: 77.77,
@@ -128,7 +128,7 @@ const pontuacoesPorData = {
     {
       time: "Adultos",
       espadas: 10,
-      versiculo: 50,
+      versiculo: 50, // QUIZ
       biblia: 0,
       porcentagembiblias: 80,
       visitantes: 10,
