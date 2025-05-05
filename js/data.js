@@ -1,7 +1,7 @@
 // Dados da gincana com pontuações por categoria
 // A pontuação vai sendo incrementada conforme os dias das gincanas vão passando
 // Incluir 0 para o dia de não pontuação
-const dadosBrutos = [
+export const dadosBrutos = [
   {
     time: "Adultos",
     espadas: [20,10],
@@ -13,7 +13,7 @@ const dadosBrutos = [
   },
   {
     time: "Liga",
-    espadas: [0,10],
+    espadas: [60,20],
     versiculo: [150,100],
     biblia: [30,0],
     visitantes: [0,5],

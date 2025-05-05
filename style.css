@@ -608,6 +608,7 @@ h5.porcentagem {
 
 @media (min-width: 992px) {
   .chart-container {
+    /*Ajustar a tela da pontuação*/
     height: 500px; /* Gráfico mais alto em telas maiores */
   }
   

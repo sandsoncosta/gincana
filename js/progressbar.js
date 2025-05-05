@@ -1,142 +1,81 @@
-// Versão corrigida do progressbar.js
+// Versão corrigida do progressbar.js que gera pontuacoesPorData dinamicamente a partir do data.js
 
-// Definindo as cores dos times
-const coresTimes = {
-  "Sementes Ágape": "#2ecc71",
-  "Novos Convertidos": "#3498db",
-  "Novos Membros": "#9b59b6",
-  "Liga Teen": "#e74c3c",
-  "Liga": "#e67e22",
-  "Adultos": "#34495e"
-};
+// Importando os dados do data.js
+import { pontuacoesPorTime, coresTimes } from './data.js';
 
-// Estrutura de dados dinâmica para as pontuações - organizada por data
-const pontuacoesPorData = {
-  "01/05": [
-    {
-      time: "Sementes Ágape",
-      espadas: 0,
-      versiculo: 150, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 68.75,
-      visitantes: 0,
-      caracterizacao: 0,
-      grito: 10
-    },
-    {
-      time: "Novos Convertidos",
-      espadas: 0,
-      versiculo: 250, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 78.26,
-      visitantes: 0,
-      caracterizacao: 0,
-      grito: 10
-    },
-    {
-      time: "Liga Teen",
-      espadas: 60,
-      versiculo: 300, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 50,
-      visitantes: 0,
-      caracterizacao: 20,
-      grito: 10
-    },
-    {
-      time: "Liga",
-      espadas: 60,
-      versiculo: 150, // QUIZ
-      biblia: 30,
-      porcentagembiblias: 100,
-      visitantes: 0,
-      caracterizacao: 20,
-      grito: 10
-    },
-    {
-      time: "Novos Membros",
-      espadas: 20,
-      versiculo: 200, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 82.75,
-      visitantes: 0,
-      caracterizacao: 0,
-      grito: 10
-    },
-    {
-      time: "Adultos",
-      espadas: 20,
-      versiculo: 300, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 70.58,
-      visitantes: 0,
-      caracterizacao: 0,
-      grito: 10
-    }
-  ],
-  "04/05": [
-    {
-      time: "Sementes Ágape",
-      espadas: 0,
-      versiculo: 100, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 64.70,
-      visitantes: 0,
-      caracterizacao: 20,
-      grito: 10
-    },
-    {
-      time: "Novos Convertidos",
-      espadas: 10,
-      versiculo: 100, // QUIZ
-      biblia: 30,
-      porcentagembiblias: 100,
-      visitantes: 0,
-      caracterizacao: 20,
-      grito: 10
-    },
-    {
-      time: "Liga Teen",
-      espadas: 10,
-      versiculo: 50, // QUIZ
-      biblia: 30,
-      porcentagembiblias: 100,
-      visitantes: 15,
-      caracterizacao: 20,
-      grito: 10
-    },
-    {
-      time: "Liga",
-      espadas: 20,
-      versiculo: 100, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 77.77,
-      visitantes: 5,
-      caracterizacao: 20,
-      grito: 10
-    },
-    {
-      time: "Novos Membros",
-      espadas: 10,
-      versiculo: 100, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 81.81,
-      visitantes: 0,
-      caracterizacao: 20,
-      grito: 10
-    },
-    {
-      time: "Adultos",
-      espadas: 10,
-      versiculo: 50, // QUIZ
-      biblia: 0,
-      porcentagembiblias: 80,
-      visitantes: 10,
-      caracterizacao: 0,
-      grito: 10
-    }
-  ]
-};
+// Definir as datas da gincana
+const datasGincana = ["01/05", "04/05"]; // Adicione mais datas conforme necessário
+
+// Expor dadosBrutos do data.js para acesso global
+// Este era o problema principal - a variável dadosBrutos não estava acessível
+import { dadosBrutos } from './data.js';
+window.dadosBrutos = dadosBrutos;
+
+// Função para gerar pontuacoesPorData dinamicamente a partir dos dados de data.js
+function gerarPontuacoesPorData() {
+  const resultado = {};
+  
+  // Para cada data da gincana
+  datasGincana.forEach((data, indiceData) => {
+    resultado[data] = [];
+    
+    // Para cada time em pontuacoesPorTime (que vem do data.js)
+    pontuacoesPorTime.forEach(time => {
+      // Obtém os dados originais (não somados) do time
+      const timeOriginal = dadosBrutos.find(t => t.time === time.time);
+      
+      if (!timeOriginal) return;
+      
+      // Cria um objeto com os valores do dia específico para cada categoria
+      const timeData = {
+        time: time.time,
+        espadas: timeOriginal.espadas[indiceData] || 0,
+        versiculo: timeOriginal.versiculo[indiceData] || 0,
+        biblia: timeOriginal.biblia[indiceData] || 0,
+        porcentagembiblias: 0, // Este valor será definido manualmente depois
+        visitantes: timeOriginal.visitantes[indiceData] || 0,
+        caracterizacao: timeOriginal.caracterizacao[indiceData] || 0,
+        grito: timeOriginal.grito[indiceData] || 0
+      };
+      
+      resultado[data].push(timeData);
+    });
+  });
+  
+  return resultado;
+}
+
+// Definir porcentagens de bíblias manualmente 
+// (esta parte não pode ser gerada dinamicamente pois são valores específicos)
+function definirPorcentagensBiblias(pontuacoesPorData) {
+  // Dia 01/05
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Sementes Ágape", 68.75);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Novos Convertidos", 78.26);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Liga Teen", 50);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Liga", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Novos Membros", 82.75);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Adultos", 70.58);
+
+  // Dia 04/05
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Sementes Ágape", 64.70);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Novos Convertidos", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Liga Teen", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Liga", 77.77);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Novos Membros", 81.81);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Adultos", 80);
+}
+
+// Função para atualizar porcentagem de bíblias
+function atualizarPorcentagemBiblias(pontuacoes, data, nomeTime, porcentagem) {
+  const time = pontuacoes[data]?.find(t => t.time === nomeTime);
+  if (time) {
+    time.porcentagembiblias = porcentagem;
+  }
+}
+
+// Gerar pontuacoesPorData no início
+const pontuacoesPorData = gerarPontuacoesPorData();
+definirPorcentagensBiblias(pontuacoesPorData);
 
 // Variável global para controlar a categoria atualmente selecionada
 let categoriaAtual = 'total';
@@ -147,9 +86,9 @@ const mapeamentoIDs = {
   'espadas': 'graficoEspadas',
   'versiculo': 'graficoVersiculo',
   'biblia': 'graficoBiblia',
-  'visitantes': 'grafVisitantes', // IDs modificados
-  'caracterizacao': 'grafCaracterizacao', // IDs modificados
-  'grito': 'grafGrito' // IDs modificados
+  'visitantes': 'grafVisitantes',
+  'caracterizacao': 'grafCaracterizacao',
+  'grito': 'grafGrito'
 };
 
 // Armazenar instâncias de gráficos para permitir destruição quando necessário
@@ -157,8 +96,6 @@ const graficosInstancias = {};
 
 // Função para calcular o total de cada time
 function calcularTotal(time) {
-  // Somar apenas os campos que devem entrar na pontuação total
-  // Não inclui porcentagembiblias na soma, apenas os campos originais
   return time.espadas + time.versiculo + time.biblia + time.visitantes + time.caracterizacao + time.grito;
 }
 
@@ -173,7 +110,7 @@ function getValorCategoria(timeData, categoria) {
 // Função para preparar dados para um gráfico específico de categoria
 function prepararDadosGraficoPorCategoria(categoria) {
   // Obter todas as datas disponíveis em ordem cronológica
-  const datas = Object.keys(pontuacoesPorData).sort(); 
+  const datas = Object.keys(pontuacoesPorData).sort();
   
   // Obter todos os nomes dos times
   const nomesTimes = pontuacoesPorData[datas[0]].map(time => time.time);
@@ -511,6 +448,9 @@ function inicializarGraficos() {
 
 // Inicializar a página com um sequenciamento adequado
 document.addEventListener('DOMContentLoaded', function() {
+  // Verificar se o dadosBrutos está disponível
+  console.log('dadosBrutos disponível?', window.dadosBrutos !== undefined);
+  
   // Pequeno atraso para garantir que todos os elementos estejam carregados
   setTimeout(() => {
     const progressoTab = document.getElementById('progresso');
@@ -540,19 +480,17 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 100);
 });
 
-// Helper para adicionar novas datas facilmente
-function adicionarNovaData(data, pontuacoes) {
-  // Garantir que todas as pontuações tenham o campo 'porcentagembiblias'
-  pontuacoes = pontuacoes.map(time => {
-    if (!('porcentagembiblias' in time)) {
-      time.porcentagembiblias = 0;
-    }
-    return time;
-  });
+// Função para adicionar nova data à gincana
+function adicionarNovaData(data) {
+  // 1. Adicionar a nova data ao array
+  if (!datasGincana.includes(data)) {
+    datasGincana.push(data);
+  }
   
-  pontuacoesPorData[data] = pontuacoes;
+  // 2. Regenerar pontuacoesPorData
+  Object.assign(pontuacoesPorData, gerarPontuacoesPorData());
   
-  // Atualizar a interface após adicionar novos dados
+  // 3. Atualizar a interface
   try {
     setTimeout(() => {
       inicializarGraficos();
@@ -563,4 +501,40 @@ function adicionarNovaData(data, pontuacoes) {
   } catch (error) {
     console.error('Erro ao atualizar interface após adicionar nova data:', error);
   }
+  
+  console.log(`Nova data adicionada: ${data}`);
+  return true;
 }
+
+// Função para definir as porcentagens de bíblias para uma data específica
+function definirPorcentagemBibliasPorData(data, porcentagens) {
+  // porcentagens deve ser um objeto com o nome do time como chave e a porcentagem como valor
+  // Ex: { "Liga": 85, "Adultos": 90, ... }
+  
+  if (!pontuacoesPorData[data]) {
+    console.error(`Data ${data} não encontrada`);
+    return false;
+  }
+  
+  Object.entries(porcentagens).forEach(([time, porcentagem]) => {
+    atualizarPorcentagemBiblias(pontuacoesPorData, data, time, porcentagem);
+  });
+  
+  // Atualizar a interface (apenas se estiver na categoria bíblias)
+  if (categoriaAtual === 'biblia') {
+    try {
+      const canvasId = mapeamentoIDs['biblia'];
+      criarGraficoPorCategoria('biblia', 'Pontuação de Bíblias');
+      criarCards('biblia');
+    } catch (error) {
+      console.error('Erro ao atualizar gráfico de bíblias:', error);
+    }
+  }
+  
+  return true;
+}
+
+// Expor a variável pontuacoesPorData e as funções para uso externo
+window.pontuacoesPorData = pontuacoesPorData;
+window.adicionarNovaData = adicionarNovaData;
+window.definirPorcentagemBibliasPorData = definirPorcentagemBibliasPorData;
