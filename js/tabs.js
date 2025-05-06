@@ -1,48 +1,61 @@
+// Função para gerenciar as abas principais
 document.addEventListener('DOMContentLoaded', function() {
-    // Obter todos os botões da aba
-    const tabButtons = document.querySelectorAll('.tab-button');
-    
-    // Adicionar evento de clique a cada botão
-    tabButtons.forEach(button => {
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+  
+  tabButtons.forEach(button => {
       button.addEventListener('click', function() {
-        // Remover classe 'active' de todos os botões
-        tabButtons.forEach(btn => {
-          btn.classList.remove('active');
-        });
-        
-        // Adicionar classe 'active' ao botão clicado
-        this.classList.add('active');
-        
-        // Obter o ID do conteúdo da aba a ser exibida
-        const tabId = this.getAttribute('data-tab');
-        
-        // Esconder todos os conteúdos de aba
-        const tabContents = document.querySelectorAll('.tab-content');
-        tabContents.forEach(content => {
-          content.classList.remove('active');
-        });
-        
-        // Mostrar o conteúdo da aba selecionada
-        document.getElementById(tabId).classList.add('active');
-        
-        // Recalcular e redimensionar os gráficos quando uma aba for selecionada
-        // para garantir que sejam exibidos corretamente
-        if (window.Chart) {
-          window.dispatchEvent(new Event('resize'));
-        }
-        
-        // Salvar a aba ativa no localStorage para persistência
-        localStorage.setItem('activeTab', tabId);
+          // Remover classe active de todos os botões e conteúdos
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Adicionar classe active ao botão clicado
+          this.classList.add('active');
+          
+          // Mostrar o conteúdo correspondente
+          const tabId = this.getAttribute('data-tab');
+          document.getElementById(tabId).classList.add('active');
       });
-    });
-    
-    // Verificar se há uma aba salva no localStorage
-    const savedTab = localStorage.getItem('activeTab');
-    if (savedTab) {
-      // Ativar a aba salva
-      const savedButton = document.querySelector(`.tab-button[data-tab="${savedTab}"]`);
-      if (savedButton) {
-        savedButton.click();
-      }
-    }
   });
+  
+  // Funções para as abas de categorias (serão ativadas quando essas abas forem criadas dinamicamente)
+  function setupCategoryTabs() {
+      const categoryButtons = document.querySelectorAll('.categoria-tab-button');
+      const categoryContents = document.querySelectorAll('.categoria-tab-content');
+      
+      categoryButtons.forEach(button => {
+          button.addEventListener('click', function() {
+              // Encontrar o conjunto de abas ao qual este botão pertence
+              const tabsGroup = this.closest('.categorias-tabs');
+              const contentGroup = document.querySelector(
+                  tabsGroup.getAttribute('data-content-group')
+              );
+              
+              // Remover classe active apenas dos botões neste grupo
+              tabsGroup.querySelectorAll('.categoria-tab-button').forEach(btn => {
+                  btn.classList.remove('active');
+              });
+              
+              // Remover classe active apenas dos conteúdos neste grupo
+              if (contentGroup) {
+                  contentGroup.querySelectorAll('.categoria-tab-content').forEach(content => {
+                      content.classList.remove('active');
+                  });
+              }
+              
+              // Adicionar classe active ao botão clicado
+              this.classList.add('active');
+              
+              // Mostrar o conteúdo correspondente
+              const tabId = this.getAttribute('data-tab');
+              const targetContent = document.getElementById(tabId);
+              if (targetContent) {
+                  targetContent.classList.add('active');
+              }
+          });
+      });
+  }
+  
+  // Expor a função para ser chamada após a criação dinâmica das abas de categoria
+  window.setupCategoryTabs = setupCategoryTabs;
+});

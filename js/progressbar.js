@@ -240,12 +240,12 @@ function criarGraficoPorCategoria(categoria, titulo) {
             return context.dataset.data[context.dataIndex] !== 0;
           },
           color: '#fff',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          // backgroundColor: 'rgba(0, 0, 0, 0.5)',
           borderRadius: 4,
           padding: 4,
           font: {
             weight: 'bold',
-            size: 10
+            size: 20
           },
           // Posicionar exatamente no final da barra
           anchor: 'end',

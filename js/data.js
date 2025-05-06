@@ -13,7 +13,7 @@ export const dadosBrutos = [
   },
   {
     time: "Liga",
-    espadas: [60,20],
+    espadas: [0,10],
     versiculo: [150,100],
     biblia: [30,0],
     visitantes: [0,5],
@@ -22,7 +22,7 @@ export const dadosBrutos = [
   },
   {
     time: "Liga Teen",
-    espadas: [60,10],
+    espadas: [60,20],
     versiculo: [300,50],
     biblia: [0,30],
     visitantes: [0,15],
