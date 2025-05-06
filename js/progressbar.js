@@ -245,7 +245,7 @@ function criarGraficoPorCategoria(categoria, titulo) {
           padding: 4,
           font: {
             weight: 'bold',
-            size: 20
+            size: 14
           },
           // Posicionar exatamente no final da barra
           anchor: 'end',
