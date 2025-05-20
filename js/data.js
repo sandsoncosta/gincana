@@ -4,57 +4,57 @@
 export const dadosBrutos = [
   {
     time: "Adultos",
-    espadas: [20,10],
-    versiculo: [300,50],
-    biblia: [0,0],
-    visitantes: [0,10],
-    caracterizacao: [0,0],
-    grito: [10,10]
+    espadas: [20,10,20],
+    versiculo: [300,50,50], // QUIZ
+    biblia: [0,0,0],
+    visitantes: [0,10,0],
+    caracterizacao: [0,0,20],
+    grito: [10,10,10]
   },
   {
     time: "Liga",
-    espadas: [0,10],
-    versiculo: [150,100],
-    biblia: [30,0],
-    visitantes: [0,5],
-    caracterizacao: [20,20],
-    grito: [10,10]
+    espadas: [0,10,10],
+    versiculo: [150,100,100], // QUIZ
+    biblia: [30,0,30],
+    visitantes: [0,5,0],
+    caracterizacao: [20,20,20],
+    grito: [10,10,10]
   },
   {
     time: "Liga Teen",
-    espadas: [60,20],
-    versiculo: [300,50],
-    biblia: [0,30],
-    visitantes: [0,15],
-    caracterizacao: [20,20],
-    grito: [10,10]
+    espadas: [60,20,0],
+    versiculo: [300,50,50], // QUIZ
+    biblia: [0,30,0],
+    visitantes: [0,15,0],
+    caracterizacao: [20,20,20],
+    grito: [10,10,10]
   },
   {
     time: "Novos Convertidos",
-    espadas: [0,10], 
-    versiculo: [250,100],
-    biblia: [0,30],
-    visitantes: [0,0],
-    caracterizacao: [0,20],
-    grito: [10,10]
+    espadas: [0,10,0], 
+    versiculo: [250,100,50], // QUIZ
+    biblia: [0,30,0],
+    visitantes: [0,0,0],
+    caracterizacao: [0,20,20],
+    grito: [10,10,10]
   },
   {
     time: "Novos Membros",
-    espadas: [20,10],
-    versiculo: [200,100],
-    biblia: [0,0],
-    visitantes: [0,0],
-    caracterizacao: [0,20],
-    grito: [10,10]
+    espadas: [20,10,20],
+    versiculo: [200,100,100], // QUIZ
+    biblia: [0,0,0],
+    visitantes: [0,0,10],
+    caracterizacao: [0,20,0],
+    grito: [10,10,10]
   },
   {
     time: "Sementes Ágape",
-    espadas: [0,0],
-    versiculo: [150,100],
-    biblia: [0,0],
-    visitantes: [0,0],
-    caracterizacao: [0,20],
-    grito: [10,10]
+    espadas: [0,0,10],
+    versiculo: [150,100,50], // QUIZ
+    biblia: [0,0,0],
+    visitantes: [0,0,0],
+    caracterizacao: [0,20,20],
+    grito: [10,10,10]
   }
 ];
 

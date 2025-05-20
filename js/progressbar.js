@@ -4,7 +4,7 @@
 import { pontuacoesPorTime, coresTimes } from './data.js';
 
 // Definir as datas da gincana
-const datasGincana = ["01/05", "04/05"]; // Adicione mais datas conforme necessário
+const datasGincana = ["01/05", "04/05", "18/05"]; // Adicione mais datas conforme necessário
 
 // Expor dadosBrutos do data.js para acesso global
 // Este era o problema principal - a variável dadosBrutos não estava acessível
