@@ -63,6 +63,14 @@ function definirPorcentagensBiblias(pontuacoesPorData) {
   atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Liga", 77.77);
   atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Novos Membros", 81.81);
   atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Adultos", 80);
+
+  // Dia 18/05
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Sementes Ágape", 60.8);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Convertidos", 84);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga Teen", 82.3);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Membros", 95.8);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Adultos", 94.11);
 }
 
 // Função para atualizar porcentagem de bíblias
@@ -86,6 +94,7 @@ const mapeamentoIDs = {
   'espadas': 'graficoEspadas',
   'versiculo': 'graficoVersiculo',
   'biblia': 'graficoBiblia',
+  'pontuacaobiblia': 'graficoPontuacaoBiblia', // <-- NOVO ID
   'visitantes': 'grafVisitantes',
   'caracterizacao': 'grafCaracterizacao',
   'grito': 'grafGrito'
@@ -126,6 +135,10 @@ function prepararDadosGraficoPorCategoria(categoria) {
         // Se a categoria for 'biblia', use o valor de 'porcentagembiblias'
         if (categoria === 'biblia') {
           return timeData.porcentagembiblias || 0;
+        }
+        // Se a categoria for 'pontuacaobiblia', use o valor de 'biblia'
+        if (categoria === 'pontuacaobiblia') {
+          return timeData.biblia || 0;
         }
         return getValorCategoria(timeData, categoria);
       });
@@ -316,11 +329,14 @@ function criarCards(categoria = categoriaAtual) {
       const timeData = pontuacoesPorData[data].find(t => t.time === time);
       if (timeData) {
         let pontos;
-        
+
         // Tratamento específico para cada categoria
         if (categoria === 'biblia') {
           pontos = timeData.porcentagembiblias || 0;
           cardHTML += `<span>${data}:<br>${pontos}%</span>`;
+        } else if (categoria === 'pontuacaobiblia') {
+          pontos = timeData.biblia || 0;
+          cardHTML += `<span>${data}:<br>${pontos} pontos</span>`;
         } else {
           pontos = getValorCategoria(timeData, categoria);
           cardHTML += `<span>${data}:<br>${pontos} pontos</span>`;
@@ -342,7 +358,8 @@ function criarAbasCategorias() {
     { id: 'total', titulo: 'Pontuação Total por Time' },
     { id: 'espadas', titulo: 'Pontuação de Espadas para o Ar' },
     { id: 'versiculo', titulo: 'Pontuação do Quiz Bíblico' },
-    { id: 'biblia', titulo: 'Pontuação de Bíblias' },
+    { id: 'biblia', titulo: 'Percentual de Bíblias' },
+    { id: 'pontuacaobiblia', titulo: 'Pontuação de Bíblias' }, // <-- NOVA ABA
     { id: 'visitantes', titulo: 'Pontuação de Visitantes' },
     { id: 'caracterizacao', titulo: 'Pontuação de Caracterização' },
     { id: 'grito', titulo: 'Pontuação de Grito de Guerra' }
@@ -416,7 +433,8 @@ function inicializarGraficos() {
     { id: 'total', titulo: 'Pontuação Total por Time' },
     { id: 'espadas', titulo: 'Pontuação de Espadas para o Ar' },
     { id: 'versiculo', titulo: 'Pontuação do Quiz Bíblico' },
-    { id: 'biblia', titulo: 'Pontuação de Bíblias' },
+    { id: 'biblia', titulo: 'Este gráfico não faz parte das pontuações. Ele é dedicado apenas para acompanhamento de percentual de Bíblias computadas na EBD.' },
+    { id: 'pontuacaobiblia', titulo: 'Pontuação de Bíblias' }, // <-- NOVA CATEGORIA
     { id: 'visitantes', titulo: 'Pontuação de Visitantes' },
     { id: 'caracterizacao', titulo: 'Pontuação de Caracterização' },
     { id: 'grito', titulo: 'Pontuação de Grito de Guerra' }
@@ -524,7 +542,7 @@ function definirPorcentagemBibliasPorData(data, porcentagens) {
   if (categoriaAtual === 'biblia') {
     try {
       const canvasId = mapeamentoIDs['biblia'];
-      criarGraficoPorCategoria('biblia', 'Pontuação de Bíblias');
+      criarGraficoPorCategoria('biblia', 'Percentual de Bíblias');
       criarCards('biblia');
     } catch (error) {
       console.error('Erro ao atualizar gráfico de bíblias:', error);

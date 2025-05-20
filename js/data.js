@@ -81,7 +81,7 @@ export const coresTimes = {
   "Sementes Ágape": "#2ecc71",
   "Novos Convertidos": "#3498db",
   "Novos Membros": "#9b59b6",
-  "Liga Teen": "#e74c3c",
-  "Liga": "#e67e22",
-  "Adultos": "#34495e"
+  "Liga Teen": "#e67e22",
+  "Liga": "#e74c3c",
+  "Adultos": "#f1c40f"
 };
