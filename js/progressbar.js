@@ -4,7 +4,7 @@
 import { pontuacoesPorTime, coresTimes } from './data.js';
 
 // Definir as datas da gincana
-const datasGincana = ["01/05", "04/05", "18/05"]; // Adicione mais datas conforme necessário
+const datasGincana = ["01/05", "04/05", "18/05", "25/05"]; // Adicione mais datas conforme necessário
 
 // Expor dadosBrutos do data.js para acesso global
 // Este era o problema principal - a variável dadosBrutos não estava acessível
@@ -49,28 +49,36 @@ function gerarPontuacoesPorData() {
 // (esta parte não pode ser gerada dinamicamente pois são valores específicos)
 function definirPorcentagensBiblias(pontuacoesPorData) {
   // Dia 01/05
-  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Sementes Ágape", 68.75);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Novos Convertidos", 78.26);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Liga Teen", 50);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Liga", 100);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Novos Membros", 82.75);
   atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Adultos", 70.58);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Liga", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Liga Teen", 50);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Novos Convertidos", 78.26);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Novos Membros", 82.75);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/05", "Sementes Ágape", 68.75);
 
   // Dia 04/05
-  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Sementes Ágape", 64.70);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Novos Convertidos", 100);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Liga Teen", 100);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Liga", 77.77);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Novos Membros", 81.81);
   atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Adultos", 80);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Liga", 77.77);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Liga Teen", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Novos Convertidos", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Novos Membros", 81.81);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "04/05", "Sementes Ágape", 64.70);
 
   // Dia 18/05
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Sementes Ágape", 60.8);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Convertidos", 84);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga Teen", 82.3);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga", 100);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Membros", 95.8);
   atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Adultos", 94.11);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga Teen", 82.3);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Convertidos", 84);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Membros", 95.8);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Sementes Ágape", 60.8);
+
+  // Dia 25/05
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Adultos", 93.75);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga Teen", 95);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Convertidos", 95.2);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Membros", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Sementes Ágape", 68.1);
 }
 
 // Função para atualizar porcentagem de bíblias
