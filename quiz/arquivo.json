@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "pergunta": "Quem escreveu o livro de Atos?",
+    "resposta": "Lucas",
+    "referencia": "Atos 1:1"
+  },
+  {
+    "id": 2,
+    "pergunta": "A quem o livro foi endereçado?",
+    "resposta": "Teófilo",
+    "referencia": "Atos 1:1"
+  },
+  {
+    "id": 3,
+    "pergunta": "Quantos dias Jesus apareceu aos discípulos após a ressurreição?",
+    "resposta": "Durante 40 dias.",
+    "referencia": "Atos 1:3"
+  },
+  {
+    "id": 4,
+    "pergunta": "O que Jesus prometeu antes de subir ao céu?",
+    "resposta": "O batismo com o Espírito Santo",
+    "referencia": "Atos 1:5"
+  },
+  {
+    "id": 5,
+    "pergunta": "Onde Jesus ascendeu ao céu?",
+    "resposta": "No Monte das Oliveiras.",
+    "referencia": "Atos 1:12"
+  },
+  {
+    "id": 6,
+    "pergunta": "Quem substituiu Judas Iscariotes?",
+    "resposta": "Matias",
+    "referencia": "Atos 1:26"
+  }
+]
