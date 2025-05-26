@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pódio da Gincana</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .podium-container {
+            padding: 50px 0;
+        }
+        
+        .podium-title {
+            text-align: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .podium-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 15px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .podium-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .podium-box.revealed {
+            cursor: default;
+        }
+        
+        .mystery-content {
+            text-align: center;
+            color: #666;
+        }
+        
+        .mystery-content i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        .revealed-content {
+            text-align: center;
+            display: none;
+        }
+        
+        .position-number {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .team-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .points {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        /* Estilos específicos para cada posição */
+        .position-1 { 
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border: 5px solid #ffd700;
+        }
+        .position-1 .position-number { color: #b8860b; }
+        .position-1 .team-name { color: #b8860b; }
+        
+        .position-2 { 
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+            border: 5px solid #c0c0c0;
+        }
+        .position-2 .position-number { color: #808080; }
+        .position-2 .team-name { color: #606060; }
+        
+        .position-3 { 
+            background: linear-gradient(135deg, #cd7f32, #daa520);
+            border: 5px solid #cd7f32;
+        }
+        .position-3 .position-number { color: #8b4513; }
+        .position-3 .team-name { color: #8b4513; }
+        
+        .position-4, .position-5, .position-6 {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 3px solid #dee2e6;
+        }
+        
+        /* Animações para o primeiro lugar - TELA INTEIRA */
+        .fullscreen-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: confetti-fall 4s linear infinite;
+        }
+        
+        .confetti:nth-child(2n) { background: #ff6b6b; }
+        .confetti:nth-child(3n) { background: #4ecdc4; }
+        .confetti:nth-child(4n) { background: #45b7d1; }
+        .confetti:nth-child(5n) { background: #96ceb4; }
+        .confetti:nth-child(6n) { background: #ffa726; }
+        .confetti:nth-child(7n) { background: #ab47bc; }
+        .confetti:nth-child(8n) { background: #26c6da; }
+        
+        /* Confetes quadrados */
+        .confetti.square {
+            border-radius: 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Confetes estrelas */
+        .confetti.star {
+            background: none;
+            position: relative;
+        }
+        
+        .confetti.star:before {
+            content: '★';
+            color: #ffd700;
+            font-size: 12px;
+            position: absolute;
+            top: -6px;
+            left: -6px;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Fogos de Artifício */
+        .firework {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: firework-explode 2s ease-out;
+        }
+        
+        @keyframes firework-explode {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+        
+        .firework-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #ff6b6b;
+        }
+        
+        .firework-particle:nth-child(1) { animation: particle-1 1.5s ease-out; }
+        .firework-particle:nth-child(2) { animation: particle-2 1.5s ease-out; }
+        .firework-particle:nth-child(3) { animation: particle-3 1.5s ease-out; }
+        .firework-particle:nth-child(4) { animation: particle-4 1.5s ease-out; }
+        .firework-particle:nth-child(5) { animation: particle-5 1.5s ease-out; }
+        .firework-particle:nth-child(6) { animation: particle-6 1.5s ease-out; }
+        .firework-particle:nth-child(7) { animation: particle-7 1.5s ease-out; }
+        .firework-particle:nth-child(8) { animation: particle-8 1.5s ease-out; }
+        
+        @keyframes particle-1 { 100% { transform: translate(100px, -100px); opacity: 0; } }
+        @keyframes particle-2 { 100% { transform: translate(-100px, -100px); opacity: 0; } }
+        @keyframes particle-3 { 100% { transform: translate(100px, 100px); opacity: 0; } }
+        @keyframes particle-4 { 100% { transform: translate(-100px, 100px); opacity: 0; } }
+        @keyframes particle-5 { 100% { transform: translate(140px, 0px); opacity: 0; } }
+        @keyframes particle-6 { 100% { transform: translate(-140px, 0px); opacity: 0; } }
+        @keyframes particle-7 { 100% { transform: translate(0px, -140px); opacity: 0; } }
+        @keyframes particle-8 { 100% { transform: translate(0px, 140px); opacity: 0; } }
+        
+        .trophy-bounce {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #ee5a24, #ff6b6b);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .podium-title {
+                font-size: 2rem;
+            }
+            .position-number {
+                font-size: 3rem;
+            }
+            .team-name {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid podium-container">
+        <h1 class="podium-title">🏆 PÓDIO DA GINCANA 🏆</h1>
+        
+        <div class="container">
+            <!-- Primeiros 3 lugares (mais importantes) -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="podium-box position-1" onclick="revealPosition(1)">
+                        <div class="mystery-content">
+                            <i class="fas fa-gift"></i>
+                            <h3>1º LUGAR</h3>
+                            <p>Clique para revelar!</p>
+                        </div>
+                        <div class="revealed-content">
+                            <div class="position-number trophy-bounce">🥇</div>
+                            <div class="team-name" id="team-1">EQUIPE CAMPEÃ</div>
+                            <div class="points" id="points-1">1000 pontos</div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="podium-box position-2" onclick="revealPosition(2)">
+                        <div class="mystery-content">
+                            <i class="fas fa-gift"></i>
+                            <h3>2º LUGAR</h3>
+                            <p>Clique para revelar!</p>
+                        </div>
+                        <div class="revealed-content">
+                            <div class="position-number">🥈</div>
+                            <div class="team-name" id="team-2">EQUIPE VICE</div>
+                            <div class="points" id="points-2">800 pontos</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="podium-box position-3" onclick="revealPosition(3)">
+                        <div class="mystery-content">
+                            <i class="fas fa-gift"></i>
+                            <h3>3º LUGAR</h3>
+                            <p>Clique para revelar!</p>
+                        </div>
+                        <div class="revealed-content">
+                            <div class="position-number">🥉</div>
+                            <div class="team-name" id="team-3">EQUIPE BRONZE</div>
+                            <div class="points" id="points-3">600 pontos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Últimos 3 lugares -->
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <div class="podium-box position-4" onclick="revealPosition(4)">
+                        <div class="mystery-content">
+                            <i class="fas fa-gift"></i>
+                            <h3>4º LUGAR</h3>
+                            <p>Clique para revelar!</p>
+                        </div>
+                        <div class="revealed-content">
+                            <div class="position-number">4º</div>
+                            <div class="team-name" id="team-4">EQUIPE QUARTA</div>
+                            <div class="points" id="points-4">400 pontos</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="podium-box position-5" onclick="revealPosition(5)">
+                        <div class="mystery-content">
+                            <i class="fas fa-gift"></i>
+                            <h3>5º LUGAR</h3>
+                            <p>Clique para revelar!</p>
+                        </div>
+                        <div class="revealed-content">
+                            <div class="position-number">5º</div>
+                            <div class="team-name" id="team-5">EQUIPE QUINTA</div>
+                            <div class="points" id="points-5">200 pontos</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="podium-box position-6" onclick="revealPosition(6)">
+                        <div class="mystery-content">
+                            <i class="fas fa-gift"></i>
+                            <h3>6º LUGAR</h3>
+                            <p>Clique para revelar!</p>
+                        </div>
+                        <div class="revealed-content">
+                            <div class="position-number">6º</div>
+                            <div class="team-name" id="team-6">EQUIPE SEXTA</div>
+                            <div class="points" id="points-6">100 pontos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <button class="btn reset-btn" onclick="resetPodium()">
+                    <i class="fas fa-redo"></i> Reiniciar Pódio
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebração em tela cheia -->
+    <div class="fullscreen-celebration" id="fullscreen-celebration"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Dados das equipes (personalize aqui)
+        const teamsData = {
+            1: { name: "EQUIPE DOURADA", points: "1000 pontos" },
+            2: { name: "EQUIPE PRATA", points: "800 pontos" },
+            3: { name: "EQUIPE BRONZE", points: "600 pontos" },
+            4: { name: "EQUIPE VERDE", points: "400 pontos" },
+            5: { name: "EQUIPE AZUL", points: "200 pontos" },
+            6: { name: "EQUIPE ROXA", points: "100 pontos" }
+        };
+
+        function revealPosition(position) {
+            const box = document.querySelector(`.position-${position}`);
+            
+            if (box.classList.contains('revealed')) {
+                return; // Já foi revelado
+            }
+            
+            // Ocultar conteúdo mistério
+            const mysteryContent = box.querySelector('.mystery-content');
+            const revealedContent = box.querySelector('.revealed-content');
+            
+            // Atualizar dados da equipe
+            document.getElementById(`team-${position}`).textContent = teamsData[position].name;
+            document.getElementById(`points-${position}`).textContent = teamsData[position].points;
+            
+            // Animação de transição
+            mysteryContent.style.opacity = '0';
+            
+            setTimeout(() => {
+                mysteryContent.style.display = 'none';
+                revealedContent.style.display = 'block';
+                revealedContent.style.opacity = '0';
+                
+                setTimeout(() => {
+                    revealedContent.style.opacity = '1';
+                }, 100);
+                
+                // Se for o primeiro lugar, criar celebração
+                if (position === 1) {
+                    createCelebration();
+                }
+            }, 300);
+            
+            box.classList.add('revealed');
+        }
+
+        function createCelebration() {
+            const celebration = document.getElementById('fullscreen-celebration');
+            
+            // Criar confetes variados em toda a tela
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Diferentes tipos de confetes
+                const types = ['', 'square', 'star'];
+                const randomType = types[Math.floor(Math.random() * types.length)];
+                if (randomType) confetti.classList.add(randomType);
+                
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                
+                celebration.appendChild(confetti);
+            }
+            
+            // Criar fogos de artifício em posições aleatórias
+            const fireworkPositions = [
+                { x: 20, y: 30 }, { x: 80, y: 25 }, { x: 50, y: 40 },
+                { x: 15, y: 60 }, { x: 85, y: 55 }, { x: 30, y: 70 },
+                { x: 70, y: 20 }, { x: 40, y: 80 }
+            ];
+            
+            fireworkPositions.forEach((pos, index) => {
+                setTimeout(() => {
+                    createFirework(pos.x, pos.y);
+                }, index * 400);
+            });
+            
+            // Segundo round de fogos
+            setTimeout(() => {
+                fireworkPositions.forEach((pos, index) => {
+                    setTimeout(() => {
+                        createFirework(
+                            Math.random() * 80 + 10,
+                            Math.random() * 60 + 20
+                        );
+                    }, index * 300);
+                });
+            }, 2000);
+            
+            // Remover toda celebração após animação
+            setTimeout(() => {
+                celebration.innerHTML = '';
+            }, 10000);
+        }
+        
+        function createFirework(x, y) {
+            const celebration = document.getElementById('fullscreen-celebration');
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = x + '%';
+            firework.style.top = y + '%';
+            
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ffd700', '#96ceb4', '#ffa726', '#ab47bc'];
+            
+            // Criar partículas do fogo de artifício
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                firework.appendChild(particle);
+            }
+            
+            celebration.appendChild(firework);
+            
+            // Remover fogo de artifício após animação
+            setTimeout(() => {
+                if (firework.parentNode) {
+                    firework.parentNode.removeChild(firework);
+                }
+            }, 2000);
+        }
+
+        function resetPodium() {
+            // Resetar todas as posições
+            for (let i = 1; i <= 6; i++) {
+                const box = document.querySelector(`.position-${i}`);
+                const mysteryContent = box.querySelector('.mystery-content');
+                const revealedContent = box.querySelector('.revealed-content');
+                
+                box.classList.remove('revealed');
+                mysteryContent.style.display = 'block';
+                mysteryContent.style.opacity = '1';
+                revealedContent.style.display = 'none';
+                revealedContent.style.opacity = '0';
+            }
+            
+            // Limpar celebração
+            document.getElementById('fullscreen-celebration').innerHTML = '';
+        }
+
+        // Função para personalizar os dados das equipes
+        function updateTeamData(position, name, points) {
+            teamsData[position] = { name: name, points: points };
+        }
+
+        // Exemplo de como usar:
+        // updateTeamData(1, "EQUIPE DOS CAMPEÕES", "1200 pontos");
+    </script>
+</body>
+</html>

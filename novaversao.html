@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Progresso da Gincana">
+    <meta property="og:description" content="Acompanhe o progresso da sua equipe!">
+    <meta property="og:image" content="https://gincanaagape.vercel.app/novo.jpg">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <title>Gincana - Placar e Progresso</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <style>
+        /* Design Flat Contemporâneo */
+        :root {
+            --primary-bg: #0f0f23;
+            --secondary-bg: #1a1a2e;
+            --card-bg: #16213e;
+            --accent-bg: #0f3460;
+            --hover-bg: #1f4068;
+            --active-bg: #533483;
+            --primary-color: #4c6ef5;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Header moderno */
+        .header {
+            background: linear-gradient(135deg, var(--card-bg) 0%, var(--accent-bg) 100%);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--success-color));
+        }
+
+        .logo {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Sistema de abas moderno */
+        .tabs-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-button {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            padding: 12px 24px;
+            margin: 0 4px;
+            cursor: pointer;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-button:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-1px);
+        }
+
+        .tab-button.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            pointer-events: none;
+        }
+
+        /* Cards modernos */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .grafico-titulo {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Conteúdo das abas */
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Aba de Regras */
+        .regras-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .regras-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+        }
+
+        .regras-title {
+            color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--success-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .regras-categoria {
+            background: var(--accent-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .regras-categoria:hover {
+            transform: translateX(8px);
+            box-shadow: var(--shadow);
+        }
+
+        .regras-categoria h4 {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .regras-categoria p, .regras-categoria ul {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .regras-categoria ul {
+            padding-left: 20px;
+        }
+
+        .regras-categoria li {
+            margin-bottom: 8px;
+        }
+
+        .pontuacao-destaque {
+            background: linear-gradient(135deg, var(--warning-color), var(--danger-color));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 5px 0;
+            box-shadow: var(--shadow);
+        }
+
+        /* Aviso container moderno */
+        .aviso-container {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .aviso-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            pointer-events: none;
+        }
+
+        /* Team cards modernos */
+        .team-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+        }
+
+        .team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .tabs-container {
+                padding: 6px;
+            }
+            
+            .tab-button {
+                padding: 10px 16px;
+                font-size: 14px;
+                margin: 0 2px;
+            }
+            
+            .regras-section {
+                padding: 20px;
+            }
+            
+            .regras-categoria {
+                padding: 15px;
+            }
+        }
+
+        /* Melhorias visuais adicionais */
+        .small {
+            color: var(--text-muted);
+        }
+
+        .text-danger {
+            color: var(--danger-color) !important;
+        }
+
+        .fw-bold {
+            font-weight: 700;
+        }
+
+        /* Animações suaves */
+        * {
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header text-center mb-4 p-4">
+        <img src="image.png" alt="Logo da Gincana" class="logo img-fluid mb-3" style="max-width: 150px;">
+        <h1 class="fs-2"><strong>GINCANA EBD 2025</strong></h1>
+    </div>
+
+    <!-- Sistema de abas -->
+    <div class="tabs-container mb-4">
+      <div class="tabs nav nav-tabs justify-content-center border-0 mb-0">
+        <button class="tab-button nav-link active" data-tab="placar">Placar Geral</button>
+        <button class="tab-button nav-link" data-tab="progresso">Progresso da Gincana</button>
+        <button class="tab-button nav-link" data-tab="regras">Regras</button>
+      </div>
+    </div>
+    
+    <!-- Conteúdo da aba Placar Geral -->
+    <div class="tab-content active" id="placar">
+      <div class="graficos row g-3">
+        <!-- Classificação Geral -->
+        <div class="col-12 col-md-6">
+          <div class="grafico-container card shadow mb-3">
+            <div class="card-body">
+              <div class="grafico-titulo card-title campeao">Classificação Geral</div>
+              <canvas id="graficoClassificacaoGeral"></canvas>
+              <div class="legendas-times mt-3 p-2 bg-black bg-opacity-25 rounded"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Espadas para o Ar -->
+        <div class="col-12 col-md-6">
+          <div class="grafico-container card shadow mb-3">
+            <div class="card-body">
+              <div class="grafico-titulo card-title">Classificação: Espadas para o ar</div>
+              <div class="grafico-titulo">Pontuação: 10 pontos</div>
+              <canvas id="graficoEspadasParaOAr"></canvas>
+              <div class="legendas-times mt-3 p-2 bg-black bg-opacity-25 rounded"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quiz -->
+        <div class="col-12 col-md-6">
+          <div class="grafico-container card shadow mb-3">
+            <div class="card-body">
+              <div class="grafico-titulo card-title">Classificação: Quiz Bíblico</div>
+              <div class="grafico-titulo">Pontuação:</div>
+              <h5 class="small text-center">Quiz SEM múltipla escolha: 100<br>Quiz COM múltipla escolha: 50</h5>
+              <canvas id="graficoQuiz"></canvas>
+              <div class="legendas-times mt-3 p-2 bg-black bg-opacity-25 rounded"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bíblias -->
+        <div class="col-12 col-md-6">
+          <div class="grafico-container card shadow mb-3">
+            <div class="card-body">
+              <div class="grafico-titulo card-title">Classificação: Pontuação de Bíblias</div>
+              <h5 class="small text-center text-danger fw-bold">A pontuação irá para a equipe que tiver a maior porcentagem de bíblias</h5>
+              <h5 class="small text-center">O cálculo da porcentagem:<br>Pontos = (Nº de pessoas com Bíblia ÷ Total de pessoas na equipe) × 100</h5>
+              <h5 class="small text-center">Exemplo:<br>Equipe A: 5 pessoas, 4 levaram → 4 ÷ 5 = 0,8 × 100 → 80%<br>Equipe B: 10 pessoas, 6 levaram → 6 ÷ 10 = 0,6 × 100 → 60%</h5>
+              <div class="grafico-titulo">Pontuação: 30 pontos</div>
+              <canvas id="graficoBiblias"></canvas>
+              <div class="legendas-times mt-3 p-2 bg-black bg-opacity-25 rounded"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Visitantes -->
+        <div class="col-12 col-md-6">
+          <div class="grafico-container card shadow mb-3">
+            <div class="card-body">
+              <div class="grafico-titulo card-title">Classificação: Pontuação por equipe que trouxeram visitantes</div>
+              <div class="grafico-titulo">Pontuação: 5 pontos</div>
+              <canvas id="graficoVisitantes"></canvas>
+              <div class="legendas-times mt-3 p-2 bg-black bg-opacity-25 rounded"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Caracterização -->
+        <div class="col-12 col-md-6">
+          <div class="grafico-container card shadow mb-3">
+            <div class="card-body">
+              <div class="grafico-titulo card-title">Classificação: Pontuação por caracterização</div>
+              <div class="grafico-titulo">Pontuação: 20 pontos</div>
+              <canvas id="graficoCaracterizacao"></canvas>
+              <div class="legendas-times mt-3 p-2 bg-black bg-opacity-25 rounded"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Grito de Guerra -->
+        <div class="col-12 col-md-6">
+          <div class="grafico-container card shadow mb-3">
+            <div class="card-body">
+              <div class="grafico-titulo card-title">Classificação: Grito de Guerra</div>
+              <div class="grafico-titulo">Pontuação: 10 pontos</div>
+              <canvas id="graficoGrito"></canvas>
+              <div class="legendas-times mt-3 p-2 bg-black bg-opacity-25 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Conteúdo da aba Progresso da Gincana -->
+    <div class="tab-content" id="progresso">
+      <div class="aviso-container text-white text-center p-3 rounded mb-4">
+        <h3 class="mb-0"><strong>Progresso da Gincana</strong></h3>
+      </div>
+      
+      <!-- Sistema de abas para categorias -->
+      <div class="categorias-tabs-container mb-4">
+        <div class="categorias-tabs d-flex flex-wrap justify-content-center border-bottom border-dark mb-4" id="categoriasTabs">
+          <!-- Abas das categorias serão inseridas aqui via JavaScript -->
+        </div>
+      </div>
+      
+      <!-- Conteúdo das abas de categorias -->
+      <div class="categorias-content" id="categoriasContent">
+        <!-- Conteúdo de cada categoria será inserido aqui via JavaScript -->
+      </div>
+      
+      <!-- Cards de pontuação por time -->
+      <div>
+        <h3 class="fs-4 mb-3">Pontuações por Time:</h3>
+        <div class="cards-container row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3" id="teamsContainer">
+          <!-- Cards dos times serão inseridos aqui via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Nova Aba: Regras -->
+    <div class="tab-content" id="regras">
+      <div class="regras-section">
+        <h2 class="regras-title">📋 Regras da Gincana EBD 2025</h2>
+        
+        <div class="regras-categoria">
+          <h4>🎯 Espadas para o Ar</h4>
+          <p><span class="pontuacao-destaque">Pontuação: 10 pontos</span></p>
+          <p>Modalidade onde os participantes devem levantar suas Bíblias simultaneamente quando solicitado.</p>
+          <ul>
+            <li>Todos os membros da equipe devem participar</li>
+            <li>A coordenação e velocidade são avaliadas</li>
+            <li>Equipe mais rápida e organizada ganha os pontos</li>
+          </ul>
+        </div>
+
+        <div class="regras-categoria">
+          <h4>🧠 Quiz Bíblico</h4>
+          <p><span class="pontuacao-destaque">Quiz SEM múltipla escolha: 100 pontos</span></p>
+          <p><span class="pontuacao-destaque">Quiz COM múltipla escolha: 50 pontos</span></p>
+          <p>Perguntas sobre conhecimento bíblico com diferentes níveis de dificuldade.</p>
+          <ul>
+            <li>Perguntas abertas valem mais pontos</li>
+            <li>Perguntas de múltipla escolha facilitam, mas valem menos</li>
+            <li>Respostas devem ser precisas e completas</li>
+            <li>Tempo limite para cada pergunta</li>
+          </ul>
+        </div>
+
+        <div class="regras-categoria">
+          <h4>📖 Pontuação de Bíblias</h4>
+          <p><span class="pontuacao-destaque">Pontuação: 30 pontos</span></p>
+          <p><strong>A pontuação vai para a equipe com maior PORCENTAGEM de membros com Bíblias</strong></p>
+          <ul>
+            <li><strong>Cálculo:</strong> (Nº de pessoas com Bíblia ÷ Total de pessoas na equipe) × 100</li>
+            <li><strong>Exemplo:</strong></li>
+            <li>Equipe A: 5 pessoas, 4 com Bíblia → 4 ÷ 5 = 0,8 × 100 = 80%</li>
+            <li>Equipe B: 10 pessoas, 6 com Bíblia → 6 ÷ 10 = 0,6 × 100 = 60%</li>
+            <li>Equipe A ganha por ter maior porcentagem (80% > 60%)</li>
+            <li>Verificação feita no início de cada encontro</li>
+          </ul>
+        </div>
+
+        <div class="regras-categoria">
+          <h4>👥 Visitantes</h4>
+          <p><span class="pontuacao-destaque">Pontuação: 5 pontos por visitante</span></p>
+          <p>Incentivo para trazer novos participantes para a EBD.</p>
+          <ul>
+            <li>Cada visitante novo conta 5 pontos para a equipe</li>
+            <li>Visitante deve participar da aula completa</li>
+            <li>Cadastro do visitante deve ser feito no início</li>
+            <li>Visitantes que retornam não contam novamente</li>
+          </ul>
+        </div>
+
+        <div class="regras-categoria">
+          <h4>🎭 Caracterização</h4>
+          <p><span class="pontuacao-destaque">Pontuação: 20 pontos</span></p>
+          <p>Apresentação temática relacionada ao estudo bíblico do dia.</p>
+          <ul>
+            <li>Toda a equipe deve participar da caracterização</li>
+            <li>Tema deve estar relacionado à lição bíblica</li>
+            <li>Criatividade e organização são avaliadas</li>
+            <li>Tempo limite: 3 minutos por apresentação</li>
+            <li>Materiais próprios devem ser providenciados</li>
+          </ul>
+        </div>
+
+        <div class="regras-categoria">
+          <h4>📢 Grito de Guerra</h4>
+          <p><span class="pontuacao-destaque">Pontuação: 10 pontos</span></p>
+          <p>Apresentação do grito característico da equipe.</p>
+          <ul>
+            <li>Deve ser criativo e relacionado ao tema bíblico</li>
+            <li>Toda a equipe deve participar</li>
+            <li>Duração máxima: 1 minuto</li>
+            <li>Avaliação baseada em criatividade, volume e coordenação</li>
+            <li>Conteúdo deve ser apropriado e edificante</li>
+          </ul>
+        </div>
+
+        <div class="regras-categoria">
+          <h4>⚖️ Regras Gerais</h4>
+          <ul>
+            <li><strong>Respeito:</strong> Todas as atividades devem manter o ambiente respeitoso</li>
+            <li><strong>Participação:</strong> Todos os membros devem participar ativamente</li>
+            <li><strong>Pontualidade:</strong> Atrasos podem resultar em penalidades</li>
+            <li><strong>Fair Play:</strong> Comportamento antidesportivo pode descontar pontos</li>
+            <li><strong>Decisões:</strong> Decisões da coordenação são finais</li>
+            <li><strong>Premiação:</strong> Equipe vencedora será anunciada no final da gincana</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Carregar os módulos JavaScript -->
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/progressbar.js"></script>
+  <script src="js/tabs.js"></script>
+  
+  <!-- Script simples para gerenciar as abas principais -->
+  <script>
+    // Função para trocar abas (compatível com o sistema existente)
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const targetTab = this.getAttribute('data-tab');
+          
+          // Remove active class from all buttons and contents
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Add active class to clicked button and corresponding content
+          this.classList.add('active');
+          document.getElementById(targetTab).classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
