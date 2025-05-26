@@ -73,12 +73,12 @@ function definirPorcentagensBiblias(pontuacoesPorData) {
   atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Sementes Ágape", 60.8);
 
   // Dia 25/05
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Adultos", 93.75);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga", 100);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Liga Teen", 95);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Convertidos", 95.2);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Novos Membros", 100);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "18/05", "Sementes Ágape", 68.1);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Adultos", 93.75);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Liga", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Liga Teen", 95);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Novos Convertidos", 95.2);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Novos Membros", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Sementes Ágape", 68.1);
 }
 
 // Função para atualizar porcentagem de bíblias
