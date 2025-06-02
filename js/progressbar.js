@@ -4,7 +4,7 @@
 import { pontuacoesPorTime, coresTimes } from './data.js';
 
 // Definir as datas da gincana
-const datasGincana = ["01/05", "04/05", "18/05", "25/05"]; // Adicione mais datas conforme necessário
+const datasGincana = ["01/05", "04/05", "18/05", "25/05", "01/06"]; // Adicione mais datas conforme necessário
 
 // Expor dadosBrutos do data.js para acesso global
 // Este era o problema principal - a variável dadosBrutos não estava acessível
@@ -79,6 +79,14 @@ function definirPorcentagensBiblias(pontuacoesPorData) {
   atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Novos Convertidos", 95.2);
   atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Novos Membros", 100);
   atualizarPorcentagemBiblias(pontuacoesPorData, "25/05", "Sementes Ágape", 68.1);
+
+  // Dia 01/06
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Adultos", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Liga", 70);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Liga Teen", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Novos Convertidos", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Novos Membros", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Sementes Ágape", 68.2);
 }
 
 // Função para atualizar porcentagem de bíblias
@@ -127,7 +135,8 @@ function getValorCategoria(timeData, categoria) {
 // Função para preparar dados para um gráfico específico de categoria
 function prepararDadosGraficoPorCategoria(categoria) {
   // Obter todas as datas disponíveis em ordem cronológica
-  const datas = Object.keys(pontuacoesPorData).sort();
+  // const datas = Object.keys(pontuacoesPorData).sort();
+  const datas = datasGincana;
   
   // Obter todos os nomes dos times
   const nomesTimes = pontuacoesPorData[datas[0]].map(time => time.time);
