@@ -16,7 +16,7 @@ export const dadosBrutos = [
     espadas: [0,10,10,40,30],
     versiculo: [150,100,100,200,100], // QUIZ
     biblia: [30,0,30,30,0],
-    visitantes: [0,5,0,5,0],
+    visitantes: [0,5,0,5,5],
     caracterizacao: [20,20,20,20,20],
     grito: [10,10,10,10,10]
   },
@@ -34,7 +34,7 @@ export const dadosBrutos = [
     espadas: [0,10,0,10,10], 
     versiculo: [350,100,50,150,50], // QUIZ
     biblia: [0,30,0,0,30],
-    visitantes: [0,0,0,5,0],
+    visitantes: [0,0,0,5,5],
     caracterizacao: [0,20,20,20,20],
     grito: [10,10,10,10,10]
   },
