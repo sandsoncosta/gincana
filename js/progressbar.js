@@ -4,7 +4,7 @@
 import { pontuacoesPorTime, coresTimes } from './data.js';
 
 // Definir as datas da gincana
-const datasGincana = ["01/05", "04/05", "18/05", "25/05", "01/06"]; // Adicione mais datas conforme necessário
+const datasGincana = ["01/05", "04/05", "18/05", "25/05", "01/06", "08/06"]; // Adicione mais datas conforme necessário
 
 // Expor dadosBrutos do data.js para acesso global
 // Este era o problema principal - a variável dadosBrutos não estava acessível
@@ -87,6 +87,14 @@ function definirPorcentagensBiblias(pontuacoesPorData) {
   atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Novos Convertidos", 100);
   atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Novos Membros", 100);
   atualizarPorcentagemBiblias(pontuacoesPorData, "01/06", "Sementes Ágape", 68.2);
+
+  // Dia 08/06
+  atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Adultos", 86.6);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Liga", 100);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Liga Teen", 93.4);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Novos Convertidos", 91.3);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Novos Membros", 86.6);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Sementes Ágape", 83.33);
 }
 
 // Função para atualizar porcentagem de bíblias

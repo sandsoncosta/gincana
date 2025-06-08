@@ -187,13 +187,13 @@ body {
 /* ALTERAR O TAMANHO DO GRÁFICO PARA CELULAR*/
 @media (min-width: 992px) {
   .chart-container {
-    height: 700px;
+    height: 800px;
   } 
 }
 
 @media (max-width: 991px) {
   .chart-container {
-    height: 700px;
+    height: 800px;
   } 
 }
 
