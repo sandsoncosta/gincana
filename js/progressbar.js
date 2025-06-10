@@ -94,7 +94,7 @@ function definirPorcentagensBiblias(pontuacoesPorData) {
   atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Liga Teen", 93.4);
   atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Novos Convertidos", 91.3);
   atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Novos Membros", 86.6);
-  atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Sementes Ágape", 83.33);
+  atualizarPorcentagemBiblias(pontuacoesPorData, "08/06", "Sementes Ágape", 100);
 }
 
 // Função para atualizar porcentagem de bíblias
@@ -339,8 +339,9 @@ function criarCards(categoria = categoriaAtual) {
   // Limpar o container
   teamsContainer.innerHTML = '';
   
-  const datas = Object.keys(pontuacoesPorData).sort();
-  
+  // const datas = Object.keys(pontuacoesPorData).sort();
+  const datas = datasGincana;
+
   Object.entries(coresTimes).forEach(([time, cor]) => {
     const card = document.createElement('div');
     card.className = 'team-card';

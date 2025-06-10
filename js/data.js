@@ -4,7 +4,7 @@
 export const dadosBrutos = [
   {
     time: "Adultos",
-    espadas: [20,10,20,20,0,10],
+    espadas: [20,10,20,20,0,20],
     versiculo: [300,50,100,100,50,50], // QUIZ
     biblia: [0,0,0,0,30,0],
     visitantes: [0,10,0,10,5,0],
@@ -13,7 +13,7 @@ export const dadosBrutos = [
   },
   {
     time: "Liga",
-    espadas: [0,10,10,40,30,30],
+    espadas: [0,10,10,40,30,40],
     versiculo: [150,100,100,200,100,0], // QUIZ
     biblia: [30,0,30,30,0,30],
     visitantes: [0,5,0,5,5,5],
@@ -40,9 +40,9 @@ export const dadosBrutos = [
   },
   {
     time: "Novos Membros",
-    espadas: [20,10,20,10,50,30],
+    espadas: [20,10,20,10,50,10],
     versiculo: [200,100,100,50,50,0], // QUIZ
-    biblia: [0,0,0,30,30,0],
+    biblia: [0,0,0,30,30,30],
     visitantes: [0,0,10,10,5,0],
     caracterizacao: [0,20,0,20,20,20],
     grito: [10,10,10,10,10,10]
