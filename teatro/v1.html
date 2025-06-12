@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dockstation de Efeitos Sonoros</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .dock-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 1400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dock-title {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .sound-pad {
+            background: linear-gradient(145deg, #4a90e2, #357abd);
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px;
+            width: 220px;
+            height: 160px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .sound-pad:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .sound-pad.playing {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            animation: pulse 2s infinite;
+        }
+
+        .sound-pad.paused {
+            background: linear-gradient(145deg, #f39c12, #e67e22);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); }
+            50% { box-shadow: 0 8px 20px rgba(231, 76, 60, 0.6); }
+            100% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .volume-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .volume-slider {
+            width: 100%;
+            max-width: 300px;
+            margin: 10px 0;
+        }
+
+        .individual-volume {
+            width: 100%;
+            margin: 5px 0;
+            height: 4px;
+        }
+
+        .global-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .global-btn {
+            background: linear-gradient(145deg, #27ae60, #2ecc71);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: bold;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .global-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .global-btn.stop {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+        }
+
+        .sound-name {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .sound-status {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .volume-info {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+
+        .fade-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .fade-indicator.active {
+            opacity: 1;
+        }
+
+        .file-input-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .file-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="dock-container">
+            <h1 class="dock-title">
+                <i class="fas fa-music"></i> Dockstation de Efeitos Sonoros
+            </h1>
+
+            <div class="file-input-container">
+                <h5 class="text-white mb-3">
+                    <i class="fas fa-upload"></i> Adicionar Seus Próprios Sons
+                </h5>
+                <p class="text-white-50 mb-3">Clique nos botões abaixo para carregar arquivos MP3 para cada pad</p>
+                <div id="fileInputs">
+                    <!-- Os inputs de arquivo serão gerados dinamicamente -->
+                </div>
+            </div>
+
+            <div class="volume-container">
+                <h5 class="text-white mb-3">
+                    <i class="fas fa-volume-up"></i> Volume Master: <span id="volumeValue">70</span>%
+                </h5>
+                <input type="range" class="form-range volume-slider" min="0" max="100" value="70" id="masterVolume">
+            </div>
+
+            <div class="global-controls">
+                <button class="btn global-btn" onclick="stopAllSounds()">
+                    <i class="fas fa-stop"></i> Parar Todos (Fade Out)
+                </button>
+                <button class="btn global-btn stop" onclick="pauseAllSounds()">
+                    <i class="fas fa-pause"></i> Pausar Todos
+                </button>
+            </div>
+
+            <div class="row justify-content-center" id="soundPads">
+                <!-- Os pads de som serão gerados dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class SoundPad {
+            constructor(name, audioSrc = null) {
+                this.name = name;
+                this.audioSrc = audioSrc;
+                this.audio = null;
+                this.isPlaying = false;
+                this.isPaused = false;
+                this.volume = 0.7;
+                this.fadeInTime = 1000; // milissegundos
+                this.fadeOutTime = 1500; // milissegundos
+                this.element = null;
+                this.isFading = false;
+                this.fadeInterval = null;
+                this.originalVolume = 0.7;
+            }
+
+            loadAudio(file) {
+                const url = URL.createObjectURL(file);
+                this.audioSrc = url;
+                
+                if (this.audio) {
+                    this.audio.pause();
+                }
+                
+                this.audio = new Audio(url);
+                this.audio.loop = true;
+                this.audio.volume = 0;
+                
+                // Atualizar nome do pad
+                this.name = file.name.replace(/\.[^/.]+$/, ""); // Remove extensão
+                if (this.element) {
+                    this.element.querySelector('.sound-name').textContent = this.name;
+                }
+            }
+
+            async play(withFade = true) {
+                if (!this.audioSrc) {
+                    alert(`Carregue um arquivo MP3 para o pad "${this.name}" primeiro!`);
+                    return;
+                }
+
+                if (!this.audio) {
+                    this.audio = new Audio(this.audioSrc);
+                    this.audio.loop = true;
+                    this.audio.volume = 0;
+                }
+
+                try {
+                    if (this.isPaused) {
+                        // Resume from pause
+                        await this.audio.play();
+                        this.audio.volume = this.getEffectiveVolume();
+                        this.isPaused = false;  
+                        this.isPlaying = true;
+                        this.updateDisplay();
+                        return;
+                    }
+
+                    this.audio.currentTime = 0;
+                    await this.audio.play();
+                    
+                    if (withFade) {
+                        this.fadeIn();
+                    } else {
+                        this.audio.volume = this.getEffectiveVolume();
+                    }
+
+                    this.isPlaying = true;
+                    this.isPaused = false;
+                    this.updateDisplay();
+
+                } catch (error) {
+                    console.error('Erro ao reproduzir som:', error);
+                }
+            }
+
+            stop(withFade = true) {
+                if (!this.isPlaying || !this.audio) return;
+
+                if (withFade) {
+                    this.fadeOut(() => {
+                        this.audio.pause();
+                        this.audio.currentTime = 0;
+                        this.isPlaying = false;
+                        this.isPaused = false;
+                        this.updateDisplay();
+                    });
+                } else {
+                    this.audio.pause();
+                    this.audio.currentTime = 0;
+                    this.isPlaying = false;
+                    this.isPaused = false;
+                    this.updateDisplay();
+                }
+            }
+
+            pause() {
+                if (!this.isPlaying || this.isPaused || !this.audio) return;
+                
+                this.audio.pause();
+                this.isPaused = true;
+                this.updateDisplay();
+            }
+
+            fadeIn() {
+                if (!this.audio) return;
+                
+                this.isFading = true;
+                this.showFadeIndicator();
+                
+                const targetVolume = this.getEffectiveVolume();
+                const steps = 20;
+                const stepTime = this.fadeInTime / steps;
+                const volumeStep = targetVolume / steps;
+                let currentStep = 0;
+
+                this.audio.volume = 0;
+                
+                this.fadeInterval = setInterval(() => {
+                    currentStep++;
+                    this.audio.volume = Math.min(volumeStep * currentStep, targetVolume);
+                    
+                    if (currentStep >= steps) {
+                        clearInterval(this.fadeInterval);
+                        this.isFading = false;
+                    }
+                }, stepTime);
+            }
+
+            fadeOut(callback) {
+                if (!this.audio) return;
+                
+                this.isFading = true;
+                this.showFadeIndicator();
+                
+                const startVolume = this.audio.volume;
+                const steps = 20;
+                const stepTime = this.fadeOutTime / steps;
+                const volumeStep = startVolume / steps;
+                let currentStep = 0;
+
+                this.fadeInterval = setInterval(() => {
+                    currentStep++;
+                    this.audio.volume = Math.max(startVolume - (volumeStep * currentStep), 0);
+                    
+                    if (currentStep >= steps) {
+                        clearInterval(this.fadeInterval);
+                        this.isFading = false;
+                        if (callback) callback();
+                    }
+                }, stepTime);
+            }
+
+            getEffectiveVolume() {
+                return this.volume * (masterVolume / 100);
+            }
+
+            updateVolume() {
+                if (this.audio && this.isPlaying && !this.isPaused && !this.isFading) {
+                    this.audio.volume = this.getEffectiveVolume();
+                }
+                
+                if (this.element) {
+                    this.element.querySelector('.volume-info').textContent = `Vol: ${Math.round(this.volume * 100)}%`;
+                }
+            }
+
+            showFadeIndicator() {
+                if (!this.element) return;
+                const indicator = this.element.querySelector('.fade-indicator');
+                indicator.classList.add('active');
+                setTimeout(() => {
+                    indicator.classList.remove('active');
+                }, Math.max(this.fadeInTime, this.fadeOutTime));
+            }
+
+            updateDisplay() {
+                if (!this.element) return;
+
+                this.element.classList.remove('playing', 'paused');
+                
+                if (this.isPlaying && !this.isPaused) {
+                    this.element.classList.add('playing');
+                    this.element.querySelector('.sound-status').textContent = 'Tocando';
+                } else if (this.isPaused) {
+                    this.element.classList.add('paused');
+                    this.element.querySelector('.sound-status').textContent = 'Pausado';
+                } else {
+                    this.element.querySelector('.sound-status').textContent = 'Parado';
+                }
+            }
+        }
+
+        // Configuração inicial dos pads
+        const padNames = [
+            'Pad 1', 'Pad 2', 'Pad 3', 'Pad 4', 'Pad 5',
+            'Pad 6', 'Pad 7', 'Pad 8', 'Pad 9', 'Pad 10'
+        ];
+
+        let soundPads = [];
+        let masterVolume = 70;
+
+        // Inicializar pads de som
+        function initializeSoundPads() {
+            const container = document.getElementById('soundPads');
+            const fileInputsContainer = document.getElementById('fileInputs');
+            
+            padNames.forEach((name, index) => {
+                const soundPad = new SoundPad(name);
+                soundPads.push(soundPad);
+
+                // Criar input de arquivo
+                const fileInputHTML = `
+                    <label for="file-${index}" class="file-label">
+                        <i class="fas fa-folder-open"></i> ${name}
+                    </label>
+                    <input type="file" id="file-${index}" class="file-input" accept="audio/*" onchange="loadFile(${index}, this)">
+                `;
+                fileInputsContainer.innerHTML += fileInputHTML;
+
+                // Criar pad visual
+                const padElement = document.createElement('div');
+                padElement.className = 'col-auto';
+                padElement.innerHTML = `
+                    <div class="sound-pad" onclick="toggleSound(${index})">
+                        <div class="fade-indicator">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="sound-name">${name}</div>
+                        <div class="sound-status">Sem arquivo</div>
+                        <div class="volume-info">Vol: 70%</div>
+                        <input type="range" class="form-range individual-volume" min="0" max="100" value="70" 
+                               onchange="updateIndividualVolume(${index}, this.value)" onclick="event.stopPropagation()">
+                        <div class="controls">
+                            <button class="control-btn" onclick="event.stopPropagation(); playPause(${index})" title="Play/Pause">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="control-btn" onclick="event.stopPropagation(); stopSound(${index})" title="Stop">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(padElement);
+                soundPad.element = padElement.querySelector('.sound-pad');
+            });
+        }
+
+        // Carregar arquivo
+        function loadFile(index, input) {
+            const file = input.files[0];
+            if (file) {
+                soundPads[index].loadAudio(file);
+                soundPads[index].element.querySelector('.sound-status').textContent = 'Pronto';
+            }
+        }
+
+        // Atualizar volume individual
+        function updateIndividualVolume(index, value) {
+            soundPads[index].volume = value / 100;
+            soundPads[index].updateVolume();
+        }
+
+        // Funções de controle
+        function toggleSound(index) {
+            const pad = soundPads[index];
+            if (pad.isPlaying && !pad.isPaused) {
+                pad.stop(true);
+            } else {
+                pad.play(true);
+            }
+        }
+
+        function playPause(index) {
+            const pad = soundPads[index];
+            const btn = pad.element.querySelector('.control-btn i');
+            
+            if (pad.isPlaying && !pad.isPaused) {
+                pad.pause();
+                btn.className = 'fas fa-play';
+            } else {
+                pad.play(false);
+                btn.className = 'fas fa-pause';
+            }
+        }
+
+        function stopSound(index) {
+            const pad = soundPads[index];
+            pad.stop(true);
+            const btn = pad.element.querySelector('.control-btn i');
+            btn.className = 'fas fa-play';
+        }
+
+        function stopAllSounds() {
+            soundPads.forEach((pad, index) => {
+                if (pad.isPlaying) {
+                    pad.stop(true);
+                    const btn = pad.element.querySelector('.control-btn i');
+                    btn.className = 'fas fa-play';
+                }
+            });
+        }
+
+        function pauseAllSounds() {
+            soundPads.forEach((pad, index) => {
+                if (pad.isPlaying && !pad.isPaused) {
+                    pad.pause();
+                    const btn = pad.element.querySelector('.control-btn i');
+                    btn.className = 'fas fa-play';
+                }
+            });
+        }
+
+        // Controle de volume master
+        document.getElementById('masterVolume').addEventListener('input', function() {
+            masterVolume = this.value;
+            document.getElementById('volumeValue').textContent = masterVolume;
+            
+            soundPads.forEach(pad => {
+                pad.updateVolume();
+            });
+        });
+
+        // Inicializar aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSoundPads();
+        });
+    </script>
+</body>
+</html>
