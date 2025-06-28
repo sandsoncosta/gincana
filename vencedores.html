@@ -6,60 +6,125 @@
     <title>Pódio da Gincana</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #43e97b 0%, #11998e 40%, #145c44 80%, #38f9d7 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
             min-height: 100vh;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .podium-container {
             padding: 50px 0;
+            position: relative;
         }
         
         .podium-title {
             text-align: center;
             color: white;
-            font-size: 3rem;
-            font-weight: bold;
+            font-size: 3.5rem;
+            font-weight: 800;
             margin-bottom: 50px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            font-family: 'Fredoka One', cursive;
+            animation: titlePulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
         .podium-box {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin: 15px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 35px;
+            margin: 20px 0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 40px rgba(255,255,255,0.1);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
-            min-height: 150px;
+            min-height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .podium-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.8s;
+        }
+        
+        .podium-box:hover::before {
+            left: 100%;
         }
         
         .podium-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25), 0 0 60px rgba(255,255,255,0.2);
         }
         
         .podium-box.revealed {
             cursor: default;
+            animation: revealPulse 0.6s ease-out;
+        }
+        
+        @keyframes revealPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         
         .mystery-content {
             text-align: center;
-            color: #666;
+            color: #555;
         }
         
         .mystery-content i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 4rem;
+            margin-bottom: 20px;
             color: #667eea;
+            animation: giftFloat 2s ease-in-out infinite;
+        }
+        
+        @keyframes giftFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .mystery-content h3 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .mystery-points {
+            font-size: 1.4rem;
+            color: #667eea;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .revealed-content {
@@ -68,47 +133,109 @@
         }
         
         .position-number {
-            font-size: 4rem;
+            font-size: 5rem;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
         }
         
         .team-name {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
         .points {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: #666;
+            font-weight: 500;
         }
         
-        /* Estilos específicos para cada posição */
+        /* Estilos específicos para cada posição - Mais vibrantes */
         .position-1 { 
-            background: linear-gradient(135deg, #ffd700, #ffed4e);
-            border: 5px solid #ffd700;
+            background: linear-gradient(135deg, #ffd700, #ffed4e, #fff200);
+            border: 4px solid #ffd700;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2);
         }
         .position-1 .position-number { color: #b8860b; }
         .position-1 .team-name { color: #b8860b; }
         
         .position-2 { 
-            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
-            border: 5px solid #c0c0c0;
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8, #f5f5f5);
+            border: 4px solid #c0c0c0;
+            box-shadow: 0 20px 60px rgba(192, 192, 192, 0.3), 0 0 40px rgba(192, 192, 192, 0.2);
         }
         .position-2 .position-number { color: #808080; }
         .position-2 .team-name { color: #606060; }
         
         .position-3 { 
-            background: linear-gradient(135deg, #cd7f32, #daa520);
-            border: 5px solid #cd7f32;
+            background: linear-gradient(135deg, #cd7f32, #daa520, #ff8c00);
+            border: 4px solid #cd7f32;
+            box-shadow: 0 20px 60px rgba(205, 127, 50, 0.3), 0 0 40px rgba(205, 127, 50, 0.2);
         }
         .position-3 .position-number { color: #8b4513; }
         .position-3 .team-name { color: #8b4513; }
         
         .position-4, .position-5, .position-6 {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            background: linear-gradient(135deg, #fff, #fff, #ffffff);
             border: 3px solid #dee2e6;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 30px rgba(255,255,255,0.1);
+        }
+        
+        /* Animação do nome da equipe - EXPLOSÃO */
+        .team-name-explosion {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10000;
+            font-size: 8rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 
+                0 0 20px rgba(255,255,255,0.8),
+                0 0 40px rgba(255,215,0,0.6),
+                0 0 60px rgba(255,215,0,0.4),
+                3px 3px 0px #333,
+                -3px -3px 0px #333,
+                3px -3px 0px #333,
+                -3px 3px 0px #333;
+            animation: teamNameExplode 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            pointer-events: none;
+            text-align: center;
+            line-height: 1;
+            white-space: nowrap;
+            font-family: 'Fredoka One', cursive;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        @keyframes teamNameExplode {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+                filter: blur(10px);
+            }
+            20% {
+                transform: translate(-50%, -50%) scale(1.8);
+                opacity: 1;
+                filter: blur(0px);
+            }
+            40% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 1;
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+                filter: blur(5px);
+            }
         }
         
         /* Animações para o primeiro lugar - TELA INTEIRA */
@@ -125,11 +252,11 @@
         
         .confetti {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 15px;
+            height: 15px;
             background: #ffd700;
             border-radius: 50%;
-            animation: confetti-fall 4s linear infinite;
+            animation: confetti-fall 5s linear infinite;
         }
         
         .confetti:nth-child(2n) { background: #ff6b6b; }
@@ -139,6 +266,8 @@
         .confetti:nth-child(6n) { background: #ffa726; }
         .confetti:nth-child(7n) { background: #ab47bc; }
         .confetti:nth-child(8n) { background: #26c6da; }
+        .confetti:nth-child(9n) { background: #ff9800; }
+        .confetti:nth-child(10n) { background: #e91e63; }
         
         /* Confetes quadrados */
         .confetti.square {
@@ -155,10 +284,10 @@
         .confetti.star:before {
             content: '★';
             color: #ffd700;
-            font-size: 12px;
+            font-size: 15px;
             position: absolute;
-            top: -6px;
-            left: -6px;
+            top: -7px;
+            left: -7px;
         }
         
         @keyframes confetti-fall {
@@ -172,13 +301,13 @@
             }
         }
         
-        /* Fogos de Artifício */
+        /* Fogos de Artifício Melhorados */
         .firework {
             position: absolute;
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            animation: firework-explode 2s ease-out;
+            animation: firework-explode 2.5s ease-out;
         }
         
         @keyframes firework-explode {
@@ -187,40 +316,40 @@
                 opacity: 1;
             }
             50% {
-                transform: scale(1);
+                transform: scale(1.5);
                 opacity: 1;
             }
             100% {
-                transform: scale(3);
+                transform: scale(4);
                 opacity: 0;
             }
         }
         
         .firework-particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: #ff6b6b;
         }
         
-        .firework-particle:nth-child(1) { animation: particle-1 1.5s ease-out; }
-        .firework-particle:nth-child(2) { animation: particle-2 1.5s ease-out; }
-        .firework-particle:nth-child(3) { animation: particle-3 1.5s ease-out; }
-        .firework-particle:nth-child(4) { animation: particle-4 1.5s ease-out; }
-        .firework-particle:nth-child(5) { animation: particle-5 1.5s ease-out; }
-        .firework-particle:nth-child(6) { animation: particle-6 1.5s ease-out; }
-        .firework-particle:nth-child(7) { animation: particle-7 1.5s ease-out; }
-        .firework-particle:nth-child(8) { animation: particle-8 1.5s ease-out; }
+        .firework-particle:nth-child(1) { animation: particle-1 2s ease-out; }
+        .firework-particle:nth-child(2) { animation: particle-2 2s ease-out; }
+        .firework-particle:nth-child(3) { animation: particle-3 2s ease-out; }
+        .firework-particle:nth-child(4) { animation: particle-4 2s ease-out; }
+        .firework-particle:nth-child(5) { animation: particle-5 2s ease-out; }
+        .firework-particle:nth-child(6) { animation: particle-6 2s ease-out; }
+        .firework-particle:nth-child(7) { animation: particle-7 2s ease-out; }
+        .firework-particle:nth-child(8) { animation: particle-8 2s ease-out; }
         
-        @keyframes particle-1 { 100% { transform: translate(100px, -100px); opacity: 0; } }
-        @keyframes particle-2 { 100% { transform: translate(-100px, -100px); opacity: 0; } }
-        @keyframes particle-3 { 100% { transform: translate(100px, 100px); opacity: 0; } }
-        @keyframes particle-4 { 100% { transform: translate(-100px, 100px); opacity: 0; } }
-        @keyframes particle-5 { 100% { transform: translate(140px, 0px); opacity: 0; } }
-        @keyframes particle-6 { 100% { transform: translate(-140px, 0px); opacity: 0; } }
-        @keyframes particle-7 { 100% { transform: translate(0px, -140px); opacity: 0; } }
-        @keyframes particle-8 { 100% { transform: translate(0px, 140px); opacity: 0; } }
+        @keyframes particle-1 { 100% { transform: translate(120px, -120px); opacity: 0; } }
+        @keyframes particle-2 { 100% { transform: translate(-120px, -120px); opacity: 0; } }
+        @keyframes particle-3 { 100% { transform: translate(120px, 120px); opacity: 0; } }
+        @keyframes particle-4 { 100% { transform: translate(-120px, 120px); opacity: 0; } }
+        @keyframes particle-5 { 100% { transform: translate(160px, 0px); opacity: 0; } }
+        @keyframes particle-6 { 100% { transform: translate(-160px, 0px); opacity: 0; } }
+        @keyframes particle-7 { 100% { transform: translate(0px, -160px); opacity: 0; } }
+        @keyframes particle-8 { 100% { transform: translate(0px, 160px); opacity: 0; } }
         
         .trophy-bounce {
             animation: bounce 2s infinite;
@@ -231,41 +360,46 @@
                 transform: translateY(0);
             }
             40% {
-                transform: translateY(-30px);
+                transform: translateY(-40px);
             }
             60% {
-                transform: translateY(-15px);
+                transform: translateY(-20px);
             }
         }
         
         .reset-btn {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24, #ff9800);
             border: none;
             color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 18px 40px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .reset-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            background: linear-gradient(135deg, #ee5a24, #ff6b6b);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #ee5a24, #ff6b6b, #ffa726);
         }
         
         /* Responsividade */
         @media (max-width: 768px) {
             .podium-title {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             .position-number {
-                font-size: 3rem;
+                font-size: 4rem;
             }
             .team-name {
-                font-size: 1.4rem;
+                font-size: 1.6rem;
+            }
+            .team-name-explosion {
+                font-size: 4rem;
             }
         }
     </style>
@@ -280,25 +414,24 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="podium-box position-1" onclick="revealPosition(1)">
                         <div class="mystery-content">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-trophy"></i>
                             <h3>1º LUGAR</h3>
-                            <p>Clique para revelar!</p>
+                            <p class="mystery-points">1000 pontos</p>
                         </div>
                         <div class="revealed-content">
                             <div class="position-number trophy-bounce">🥇</div>
                             <div class="team-name" id="team-1">EQUIPE CAMPEÃ</div>
                             <div class="points" id="points-1">1000 pontos</div>
                         </div>
-
                     </div>
                 </div>
                 
                 <div class="col-lg-4 col-md-6">
                     <div class="podium-box position-2" onclick="revealPosition(2)">
                         <div class="mystery-content">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-medal"></i>
                             <h3>2º LUGAR</h3>
-                            <p>Clique para revelar!</p>
+                            <p class="mystery-points">800 pontos</p>
                         </div>
                         <div class="revealed-content">
                             <div class="position-number">🥈</div>
@@ -311,9 +444,9 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="podium-box position-3" onclick="revealPosition(3)">
                         <div class="mystery-content">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-award"></i>
                             <h3>3º LUGAR</h3>
-                            <p>Clique para revelar!</p>
+                            <p class="mystery-points">600 pontos</p>
                         </div>
                         <div class="revealed-content">
                             <div class="position-number">🥉</div>
@@ -329,9 +462,9 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="podium-box position-4" onclick="revealPosition(4)">
                         <div class="mystery-content">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-star"></i>
                             <h3>4º LUGAR</h3>
-                            <p>Clique para revelar!</p>
+                            <p class="mystery-points">400 pontos</p>
                         </div>
                         <div class="revealed-content">
                             <div class="position-number">4º</div>
@@ -344,9 +477,9 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="podium-box position-5" onclick="revealPosition(5)">
                         <div class="mystery-content">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-certificate"></i>
                             <h3>5º LUGAR</h3>
-                            <p>Clique para revelar!</p>
+                            <p class="mystery-points">200 pontos</p>
                         </div>
                         <div class="revealed-content">
                             <div class="position-number">5º</div>
@@ -359,9 +492,9 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="podium-box position-6" onclick="revealPosition(6)">
                         <div class="mystery-content">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-ribbon"></i>
                             <h3>6º LUGAR</h3>
-                            <p>Clique para revelar!</p>
+                            <p class="mystery-points">100 pontos</p>
                         </div>
                         <div class="revealed-content">
                             <div class="position-number">6º</div>
@@ -402,6 +535,9 @@
                 return; // Já foi revelado
             }
             
+            // Criar explosão do nome da equipe
+            createTeamNameExplosion(teamsData[position].name);
+            
             // Ocultar conteúdo mistério
             const mysteryContent = box.querySelector('.mystery-content');
             const revealedContent = box.querySelector('.revealed-content');
@@ -410,32 +546,51 @@
             document.getElementById(`team-${position}`).textContent = teamsData[position].name;
             document.getElementById(`points-${position}`).textContent = teamsData[position].points;
             
-            // Animação de transição
-            mysteryContent.style.opacity = '0';
-            
+            // Animação de transição com delay para a explosão do nome
             setTimeout(() => {
-                mysteryContent.style.display = 'none';
-                revealedContent.style.display = 'block';
-                revealedContent.style.opacity = '0';
+                mysteryContent.style.opacity = '0';
                 
                 setTimeout(() => {
-                    revealedContent.style.opacity = '1';
-                }, 100);
-                
-                // Se for o primeiro lugar, criar celebração
-                if (position === 1) {
-                    createCelebration();
-                }
-            }, 300);
+                    mysteryContent.style.display = 'none';
+                    revealedContent.style.display = 'block';
+                    revealedContent.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        revealedContent.style.opacity = '1';
+                    }, 100);
+                    
+                    // Se for o primeiro lugar, criar celebração
+                    if (position === 1) {
+                        setTimeout(() => {
+                            createCelebration();
+                        }, 500);
+                    }
+                }, 400);
+            }, 800); // Delay para permitir que a explosão do nome seja vista
             
             box.classList.add('revealed');
+        }
+
+        function createTeamNameExplosion(teamName) {
+            const explosion = document.createElement('div');
+            explosion.className = 'team-name-explosion';
+            explosion.textContent = teamName;
+            
+            document.body.appendChild(explosion);
+            
+            // Remover após animação
+            setTimeout(() => {
+                if (explosion.parentNode) {
+                    explosion.parentNode.removeChild(explosion);
+                }
+            }, 2500);
         }
 
         function createCelebration() {
             const celebration = document.getElementById('fullscreen-celebration');
             
             // Criar confetes variados em toda a tela
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 200; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 
@@ -445,8 +600,8 @@
                 if (randomType) confetti.classList.add(randomType);
                 
                 confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.animationDelay = Math.random() * 5 + 's';
-                confetti.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                confetti.style.animationDelay = Math.random() * 6 + 's';
+                confetti.style.animationDuration = (Math.random() * 5 + 4) + 's';
                 
                 celebration.appendChild(confetti);
             }
@@ -455,13 +610,14 @@
             const fireworkPositions = [
                 { x: 20, y: 30 }, { x: 80, y: 25 }, { x: 50, y: 40 },
                 { x: 15, y: 60 }, { x: 85, y: 55 }, { x: 30, y: 70 },
-                { x: 70, y: 20 }, { x: 40, y: 80 }
+                { x: 70, y: 20 }, { x: 40, y: 80 }, { x: 60, y: 30 },
+                { x: 25, y: 45 }, { x: 75, y: 65 }, { x: 45, y: 15 }
             ];
             
             fireworkPositions.forEach((pos, index) => {
                 setTimeout(() => {
                     createFirework(pos.x, pos.y);
-                }, index * 400);
+                }, index * 300);
             });
             
             // Segundo round de fogos
@@ -472,14 +628,26 @@
                             Math.random() * 80 + 10,
                             Math.random() * 60 + 20
                         );
-                    }, index * 300);
+                    }, index * 250);
                 });
-            }, 2000);
+            }, 2500);
+            
+            // Terceiro round de fogos
+            setTimeout(() => {
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        createFirework(
+                            Math.random() * 80 + 10,
+                            Math.random() * 60 + 20
+                        );
+                    }, i * 200);
+                }
+            }, 4500);
             
             // Remover toda celebração após animação
             setTimeout(() => {
                 celebration.innerHTML = '';
-            }, 10000);
+            }, 12000);
         }
         
         function createFirework(x, y) {
@@ -489,7 +657,7 @@
             firework.style.left = x + '%';
             firework.style.top = y + '%';
             
-            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ffd700', '#96ceb4', '#ffa726', '#ab47bc'];
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ffd700', '#96ceb4', '#ffa726', '#ab47bc', '#26c6da', '#ff9800', '#e91e63'];
             
             // Criar partículas do fogo de artifício
             for (let i = 0; i < 8; i++) {
@@ -506,7 +674,7 @@
                 if (firework.parentNode) {
                     firework.parentNode.removeChild(firework);
                 }
-            }, 2000);
+            }, 2500);
         }
 
         function resetPodium() {
