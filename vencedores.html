@@ -545,7 +545,7 @@
         async function fetchSheetData() {
             try {
                 console.log('Buscando dados da planilha...');
-                const response = await fetch(SHEET_CSV_URL);
+                const response = await fetch(SHEET_CSV_URL + '?_=' + Date.now());
                 const csvText = await response.text();
                 
                 console.log('Dados CSV recebidos:', csvText.substring(0, 500) + '...');
