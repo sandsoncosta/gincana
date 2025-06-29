@@ -535,170 +535,27 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-// Dados das equipes (será preenchido automaticamente)
-        let teamsData = {};
-        
-        // URL da planilha convertida para CSV
-        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vSemhFs18Wu4ygqt6Cqsjp6tvQwGXQ1O7ZN9Z4yONxJfwVG3lH_UZSRmpp1n2za1HtPhKst0vTiWNAZ/pub?gid=580765410&single=true&output=csv';
+        // Dados das equipes (personalize aqui)
+        const teamsData = {
+            1: { name: "LIGA TEEN", points: "1355 pontos" },
+            2: { name: "LIGA", points: "1290 pontos" },
+            3: { name: "NOVOS CONVERTIDOS", points: "1220 pontos" },
+            4: { name: "NOVOS MEMBROS", points: "1085 pontos" },
+            5: { name: "ADULTOS", points: "1075 pontos" },
+            6: { name: "SEMENTES ÁGAPE", points: "840 pontos" }
+        };
 
-        // Função para buscar dados da planilha
-        async function fetchSheetData() {
-            try {
-                console.log('Buscando dados da planilha...');
-                const response = await fetch(SHEET_CSV_URL);
-                const csvText = await response.text();
-                
-                console.log('Dados CSV recebidos:', csvText.substring(0, 500) + '...');
-                
-                // Parse do CSV
-                const rows = csvText.split('\n').map(row => row.split(',').map(cell => cell.trim().replace(/"/g, '')));
-                
-                console.log('Primeiras linhas parseadas:', rows.slice(0, 5));
-                
-                // Encontrar os índices das colunas
-                const headerRow = rows[0];
-                const timeIndex = headerRow.findIndex(header => 
-                    header.toLowerCase().includes('time') || 
-                    header.toLowerCase().includes('equipe')
-                );
-                const pontuacaoIndex = headerRow.findIndex(header => 
-                    header.toLowerCase().includes('pontuação final')
-                );
-                
-                console.log('Índice da coluna TIME:', timeIndex);
-                console.log('Índice da coluna PONTUAÇÃO FINAL:', pontuacaoIndex);
-                console.log('Cabeçalhos encontrados:', headerRow);
-                
-                if (timeIndex === -1) {
-                    throw new Error('Coluna TIME não encontrada na planilha');
-                }
-                if (pontuacaoIndex === -1) {
-                    throw new Error('Coluna PONTUAÇÃO FINAL não encontrada na planilha');
-                }
-                
-                // Coletar dados das equipes
-                const teamsArray = [];
-                
-                // Processar dados a partir da segunda linha (ignorar cabeçalho)
-                for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i];
-                    if (row.length > Math.max(timeIndex, pontuacaoIndex)) {
-                        const teamName = row[timeIndex] ? row[timeIndex].trim() : '';
-                        const points = row[pontuacaoIndex] ? row[pontuacaoIndex].trim() : '';
-                        
-                        if (teamName && teamName !== '' && points && points !== '') {
-                            // Converter pontos para número para ordenação
-                            const pointsNumber = parseFloat(points.toString().replace(/[^\d.-]/g, '')) || 0;
-                            teamsArray.push({
-                                name: teamName,
-                                points: pointsNumber,
-                                pointsDisplay: `${pointsNumber} pontos`
-                            });
-                        }
-                    }
-                }
-                
-                console.log('Dados coletados:', teamsArray);
-                
-                // Ordenar por pontos (maior para menor)
-                const sortedTeams = teamsArray.sort((a, b) => b.points - a.points);
-                
-                console.log('Times ordenados:', sortedTeams);
-                
-                // Preencher teamsData
-                teamsData = {};
-                sortedTeams.forEach((team, index) => {
-                    if (index < 6) { // Apenas os 6 primeiros
-                        teamsData[index + 1] = {
-                            name: team.name,
-                            points: team.pointsDisplay
-                        };
-                    }
-                });
-                
-                // Garantir que temos pelo menos 6 posições (preencher com dados em branco se necessário)
-                for (let i = 1; i <= 6; i++) {
-                    if (!teamsData[i]) {
-                        teamsData[i] = {
-                            name: `EQUIPE ${i}`,
-                            points: '0 pontos'
-                        };
-                    }
-                }
-                
-                console.log('Dados finais das equipes:', teamsData);
-                
-                return teamsData;
-                
-            } catch (error) {
-                console.error('Erro ao buscar dados da planilha:', error);
-                
-                // Dados de fallback em caso de erro
-                return {
-                    1: { name: "LIGA TEEN", points: "1355 pontos" },
-                    2: { name: "LIGA", points: "1290 pontos" },
-                    3: { name: "NOVOS CONVERTIDOS", points: "1220 pontos" },
-                    4: { name: "NOVOS MEMBROS", points: "1085 pontos" },
-                    5: { name: "ADULTOS", points: "1075 pontos" },
-                    6: { name: "SEMENTES ÁGAPE", points: "840 pontos" }
-                };
-            }
-        }
-
-        // Função para atualizar a interface com os dados
-        function updateInterface() {
+        // Atualiza os nomes e pontos ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
             for (let i = 1; i <= 6; i++) {
                 const teamName = document.getElementById(`team-${i}`);
                 const teamPoints = document.getElementById(`points-${i}`);
                 const mysteryPoints = document.getElementById(`mystery-points-${i}`);
-                
                 if (teamName && teamsData[i]) teamName.textContent = teamsData[i].name;
                 if (teamPoints && teamsData[i]) teamPoints.textContent = teamsData[i].points;
                 if (mysteryPoints && teamsData[i]) mysteryPoints.textContent = teamsData[i].points;
             }
-        }
-
-        // Função para inicializar a aplicação
-        async function initializeApp() {
-            console.log('Inicializando aplicação...');
-            
-            try {
-                teamsData = await fetchSheetData();
-                updateInterface();
-                
-                // Esconder loading e mostrar conteúdo
-                document.getElementById('loading-spinner').style.display = 'none';
-                document.getElementById('podium-content').style.display = 'block';
-                
-                console.log('Aplicação inicializada com sucesso!');
-                
-            } catch (error) {
-                console.error('Erro na inicialização:', error);
-                
-                // Mostrar conteúdo mesmo com erro (usará dados de fallback)
-                document.getElementById('loading-spinner').style.display = 'none';
-                document.getElementById('podium-content').style.display = 'block';
-            }
-        }
-
-        // Função para atualizar dados
-        async function refreshData() {
-            const loadingSpinner = document.getElementById('loading-spinner');
-            const podiumContent = document.getElementById('podium-content');
-            
-            // Mostrar loading
-            loadingSpinner.style.display = 'block';
-            podiumContent.style.display = 'none';
-            
-            // Resetar pódio
-            resetPodium();
-            
-            // Buscar novos dados
-            await initializeApp();
-        }
-
-        // Inicializar quando a página carregar
-        window.addEventListener('DOMContentLoaded', initializeApp);
+        });
 
         function revealPosition(position) {
             const box = document.querySelector(`.position-${position}`);
@@ -707,14 +564,14 @@
                 return; // Já foi revelado
             }
             
-            // Criar explosão do nome da equipe (agora mostra o nome correto)
+            // Criar explosão do nome da equipe
             createTeamNameExplosion(teamsData[position].name);
             
             // Ocultar conteúdo mistério
             const mysteryContent = box.querySelector('.mystery-content');
             const revealedContent = box.querySelector('.revealed-content');
             
-            // Atualizar dados da equipe (nome no lugar certo, pontos no lugar certo)
+            // Atualizar dados da equipe
             document.getElementById(`team-${position}`).textContent = teamsData[position].name;
             document.getElementById(`points-${position}`).textContent = teamsData[position].points;
             
@@ -866,6 +723,14 @@
             // Limpar celebração
             document.getElementById('fullscreen-celebration').innerHTML = '';
         }
+
+        // Função para personalizar os dados das equipes
+        function updateTeamData(position, name, points) {
+            teamsData[position] = { name: name, points: points };
+        }
+
+        // Exemplo de como usar:
+        // updateTeamData(1, "EQUIPE DOS CAMPEÕES", "1200 pontos");
     </script>
 </body>
 </html>
