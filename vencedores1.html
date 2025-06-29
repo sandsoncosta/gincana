@@ -541,11 +541,13 @@
         // URL da planilha convertida para CSV
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vSemhFs18Wu4ygqt6Cqsjp6tvQwGXQ1O7ZN9Z4yONxJfwVG3lH_UZSRmpp1n2za1HtPhKst0vTiWNAZ/pub?gid=580765410&single=true&output=csv';
 
+        https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vSemhFs18Wu4ygqt6Cqsjp6tvQwGXQ1O7ZN9Z4yONxJfwVG3lH_UZSRmpp1n2za1HtPhKst0vTiWNAZ/pubhtml?gid=580765410&single=true
+
         // Função para buscar dados da planilha
         async function fetchSheetData() {
             try {
                 console.log('Buscando dados da planilha...');
-                const response = await fetch(SHEET_CSV_URL);
+                const response = await fetch(SHEET_CSV_URL + '?_=' + Date.now());
                 const csvText = await response.text();
                 
                 console.log('Dados CSV recebidos:', csvText.substring(0, 500) + '...');
@@ -562,9 +564,7 @@
                     header.toLowerCase().includes('equipe')
                 );
                 const pontuacaoIndex = headerRow.findIndex(header => 
-                    header.toLowerCase().includes('pontuação final') || 
-                    header.toLowerCase().includes('pontuacao final') ||
-                    header.toLowerCase().includes('pontos final')
+                    header.toLowerCase().includes('pontuação final')
                 );
                 
                 console.log('Índice da coluna TIME:', timeIndex);
