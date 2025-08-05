@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Dons Espirituais</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 20px auto;
+            max-width: 900px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #4facfe;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+        }
+        
+        .question-number {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .rating-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .rating-option {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .rating-option input[type="radio"] {
+            display: none;
+        }
+        
+        .rating-option label {
+            display: block;
+            padding: 12px 8px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .rating-option input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-color: #4facfe;
+            transform: scale(1.05);
+        }
+        
+        .rating-option label:hover {
+            border-color: #4facfe;
+            background: rgba(79, 172, 254, 0.1);
+        }
+        
+        .progress-bar-custom {
+            height: 8px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 10px;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        }
+        
+        .results-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .gift-result {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .gift-result.top-5 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-weight: bold;
+            transform: scale(1.02);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #28a745;
+        }
+        
+        @media (max-width: 768px) {
+            .rating-options {
+                flex-direction: column;
+            }
+            
+            .rating-option {
+                min-width: auto;
+            }
+            
+            .question-card {
+                padding: 20px;
+                margin: 15px 0;
+            }
+            
+            .main-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+                border-radius: 15px 15px 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <div class="header">
+                <h1><i class="fas fa-hands-praying me-3"></i>Avaliação de Dons Espirituais</h1>
+                <p class="mb-0">Descubra seus dons espirituais através desta avaliação completa</p>
+            </div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs mt-3" id="donsTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="teste-tab" data-bs-toggle="tab" data-bs-target="#teste" type="button" role="tab" aria-controls="teste" aria-selected="true">
+                        Teste
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="definicoes-tab" data-bs-toggle="tab" data-bs-target="#definicoes" type="button" role="tab" aria-controls="definicoes" aria-selected="false">
+                        Definições dos Dons
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content" id="donsTabContent">
+                <div class="tab-pane fade show active" id="teste" role="tabpanel" aria-labelledby="teste-tab">
+                    <div class="p-4">
+                        <div class="instructions">
+                            <h4><i class="fas fa-info-circle me-2"></i>Como Preencher o Teste</h4>
+                            <p><strong>Instruções:</strong></p>
+                            <ul>
+                                <li>Leia cada declaração cuidadosamente</li>
+                                <li>Avalie o quanto cada afirmação se aplica à sua vida</li>
+                                <li>Escolha uma pontuação de 0 a 5 para cada pergunta:</li>
+                            </ul>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <strong>Escala de Avaliação:</strong>
+                                    <ul class="list-unstyled mt-2">
+                                        <li><span class="badge bg-danger me-2">0</span>Não tem absolutamente nada a ver com você</li>
+                                        <li><span class="badge bg-warning me-2">1</span>Reflete uma leve inclinação</li>
+                                        <li><span class="badge bg-info me-2">2</span>Reflete uma forte tendência sua</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <br>
+                                    <ul class="list-unstyled mt-2">
+                                        <li><span class="badge bg-primary me-2">3</span>Descreve você de forma geral</li>
+                                        <li><span class="badge bg-success me-2">4</span>Descreve você muito bem</li>
+                                        <li><span class="badge bg-dark me-2">5</span>Descreve você perfeitamente</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <p class="mt-3"><strong>Seja honesto(a) em suas respostas. Não há respostas certas ou erradas!</strong></p>
+                        </div>
+                        
+                        <div class="text-center mb-4">
+                            <div class="progress mb-2" style="height: 10px;">
+                                <div class="progress-bar progress-bar-custom" id="progressBar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <small class="text-muted">Progresso: <span id="progressText">0/133</span></small>
+                        </div>
+                        
+                        <form id="spiritualGiftsForm">
+                            <div id="questionsContainer">
+                                <!-- Perguntas serão adicionadas dinamicamente aqui -->
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-primary-custom btn-lg" onclick="calculateResults()">
+                                    <i class="fas fa-calculator me-2"></i>Calcular Resultados
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div id="resultsSection" style="display: none;">
+                            <div class="results-container">
+                                <h3 class="text-center mb-4"><i class="fas fa-trophy me-2"></i>Seus Resultados</h3>
+                                <div id="resultsContent"></div>
+                                
+                                <div class="mt-4">
+                                    <h5>Interpretação dos Resultados:</h5>
+                                    <ul class="list-unstyled">
+                                        <li><strong>0-5:</strong> Indica que você não tem esse dom; também pode indicar uma fraqueza espiritual quanto à responsabilidade cristã nessa área.</li>
+                                        <li><strong>6-10:</strong> Indica que provavelmente não tem esse dom, ou o dom nunca foi muito desenvolvido.</li>
+                                        <li><strong>11-15:</strong> Indica uma possibilidade de ter esse dom.</li>
+                                        <li><strong>16-20:</strong> Indica que é quase certeza que tem esse dom.</li>
+                                        <li><strong>21-25:</strong> Indica que você tem um chamado muito especial nessa área.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="definicoes" role="tabpanel" aria-labelledby="definicoes-tab">
+                    <div class="p-4">
+                        <h3 class="mb-4"><i class="fas fa-book me-2"></i>Definições dos 19 Dons do Espírito</h3>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>ADMINISTRAÇÃO:</strong> O dom do Espírito que concebe e supervisiona planos para o trabalho de Deus, trazendo progresso à causa e condições (materiais e humanas) para que sejam administrados.</li>
+                            <li class="list-group-item"><strong>APOSTOLADO:</strong> O dom do Espírito Santo para pioneiro, líder, que inicia igrejas ou as desenvolve, indo para lugares onde outros não iriam. Apostello quer dizer enviado para pregar. Paulo é o exemplo típico.</li>
+                            <li class="list-group-item"><strong>CONHECIMENTO:</strong> O dom concedido pelo Espírito capacitando o crente a reter conhecimento. Geralmente está (ou deveria estar) associado ao dom de ensino.</li>
+                            <li class="list-group-item"><strong>DISCERNIMENTO:</strong> É o dom de perceber o espírito que move as pessoas. Por “intuição” (Espírito Santo) percebe o estado espiritual de outros e ministra conforme a necessidade. Associado ao dom de exortação.</li>
+                            <li class="list-group-item"><strong>ENSINO:</strong> O dom para conceder instrução espiritual às pessoas (membros de igreja ou não) de modo que o evangelho seja compreendido e seguido, promovendo crescimento espiritual e unidade na fé.</li>
+                            <li class="list-group-item"><strong>CURA:</strong> É o dom de entender o funcionamento do corpo humano, discernir doenças, aplicar tratamentos e ajudar o doente a cuidar de seu corpo para que tenha saúde. Pode estar associado ao dom de milagres.</li>
+                            <li class="list-group-item"><strong>EVANGELISMO:</strong> O dom do Espírito para compartilhar o Evangelho e ver os descrentes se encontrarem com Jesus, unindo-se como membros responsáveis à igreja.</li>
+                            <li class="list-group-item"><strong>EXORTAÇÃO:</strong> O dom do Espírito que traz conforto, encorajamento e instrução àqueles que precisam de alguma ajuda, cura interior e nos relacionamentos. Ouvir e aconselhar oportunamente é a marca deste dom.</li>
+                            <li class="list-group-item"><strong>FÉ:</strong> O dom do Espírito para reclamar as promessas de Deus com inabalável confiança de que serão cumpridas. Está baseado num profundo conhecimento de Deus e de seu modo de agir encontrado na Bíblia.</li>
+                            <li class="list-group-item"><strong>HOSPITALIDADE:</strong> O dom do Espírito para acolher o abandonado e necessitado, fazendo com que cada pessoa sinta-se querida e confortável. Habilidade de amar e servir desinteressadamente.</li>
+                            <li class="list-group-item"><strong>ORAÇÃO INTERCESSÓRIA:</strong> Pessoas são chamadas para se importar e interceder em oração por outras, por atividades internas e externas à igreja. É o dom de apoio ao evangelismo e ao pastorado.</li>
+                            <li class="list-group-item"><strong>LIBERALIDADE:</strong> O dom do Espírito para dar liberalmente, com alegria, e com regularidade às necessidades da igreja e de indivíduos. Todos são chamados a dar, mas o dom capacita para mais.</li>
+                            <li class="list-group-item"><strong>LIDERANÇA:</strong> É o dom de envolver pessoas em uma visão, estabelecer objetivos, desenvolver estratégias para alcançá-los e vê-los realizados para a edificação da igreja; trazendo crescimento do reino de Deus.</li>
+                            <li class="list-group-item"><strong>MISERICÓRDIA/SOCORRO:</strong> O dom do Espírito para ser ter sensibilidade aos sentimentos e necessidades dos outros, dando-lhes auxilio que traz conforto e cura.</li>
+                            <li class="list-group-item"><strong>MISSIONÁRIO:</strong> É o dom para compartilhar o Evangelho de maneira eficaz noutro país, adaptando-se com espontaneidade e facilidade á diferentes culturas, climas e circunstâncias. Está associado ao dom de línguas.</li>
+                            <li class="list-group-item"><strong>PASTORAL:</strong> O dom do Espírito para ministrar, tanto direta como indiretamente, a todas as necessidades de cada membro da congregação e a pessoas que necessitem ser pastoreadas. Está ligado com o dom de exortação, da palavra, da sabedoria, da misericórdia e da liderança (entre outros).</li>
+                            <li class="list-group-item"><strong>PROFECIA:</strong> É o dom através do qual o Espírito transmite conselhos e instruções para a igreja por meio de visões e sonhos. Deus manifesta a Sua vontade através deste dom (Amós 3:7) para um grupo menor ou para a igreja como um todo. A inspiração profética pode ser usada por Deus como e quando Lhe apraz.</li>
+                            <li class="list-group-item"><strong>SABEDORIA:</strong> Dom que habilita para o entendimento de pessoas e/ou a igreja em partes e como um todo em sua complexidade, trazendo solução para problemas, libertação, harmonia, progresso e crescimento.</li>
+                            <li class="list-group-item"><strong>LÍNGUAS:</strong> É o dom pelo qual o Espírito capacita pessoas a falarem outras línguas, quer seja facilitando o aprendizado, quer habilitando a comunicação quando houver necessidade. Associado ao dom de missão.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Dados dos dons espirituais e suas posições
+        const spiritualGifts = {
+            'Administração': [1,20,39,58,77,96,115],
+            'Apostolado': [2,21,40,59,78,97,116],
+            'Discernimento': [3,22,41,60,79,98,117],
+            'Evangelismo': [4,23,42,61,80,99,118],
+            'Exortação': [5,24,43,62,81,100,119],
+            'Fé': [6,25,44,63,82,101,120],
+            'Liberalidade': [7,26,45,64,83,102,121],
+            'Socorro e Misericórdia': [8,27,46,65,84,103,122],
+            'Hospitalidade': [9,28,47,66,85,104,123],
+            'Intercessão': [10,29,48,67,86,105,124],
+            'Conhecimento': [11,30,49,68,87,106,125],
+            'Liderança': [12,31,50,69,88,107,126],
+            'Cura': [13,32,51,70,89,108,127],
+            'Misericórdia': [14,33,52,71,90,109,128],
+            'Missionário': [15,34,53,72,91,110,129],
+            'Pastoral': [16,35,54,73,92,111,130],
+            'Profecia': [17,36,55,74,93,112,131],
+            'Ensino': [18,37,56,75,94,113,132],
+            'Sabedoria': [19,38,57,76,95,114,133]
+        };
+
+        // Perguntas exemplo (você pode adicionar as outras 128)
+        const questions = [
+            "Quando enfrento um problema complexo sou capaz de identificar os fatores chaves para que eu possa tratá-los em ordem, alcançando soluções práticas.",
+            "Tenho sido chamado diretamente por Deus para ocupar uma posição de liderança onde outros hesitariam em ir.",
+            "Eu posso facilmente dizer se um profeta fala inspirado pelo Espirito Santo ou não.",
+            "Tenho facilidade em persuadir alguém a tomar uma decisão ao lado de Cristo.",
+            "Quando alguém está sofrendo, sou capaz de lhe dizer algo que realmente conforta.",
+            "Tenho coragem de ousar coisas, andar numa direção desconhecida e iniciar projetos, pois eu conheço a direção de Deus e confio que Ele está me guiando.",
+            "Sempre tento ajudar uma pessoa em dificuldades, mesmo que minhas próprias necessidades sejam muitas e freqüentes.",
+            "Eu teria grande satisfação pessoal em trazer encorajamento a um rejeitado da sociedade, por exemplo: bêbado, viciado em drogas e outros.",
+            "Sinto satisfação em ajudar as pessoas, proporcionando-lhes moradia e alimento.",
+            "Gasto muito do meu tempo de oração intercedendo pelas necessidades de outros.",
+            "Conheço a Bíblia e outros escritos proféticos em seu contexto histórico e cultural.",
+            "Gosto de liderar e servir. Se a igreja precisa de alguém para dirigir atividades, motivar pessoas, me encontro entre os primeiros com quem se pode contar.",
+            "Gosto de estudar o corpo humano e conheço seus órgãos e funções e continuo me aperfeiçoando no conhecimento desta máquina maravilhosa construída por Deus.",
+            "Tenho facilidades para aprender línguas de outros países e povos.",
+            "Sinto grande responsabilidade em levar o Evangelho a pessoas não alcançadas.",
+            "Tenho motivação de visitar os membros da Igreja, de casa em casa, regularmente.",
+            "Tenho sonhos e visões contendo mensagens em plena concordância com a Bíblia.",
+            "Gosto de ensinar e muitos me procuram para receber estudos bíblicos de mim.",
+            "Quando enfrento uma situação difícil, posso encontrar uma solução prática para resolvê-las.",
+            "Tenho facilidade para descobrir recursos e pessoas para realizar certa atividade.",
+            "Deus tem, em algumas ocasiões, me chamado diretamente para uma área geográfica específica, distante de minha terra natal, para estabelecer ou consolidar Seu trabalho.",
+            "Sei quando uma pessoa está sofrendo, mesmo que esteja sorrindo.",
+            "Posso, com facilidade, transformar uma conversação corriqueira numa conversa espiritual com um não cristão, conduzindo o interlocutor a Cristo.",
+            "Posso ajudar a um causador de problemas a voltar a cooperar com o grupo sob minha liderança.",
+            "Sei que ao confiar em Deus Ele me guiará inclusive através de problemas. Tenho convicção de que inclusive as perdas e lutas vão colaborar para o meu bem.",
+            "Sou fiel e generoso nos dízimos e ofertas, pois conheço a generosidade de Deus.",
+            "Quando me pedem ajuda, mesmo ocupado, tenho ajudar.",
+            "Se alguém confiável (talvez um conhecido) bater a minha porta, precisando de lugar para pernoitar, convido-o para entrar, ainda que para acomodá-lo fosse necessário ceder minha cama e eu dormir no chão.",
+            "Freqüentemente, quando pessoas têm problemas, pedem eu orar por elas.",
+            "Memorizo textos bíblicos e textos relacionados e posso raciocinar em sua lógica.",
+            "Quando tenho idéias que creio terem vindas de Deus, aconselho-me com irmãos, avalio as conseqüências, tomo a decisão e creio nela, mesmo que seja impopular.",
+            "Deus quer que tenhamos saúde, pois um intelecto vigoroso e uma vida espiritual abundante apenas ocorrem num corpo saudável. Recomendo a prevenção da saúde.",
+            "Entendo o sentido do que as pessoas estão falando, mesmo que eu não saiba falar.",
+            "Fico inquieto quando vejo quantas pessoas ainda não conhecem Jesus e vivo com idéias para alcançar pessoas ao meu redor. Gosto de dar estudos para descrentes.",
+            "Gosto de dar estudos bíblicos para ajudar as pessoas a crescer em sua fé.",
+            "Quando falo em público, os ouvintes me consideram mais como um professor do que um orador ou pregador. A igreja reconhece o dom de profecia em mim.",
+            "Consigo explicar diversos temas de tal maneira que as pessoas entendem.",
+            "Quando aconselho pessoas em conflito ajudo-as a ganhar foco na solução.",
+            "Eu resolvo os problemas de pessoas e da igreja de tal forma que elas se sintam satisfeitas e a igreja encontre caminhos para funcionar bem.",
+            "Tenho formado uma congregação em um lugar onde antes nada existia.",
+            "Posso dizer se as decisões estão ou não de acordo com os principias bíblicos.",
+            "Se eu tenho um tempo extra, meu primeiro pensamento è dedicar-me ao trabalho do Evangelho. Sinto desejo de compartilhar aquilo que me fez tão bem: Jesus!",
+            "Freqüentemente tenho sido solicitado para ajudar aqueles que estão em problemas a resolvê-los.",
+            "Aceito as promessas de Deus como válidas e creio nelas, ainda que o seu cum primento pareça impossível.",
+            "Eu reservo, de minhas despesas, um determinado valor para atender apelos que sejam feitos em prol da igreja e das necessidades de outros.",
+            "Sou extremamente sensível às necessidades dos menos favorecidos, sinto satisfação em falar com eles, oferecendo-lhes minha ajuda.",
+            "Quando eu tenho um hóspede me dedico a seu bem estar e a sua salvação.",
+            "Nomes, regularmente, vêm à minha mente quando estou em oração com Deus.",
+            "A igreja me conhece pelo meu conhecimento bíblico e me consulta se necessário.",
+            "Tem havido espírito de unidade, entusiasmo e progresso do reino de Deus quando ocupo um cargo de liderança. Gosto de liderar servindo e coordenando outros.",
+            "Muitas vezes quando oro pela saúde de alguém impondo as mãos e ela melhora.",
+            "Interesso-me muito por outras línguas e não me custa memorizar palavras.",
+            "Gosto de estar com pessoas de diferentes raças e nações. Gostaria de pregar o Evangelho em outro país. Posso me adaptar a clima e condições de moradia local.",
+            "Gosto de elaborar sermões, de pregá-los e observar o efeito na vida das pessoas.",
+            "Recebo mensagens específicas de Deus com conteúdo para a igreja como um todo bem como para indivíduos, conforme Deus me mostra.",
+            "Quando ensino, percebo que as pessoas ficam envolvidas por inteiro, elas não entendem apenas com a cabeça, mas com o coração, aplicando o tema às suas vidas",
+            "Quando pessoas me procuram, raciocino com elas e discuto opções. Elas decidem",
+            "“Nenhum administrador estabeleceria objetivos para sua organização sem levar em consideração se estes afetariam a vida pessoal dos empregados”. Como administrador, vigorosamente apoio este conceito.",
+            "Sinto-me desassossegado quando fico muito tempo em um mesmo lugar.",
+            "Muitas vezes posso discernir os motivos das pessoas.",
+            "Regularmente tenho o privilégio de conduzir almas a Cristo, acompanhando-as ao batismo e confirmando-as na fé e na doutrina bíblica.",
+            "Acho fácil aplicar os princípios bíblicos aos problemas das pessoas de tal forma que possa ajudá-las.",
+            "Deus tem respondido minhas orações, principalmente quando eu avanço nas aventuras de fé com confiança inabalável nEle.",
+            "Poucas coisas na vida dão-me maior prazer do que dar a outros o que necessitam.",
+            "Os membros da igreja sabem que sinto prazer genuíno em visitar os doentes, me alegrando em ajudá-los.",
+            "Sinto me satisfeito de convidar pessoas e oferecer o que tenho de melhor em minha casa. Gosto de servir uma mesa bonita bem como acolher da melhor maneira.",
+            "Minhas orações pelos outros, muitas vezes são respondidas.",
+            "Conheço a história bíblica e creio na ação de Deus em cada momento dela. Conheço o plano profético e fico maravilhado com o plano da salvação em Jesus.",
+            "Sei que as críticas fazem parte da liderança e tenho aprendido com elas. Tenho me esforçado pelo melhor e procuro entender e ser sensível às idéias de outros.",
+            "Conheço tratamentos simples, sem contra-indicação para muitas doenças e males.",
+            "Gosto de estar no meio de pessoas de outros países; quando tenho que me comunicar com eles, faço o melhor que consigo, mesmo sem saber a língua.",
+            "Consigo aceitar e amar descrentes como estão e ajudá-los a conhecer Jesus.",
+            "Eu gosto de aconselhar pessoas nas diferentes fases de suas vidas. Elas também gostam e tiram proveito para sua experiência espiritual e de vida.",
+            "Nunca pedi para ter o dom de profecia. Cumpro com o meu dever em humildade.",
+            "Empolgo-me em ler livros e me desenvolver em didática e psicologia do ensino.",
+            "Princípios Bíblicos me vêm rápido á mente quando me deparo com problemas.",
+            "Percebo facilmente, quando tomo uma posição inflexível ou quando me posiciono com flexibilidade.",
+            "Quando lideres estão diante de problemas para os quais não encontram solução óbvia, confiam em meus conselhos.",
+            "Quando as pessoas estão diante de problemas para os quais não encontrão solução óbvia, pedem-me conselhos.",
+            "Tenho atitude de vida positiva, inclusive quando convido alguém p/ aceitar Jesus.",
+            "Sou muito sensível ao sofrimento dos outros e a maioria das vezes sou capaz de trazer-lhes o alívio do amor de Jesus.",
+            "Não Tenho dúvidas sobre as promessas de Deus e sei que elas se aplicam a mim.",
+            "Somando minha contribuição pessoal com as contribuições da Igreja, isto, provavelmente seria igual ou superior a um quinto de minha renda.",
+            "Se a Igreja ou algum líder pedisse para fazer alguma tarefa simples como varrer o saguão ou recolher o lixo, eu o faria alegre e satisfeito",
+            "Sempre cumprimento aos estranhos e, quando possível, convido-os para irem à minha casa.",
+            "Entendo qual o plano de Deus com a oração intercessória e por que assim orar.",
+            "Gosto de estudar tanto a Bíblia, como outros livros, quer sejam cristãos quer sejam de outras áreas, expandindo a minha mente e suas ferramentas.",
+            "Aceito a solidão e incompreensão que acompanham o trabalho de liderança.",
+            "Creio no poder da oração, mas sei que Deus vai fazer a Sua vontade que é sempre melhor do que a nossa, por isso confio para que Deus vai fazer o melhor.",
+            "Creio que Deus pode me capacitar de forma sobrenatural a falar uma língua se for necessário e imprescindível para a pregação do evangelho.",
+            "Não me importo de ir atrás de pessoas devastadas e destruídas pelo pecado.",
+            "Tendo a ser organizado e planejo com antecedência envolvendo líderes na obra.",
+            "A igreja já me ouviu e testou biblicamente o meu dom. Os líderes aprovaram.",
+            "Procuro novas maneiras de ensinar e aprimorar o conteúdo a ser passado.",
+            "“Gênio não é aquele que sabe muito, mas aquele que consegue ver o ponto sob diversos ângulos.” Este ditado me acompanha quando raciocino a respeito de algo.",
+            "Posso prever, com segurança, os resultados futuros das minhas decisões.",
+            "Regulamente o Espírito Santo me impressiona para efetuar um trabalho claro e específico para o Senhor.",
+            "Posso dizer que uma pessoa está sendo influenciada pelo Senhor ou por Satanás.",
+            "Sei distinguir entre assuntos periféricos e centrais do evangelho na apresentação do evangelho e entendo claramente os passos que levam à salvação em Jesus Cristo.",
+            "Pessoas que precisam de conselhos costumam me procurar para falar comigo.",
+            "Se Deus me chamar para um trabalho noutro lugar, me mudo e inicio o trabalho ainda que nem todas as providências tenham sido tomadas para a minha manutenção.",
+            "Os membros da minha congregação sabem que tenho prazer em ajudar aqueles que têm necessidades materiais e financeiras.",
+            "Se eu fosse diretor de uma escola e me deparasse com um adolescente roubando, sendo esta segunda vez, lhe daria outra oportunidade.",
+            "Quando as pessoas têm fome, sabem que podem participar das minhas refeições.",
+            "Tenho longa e crescente lista de pessoas das quais me lembro em minhas orações.",
+            "Sou professor da classe bíblica e sou requisitado freqüentemente a dar respostas sobre temas nos quais outros não conseguem mais raciocinar.",
+            "Estou disposto a assumir toda a responsabilidade pelas minhas decisões e por aquilo que é feito por aqueles que estão sob minha direção.",
+            "Creio que Deus pode e vai agir por meio das mãos de médicos por isso entendo a oração e religião como sendo complementado pela medicina e vice e versa.",
+            "O dom de línguas é como os outros, não compulsório, nem prova de fé ou recebimento do Espírito Santo. O Espírito Santo o dá como lhe apraz.",
+            "Amo pessoas e me interesso profundamente por suas histórias e sua salvação.",
+            "Tenho a facilidade de relacionar-me com pessoas de todas as idades, desde as crianças até aos adultos.",
+            "Deus tem me dado mensagens que se cumprem. Diversas já se cumpriram.",
+            "Para mim, ensinar a Bíblia é algo especial. Procuro apresentar tanto os conteúdos fortes como os tocantes com amor e paciência. Sempre oro por meus alunos.",
+            "Procuro orar e aguardar quando o problema é difícil. Cerco-me de conselheiros.",
+            "Tenho habilidade para desenvolver programas progressivos e gerenciá-los do princípio ao fim, para obter uma bem sucedida conclusão.",
+            "Sou facilmente impressionável pelo Espírito Santo e sigo as Suas instruções sem temer distância, dificuldade, obstáculos e desvantagens pessoais.",
+            "Quando alguém me pede dinheiro, geralmente sei se a pessoa precisa realmente de ajuda ou não.",
+            "Pessoas com dúvidas em seu relacionamento com Jesus me procuram perguntando como alcançar uma entrega mais completa a Jesus.",
+            "Quando os conselhos que dou são seguidos, geralmente funcionam para a pessoa.",
+            "Sei lidar com a solidão de confiar em Deus quando poucos ao meu redor o fazem e sei motivar outras pessoas a darem passos de fé – confiando em Deus.",
+            "Eu freqüentemente, dou presente ás pessoas não por interesse particular, mas porque gosto de fazê-lo.",
+            "Quando o pastor da igreja anuncia um programa de trabalho (como limpar os arredores da Igreja ou pintar uma sala), disponho-me a estar lá e ajudar possível.",
+            "Há, freqüentemente, um bom número de pessoas em nossa casa para almoçar conosco após voltarmos da Igreja.",
+            "Oro pela vontade de Deus na vida de outros e estas pessoas, pelas quais oro, contam-me que minhas orações por ela têm sido respondidas em suas vidas.",
+            "Sinto-me inspirado, estimulado e espiritualmente enlevado estudando a Bíblia.",
+            "Membros e líderes da igreja vêem em mim um exemplo cristão a ser seguido.",
+            "Procuro ajudar pessoas a entregarem suas vidas na saúde ou doença.",
+            "Creio no dom de línguas como em Atos 2 quando os apóstolos foram capacitados a falar em línguas da época para pregar das maravilhas de Deus.",
+            "Consigo motivar pessoas a estudar a Bíblia e sei focalizar os temas em Jesus.",
+            "Eu me vejo como um pastor de Igreja com total dedicação às ovelhas, zelando pelo seu bem-estar, bem como pelo crescimento da igreja.",
+            "Transmito as mensagens que Deus impressiona em minha mente, sem temer as conseqüências que possam sobrevir. Procuro ser fiel a Deus, o máximo possível.",
+            "Uso muitas ilustrações e compartilho minha experiência para tornar conteúdos reais, palpáveis e desejáveis de serem colocados em prática na vida dos alunos.",
+            "Quando os líderes pedem minha opinião, faço com que entendam qual a melhor solução a ser encontrada, envolvo-os com o processo do meu raciocínio."
+        ];
+
+        // Gerar perguntas restantes como placeholders
+        // for(let i = 11; i <= 133; i++) {
+        //     questions.push(`Pergunta ${i} - Adicione sua pergunta personalizada aqui`);
+        // }
+
+        const ratingLabels = ['Não tem absolutamente nada a ver com você', 'Reflete uma leve inclinação', 'Reflete uma forte tendência sua', 'Descreve você de forma geral', 'Descreve você muito bem', 'Descreve você perfeitamente'];
+
+        // Gerar formulário
+        function generateForm() {
+            const container = document.getElementById('questionsContainer');
+            
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-card';
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-text">${question}</div>
+                    <div class="rating-options">
+                        ${ratingLabels.map((label, value) => `
+                            <div class="rating-option">
+                                <input type="radio" id="q${index + 1}_${value}" name="q${index + 1}" value="${value}" onchange="updateProgress()">
+                                <label for="q${index + 1}_${value}">
+                                    <div class="fw-bold">${value}</div>
+                                    <div class="small">${label}</div>
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+
+        // Atualizar progresso
+        function updateProgress() {
+            const totalQuestions = 133;
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            const percentage = (answeredQuestions / totalQuestions) * 100;
+            
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `${answeredQuestions}/${totalQuestions}`;
+        }
+
+        // Calcular resultados
+        function calculateResults() {
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            
+            if (answeredQuestions < 133) {
+                alert(`Por favor, responda todas as perguntas. Você respondeu ${answeredQuestions} de 133.`);
+                return;
+            }
+
+            const results = {};
+            
+            // Calcular pontuação para cada dom
+            Object.entries(spiritualGifts).forEach(([giftName, positions]) => {
+                let total = 0;
+                positions.forEach(position => {
+                    const selectedValue = document.querySelector(`input[name="q${position}"]:checked`);
+                    if (selectedValue) {
+                        total += parseInt(selectedValue.value);
+                    }
+                });
+                results[giftName] = total;
+            });
+
+            // Ordenar resultados por pontuação
+            const sortedResults = Object.entries(results).sort((a, b) => b[1] - a[1]);
+            
+            displayResults(sortedResults);
+        }
+
+        // Exibir resultados
+        function displayResults(sortedResults) {
+            const resultsContainer = document.getElementById('resultsContent');
+            const top5 = sortedResults.slice(0, 5);
+            
+            let html = '<h5 class="mb-3">🏆 Seus Top 5 Dons Espirituais:</h5>';
+            
+            top5.forEach(([gift, score], index) => {
+                html += `
+                    <div class="gift-result top-5">
+                        <span><i class="fas fa-medal me-2"></i>${index + 1}º lugar - ${gift}</span>
+                        <span class="badge bg-light text-dark fs-6">${score} pontos</span>
+                    </div>
+                `;
+            });
+            
+            html += '<hr><h5 class="mt-4 mb-3">📊 Todos os Resultados:</h5>';
+            
+            sortedResults.forEach(([gift, score]) => {
+                const isTop5 = top5.some(([topGift]) => topGift === gift);
+                html += `
+                    <div class="gift-result ${isTop5 ? 'top-5' : ''}">
+                        <span>${gift}</span>
+                        <span class="badge bg-light text-dark">${score} pontos</span>
+                    </div>
+                `;
+            });
+            
+            resultsContainer.innerHTML = html;
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inicializar formulário quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            generateForm();
+        });
+    </script>
+</body>
+</html>
