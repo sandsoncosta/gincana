@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown - Gincana EBD 2025</title>
+    <title>Countdown - Gincana EBD 2026</title>
+    
+    <!-- Favicon com texto EBD -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='70' font-family='Arial, sans-serif' font-size='45' font-weight='bold' fill='white' text-anchor='middle'%3EEBD%3C/text%3E%3C/svg%3E">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Gincana EBD 2026 - Contagem Regressiva">
+    <meta property="og:description" content="Faltam poucos dias para o início da Gincana EBD! Prepare-se para a aventura!">
+    <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1200' height='630' fill='url(%23grad)'/%3E%3Ctext x='600' y='250' font-family='Arial, sans-serif' font-size='80' font-weight='bold' fill='white' text-anchor='middle'%3EGincana EBD 2026%3C/text%3E%3Ctext x='600' y='350' font-family='Arial, sans-serif' font-size='50' fill='white' text-anchor='middle' opacity='0.9'%3EContagem Regressiva%3C/text%3E%3Ctext x='600' y='450' font-family='Arial, sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3E1%C2%BA de Mar%C3%A7o%3C/text%3E%3C/svg%3E">
+    <meta property="og:url" content="https://gincana-ebd.com">
+    <meta property="og:type" content="website">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -18,7 +29,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
-            background: linear-gradient(135deg, #074801 0%, #000000 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             position: relative;
         }
@@ -94,6 +105,7 @@
             color: #fff;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
             margin-bottom: 0.5rem;
+            white-space: nowrap;
         }
         
         .header-section .subtitle {
@@ -196,6 +208,7 @@
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 1rem;
+            white-space: nowrap;
         }
         
         .event-icon {
@@ -216,7 +229,8 @@
         
         @media (max-width: 768px) {
             .header-section h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
+                white-space: normal;
             }
             
             .header-section .subtitle {
@@ -243,6 +257,11 @@
             .countdown-container {
                 padding: 2rem 1rem;
             }
+            
+            .event-date {
+                font-size: 1.5rem;
+                white-space: normal;
+            }
         }
         
         @media (max-width: 480px) {
@@ -266,7 +285,7 @@
     
     <div class="container-main">
         <div class="header-section">
-            <h1><i class="fas fa-church"></i> Gincana EBD 2025</h1>
+            <h1><i class="fas fa-church"></i> Gincana EBD 2026</h1>
             <p class="subtitle">Prepare-se para a aventura!</p>
         </div>
         
@@ -296,7 +315,7 @@
                 <i class="fas fa-trophy"></i>
             </div>
             <div class="event-date">
-                <i class="far fa-calendar-alt"></i> 1º de Março de 2025
+                <i class="far fa-calendar-alt"></i> 1º de Março de 2026
             </div>
         </div>
     </div>
@@ -317,7 +336,7 @@
                 teamName.className = 'team-name';
                 teamName.textContent = teams[Math.floor(Math.random() * teams.length)];
                 teamName.style.left = Math.random() * 100 + '%';
-                teamName.style.animationDuration = (5 + Math.random() * 3) + 's';
+                teamName.style.animationDuration = (12 + Math.random() * 6) + 's';
                 teamName.style.animationDelay = '0s';
                 
                 background.appendChild(teamName);
@@ -328,12 +347,18 @@
             }, 2000);
         }
         
-        // Countdown
-        const countdownDate = new Date('March 1, 2026 00:00:00').getTime();
+        // Countdown para 1º de março de 2026
+        const countdownDate = new Date('2026-03-01T00:00:00').getTime();
         
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = countdownDate - now;
+            
+            if (distance < 0) {
+                document.querySelector('.countdown-display').innerHTML = 
+                    '<div style="color: #fff; font-size: 2rem; text-align: center; width: 100%; padding: 2rem;"><i class="fas fa-star"></i> A Gincana Começou! <i class="fas fa-star"></i></div>';
+                return;
+            }
             
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -344,17 +369,12 @@
             document.getElementById('hours').textContent = String(hours).padStart(2, '0');
             document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
             document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-            
-            if (distance < 0) {
-                clearInterval(countdownInterval);
-                document.querySelector('.countdown-display').innerHTML = 
-                    '<div style="color: #fff; font-size: 2rem; text-align: center; width: 100%;"><i class="fas fa-star"></i> A Gincana Começou! <i class="fas fa-star"></i></div>';
-            }
         }
         
+        // Inicializar
         createFloatingTeams();
         updateCountdown();
-        const countdownInterval = setInterval(updateCountdown, 1000);
+        setInterval(updateCountdown, 1000);
     </script>
 </body>
 </html>
