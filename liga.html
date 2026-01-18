@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caminhos da Vida - Acompanhamento do Jogo</title>
+    <!-- Tailwind CSS CDN for modern and responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics and readability */
+        :root {
+            --primary-color: #3b82f6; /* blue-500 */
+            --secondary-color: #10b981; /* emerald-500 */
+            --danger-color: #ef4444; /* red-500 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* light gray background */
+        }
+        .board-casa {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        .board-casa:hover:not(.active) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .active {
+            border: 4px solid var(--primary-color);
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        .player-token {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            border: 2px solid white;
+            position: absolute;
+            top: 5px;
+        }
+        .special-casa {
+            background-color: #fef08a; /* yellow-200 */
+            border: 3px solid #f59e0b; /* amber-500 */
+        }
+        .danger-casa {
+            background-color: #fee2e2; /* red-100 */
+            border: 3px solid #dc2626; /* red-600 */
+        }
+        .success-casa {
+            background-color: #d1fae5; /* green-100 */
+            border: 3px solid #059669; /* emerald-600 */
+        }
+        /* Style for the Modal backdrop */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div id="loading-indicator" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="text-white text-xl flex items-center">
+            Carregando o Jogo...
+        </div>
+    </div>
+
+    <div id="main-content" class="max-w-7xl mx-auto bg-white p-6 rounded-xl shadow-2xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">
+            🧭 CAMINHOS DA VIDA - Gestão
+        </h1>
+
+        <!-- User Info & Game Status -->
+        <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <button id="export-btn" onclick="exportGameState()" class="mt-3 md:mt-0 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition shadow-md">
+                Exportar Dados (.txt)
+            </button>
+            <button id="new-game-btn" onclick="showNewGameConfirmation()" class="mt-3 md:mt-0 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition shadow-md">
+                Iniciar Novo Jogo
+            </button>
+        </div>
+
+        <!-- 1. Team Setup Section -->
+        <div id="setup-section" class="bg-gray-50 p-6 rounded-xl mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">1. Configuração de Equipes</h2>
+            <div id="player-input-area" class="flex flex-col sm:flex-row gap-4 mb-4">
+                <input type="text" id="player-name-input" placeholder="Nome do Jogador/Equipe" class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <select id="player-color-select" class="p-3 border border-gray-300 rounded-lg">
+                    <option value="bg-red-500">Vermelho</option>
+                    <option value="bg-blue-500">Azul</option>
+                    <option value="bg-green-500">Verde</option>
+                    <option value="bg-yellow-500">Amarelo</option>
+                    <option value="bg-purple-500">Roxo</option>
+                    <option value="bg-pink-500">Rosa</option>
+                </select>
+                <button onclick="addPlayer()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition shadow-md">
+                    Adicionar
+                </button>
+            </div>
+            
+            <div id="player-list-setup" class="space-y-3">
+                <!-- Players will be listed here -->
+            </div>
+
+            <button onclick="startGame()" id="start-game-btn" class="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl rounded-lg transition shadow-lg disabled:opacity-50" disabled>
+                Começar o Jogo!
+            </button>
+        </div>
+        
+        <!-- 2. Game In Progress Section -->
+        <div id="game-section" class="hidden">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">2. O Jogo</h2>
+
+            <!-- Scoreboard -->
+            <div id="scoreboard" class="mb-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Score cards will be rendered here -->
+            </div>
+
+            <!-- Board & Action Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Board Visualization (Left/Center) -->
+                <div class="lg:col-span-2 bg-gray-50 p-4 rounded-xl shadow-inner">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700">Tabuleiro (Casa 1 a 20 + Início/Chegada)</h3>
+                    <div id="game-board" class="grid grid-cols-5 md:grid-cols-11 gap-2">
+                        <!-- Board houses will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Action Panel (Right) -->
+                <div class="lg:col-span-1 p-4 bg-white border border-gray-200 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">
+                        <span id="current-player-indicator" class="text-blue-600"></span>
+                    </h3>
+                    
+                    <div id="action-panel-move" class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h4 class="text-lg font-semibold mb-3 text-blue-800">
+                            Fase 1: Movimentação (Dado Físico)
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-3">
+                            O jogador jogou o dado físico. Para qual casa ele se moveu? (Ex: Posição atual 3 + dado 4 = Casa 7)
+                        </p>
+                        <select id="new-position-select" class="w-full p-2 border border-gray-300 rounded-lg mb-3"></select>
+                        <button onclick="applyMove()" class="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition shadow-md">
+                            Aplicar Movimento
+                        </button>
+                    </div>
+
+                    <div id="action-panel-question" class="hidden p-4 bg-emerald-50 rounded-lg border border-emerald-200 mt-4">
+                        <h4 class="text-lg font-semibold mb-3 text-emerald-800">
+                            Fase 2: Escolha da Pergunta
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-3">
+                            O jogador deve escolher uma Categoria (1-5) e um número de Pergunta (1-5).
+                        </p>
+                        <div class="flex gap-2 mb-3">
+                            <select id="category-select" class="w-1/2 p-2 border border-gray-300 rounded-lg">
+                                <option value="" disabled selected>Categoria</option>
+                                <option value="1">1. Redes Sociais</option>
+                                <option value="2">2. Dinheiro e Trabalho</option>
+                                <option value="3">3. Relacionamentos</option>
+                                <option value="4">4. Vida na Igreja</option>
+                                <option value="5">5. Decisões Difíceis</option>
+                            </select>
+                            <select id="question-number-select" class="w-1/2 p-2 border border-gray-300 rounded-lg">
+                                <option value="" disabled selected>Pergunta</option>
+                                <option value="1">Pergunta 1</option>
+                                <option value="2">Pergunta 2</option>
+                                <option value="3">Pergunta 3</option>
+                                <option value="4">Pergunta 4</option>
+                                <option value="5">Pergunta 5</option>
+                            </select>
+                        </div>
+                        <button onclick="displayQuestion()" id="display-question-btn" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg transition shadow-md disabled:opacity-50" disabled>
+                            Mostrar Situação
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Question & Result -->
+    <div id="question-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full m-4 p-6">
+            <h3 id="modal-title" class="text-2xl font-bold mb-4 text-gray-800">Situação do Jogo</h3>
+            <p id="modal-situation" class="text-lg mb-4 p-4 bg-gray-100 rounded"></p>
+            
+            <!-- Question Options -->
+            <div id="modal-options">
+                <button onclick="chooseOption('A')" id="option-a-btn" class="w-full mb-3 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition shadow-md">A) </button>
+                <button onclick="chooseOption('B')" id="option-b-btn" class="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition shadow-md">B) </button>
+            </div>
+
+            <!-- Result Display -->
+            <div id="modal-result" class="hidden">
+                <h4 class="text-xl font-semibold mt-4 mb-2">Consequência:</h4>
+                <p id="modal-consequence" class="text-md mb-4 p-4 bg-yellow-100 rounded border-l-4 border-yellow-500"></p>
+                <p id="modal-points" class="text-lg font-bold mb-4"></p>
+                <button onclick="closeQuestionModal()" id="next-turn-btn" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg transition shadow-md">
+                    Concluir Turno
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Prenda -->
+    <div id="prenda-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl max-w-xl w-full m-4 p-6">
+            <h3 class="text-3xl font-bold mb-4 text-red-600">🚨 PRENDA!</h3>
+            <p class="text-lg mb-4">
+                O jogador perdeu pontos e deve pagar uma prenda! A prenda sorteada é:
+            </p>
+            <div id="prenda-display" class="text-xl font-extrabold text-center p-6 bg-red-50 rounded-lg border-2 border-red-300 mb-6">
+                <!-- Prenda content here -->
+            </div>
+            
+            <p class="text-sm text-gray-600 mb-4">
+                Clique no botão abaixo após a prenda ser executada.
+            </p>
+            <button onclick="endPrenda()" class="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition shadow-md">
+                Prenda Paga! Concluir Turno
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal for New Game Confirmation -->
+    <div id="new-game-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full m-4 p-6">
+            <h3 class="text-2xl font-bold mb-4 text-red-600">Tem Certeza?</h3>
+            <p class="text-lg mb-4">
+                Ao iniciar um novo jogo, o progresso atual será **PERDIDO** permanentemente no navegador. Confirma a ação?
+            </p>
+            <div class="flex justify-end gap-4">
+                <button onclick="document.getElementById('new-game-modal').classList.add('hidden')" class="py-2 px-4 bg-gray-300 hover:bg-gray-400 font-bold rounded-lg transition">
+                    Cancelar
+                </button>
+                <button onclick="resetGameState(true)" class="py-2 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition">
+                    Sim, Novo Jogo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chave do localStorage
+        const LOCAL_STORAGE_KEY = 'caminhosDaVidaState';
+        
+        // Estado inicial do jogo
+        const INITIAL_STATE = {
+            isSetup: true,
+            players: [],
+            playerOrder: [],
+            currentPlayerIndex: 0,
+            currentTurnState: 'SETUP', // SETUP, MOVE, QUESTION, RESULT, PRENDA, END
+            currentQuestion: null, // Stores selected Q for result phase
+            questionLog: [],
+            prendaLog: []
+        };
+        
+        // Estado global (será carregado do localStorage)
+        let gameState = { ...INITIAL_STATE };
+        
+        // --- GAME DATA (Hardcoded) ---
+        const NUM_CASAS = 20;
+        
+        const PRENDAS = [
+            '🎵 Cantar "Eu navegarei" com gestos exagerados.',
+            '💪 Fazer 20 polichinelos gritando "Aleluia!" a cada um.',
+            '😅 Contar um mico que já passou na igreja.',
+            '⏱️ Recitar Salmo 23 em menos de 15 segundos.',
+            '🎤 Imitar o pastor pregando por 30 segundos.',
+            '💃 Dançar "Fica Tranquilo" (Thalles Roberto).',
+            '😝 Fazer 5 caretas sem rir.',
+            '🤗 Abraçar todos do grupo pedindo oração.',
+            '💝 Falar 3 qualidades do líder.',
+            '🎬 Fazer propaganda de um ministério da igreja estilo comercial de TV (30 seg).',
+            '🎤 Cantar um louvor escolhido pelo grupo fazendo playback exagerado.',
+            '😂 Contar piada gospel (tem que arrancar risada!).',
+            '🔢 Falar de 30 até 1 de trás pra frente sem errar.',
+            '📖 Equilibrar Bíblia na cabeça por 1 minuto.',
+            '🦁 Imitar 3 animais da Arca de Noé.',
+            '🙏 Fazer oração de gratidão por 1 minuto sem parar de falar.',
+            '📝 Escrever no ar "Jesus me ama" com o bumbum.',
+            '🎯 Recitar 5 versículos de memória (pode escolher quais).',
+            '🤸 Dançar coreografia de "Raridade" (Anderson Freire).',
+            '💬 Contar testemunho de quando conheceu Jesus (2 min).'
+        ];
+
+        const CATEGORIES = {
+            1: '📱 Redes Sociais e Tecnologia',
+            2: '💰 Dinheiro e Trabalho',
+            3: '❤️ Relacionamentos',
+            4: '⛪ Vida na Igreja',
+            5: '🎯 Decisões Difíceis'
+        };
+
+        const QUESTIONS = {
+            // Categoria 1: Redes Sociais e Tecnologia
+            1: {
+                1: {
+                    situation: 'Seu amigo postou algo ofensivo aos cristãos. Está bombando.',
+                    A: { text: 'Comentar defendendo a fé publicamente', result: 'Seu comentário virou exemplo e 50 pessoas curtiram.', points: 15, prenda: false },
+                    B: { text: 'Mandar mensagem no privado', result: 'No privado ele te xingou e bloqueou.', points: -10, prenda: true }
+                },
+                2: {
+                    situation: 'Pessoa linda te chamou no direct. Perfil tem fotos sensuais.',
+                    A: { text: 'Responder educadamente', result: 'Era perfil fake. Te extorquiram com prints.', points: -15, prenda: true },
+                    B: { text: 'Bloquear imediatamente', result: 'Era golpe conhecido. Você se salvou.', points: 20, prenda: false }
+                },
+                3: {
+                    situation: 'Grupo da igreja compartilhou meme engraçado mas que zomba de Jesus.',
+                    A: { text: 'Dar risada junto (é só humor)', result: 'Pastor viu e te chamou para conversar.', points: -10, prenda: true },
+                    B: { text: 'Sair do grupo', result: 'Você perdeu amizades, mas manteve testemunho.', points: 10, prenda: false }
+                },
+                4: {
+                    situation: 'Você tem tempo livre no domingo à noite. O que você faz?',
+                    A: { text: 'Assistir a um filme ou série com amigos, e ir dormir tarde.', result: 'Você acordou na segunda-feira bem cansado, e teve dificuldade de prestar atenção no seu devocional.', points: -5, prenda: true },
+                    B: { text: 'Assistir a um culto online e ir dormir cedo.', result: 'Você começou a semana com a Palavra de Deus no seu coração e com energia para o dia a dia.', points: 10, prenda: false }
+                },
+                5: {
+                    situation: 'Você está no culto e recebe uma mensagem urgente no celular.',
+                    A: { text: 'Deixar o celular de lado e se concentrar no culto.', result: 'Você se concentrou na Palavra de Deus e foi edificado.', points: 15, prenda: false },
+                    B: { text: 'Responder rapidamente a mensagem.', result: 'Você perdeu a atenção e o foco na Palavra de Deus.', points: -5, prenda: true }
+                }
+            },
+            // Categoria 2: Dinheiro e Trabalho
+            2: {
+                1: {
+                    situation: 'Você encontrou uma carteira cheia de dinheiro na rua. Ninguém viu.',
+                    A: { text: 'Pegar o dinheiro para si. Afinal, "achado não é roubado."', result: 'A carteira tinha documentos e o dono era um missionário que precisava daquele dinheiro para a viagem. Você o prejudicou.', points: -20, prenda: true },
+                    B: { text: 'Procurar o dono ou entregar a uma autoridade policial.', result: 'O dono te encontrou e, como forma de gratidão, te deu R$ 100,00 e orou por você.', points: 25, prenda: false }
+                },
+                2: {
+                    situation: 'Seu chefe te pediu para falsificar um relatório para conseguir um contrato.',
+                    A: { text: 'Fazer o que ele pediu. Precisa do emprego.', result: 'O contrato foi descoberto como fraude, você e seu chefe foram demitidos e processados.', points: -25, prenda: true },
+                    B: { text: 'Recusar educadamente, citando seus princípios.', result: 'Você foi elogiado pela sua integridade e recebeu uma promoção (e seu chefe foi demitido!).', points: 30, prenda: false }
+                },
+                3: {
+                    situation: 'Você recebeu seu primeiro salário e quer comprar algo legal. Seus dízimos e ofertas são devidos.',
+                    A: { text: 'Comprar o item de luxo e dizimar o que sobrar.', result: 'Você desequilibrou suas finanças, e Deus não se agradou.', points: -10, prenda: true },
+                    B: { text: 'Separar o dízimo e a oferta primeiro, depois comprar o item.', result: 'Você honrou a Deus, e Ele te prosperou.', points: 15, prenda: false }
+                },
+                4: {
+                    situation: 'Um colega de trabalho está falando mal do chefe na sua frente.',
+                    A: { text: 'Concordar e participar da fofoca.', result: 'O chefe descobriu, e você levou uma advertência.', points: -10, prenda: true },
+                    B: { text: 'Mudar de assunto e orar pelo colega.', result: 'Você evitou a fofoca e manteve a paz no ambiente de trabalho.', points: 10, prenda: false }
+                },
+                5: {
+                    situation: 'Você foi contratado para um trabalho simples, mas o cliente te pediu para fazer algo complexo sem custo adicional.',
+                    A: { text: 'Recusar e cobrar o valor adicional.', result: 'O cliente te chamou de ganancioso e te deu uma nota baixa.', points: -5, prenda: true },
+                    B: { text: 'Fazer o que ele pediu como forma de evangelismo.', result: 'O cliente ficou impressionado e te indicou para outros trabalhos.', points: 15, prenda: false }
+                }
+            },
+            // Categoria 3: Relacionamentos
+            3: {
+                1: {
+                    situation: 'Seu namorado(a) te pressiona a ir para a cama. Ele(a) diz que é "normal" e "prova de amor".',
+                    A: { text: 'Ceder, por medo de perdê-lo(a).', result: 'Você se arrependeu, perdeu a paz e ele(a) te deixou uma semana depois.', points: -20, prenda: true },
+                    B: { text: 'Dizer "NÃO" e explicar seus limites em Cristo.', result: 'Ele(a) te respeitou, e vocês continuaram o namoro com mais santidade e propósito.', points: 25, prenda: false }
+                },
+                2: {
+                    situation: 'Você e seu cônjuge estão em uma briga feia. Ele(a) te ofendeu, e você está com raiva.',
+                    A: { text: 'Responder com a mesma ofensa, gritando.', result: 'A briga escalou e vocês ficaram dias sem se falar. O Espírito Santo se entristeceu.', points: -15, prenda: true },
+                    B: { text: 'Pedir um tempo, sair de perto para orar e se acalmar.', result: 'Você acalmou seu coração, e voltaram a conversar em amor.', points: 15, prenda: false }
+                },
+                3: {
+                    situation: 'Seu vizinho está com um problema sério e precisa de ajuda urgente. Você está ocupado.',
+                    A: { text: 'Dizer que está ocupado e que ele procure a igreja.', result: 'Você perdeu a oportunidade de ser luz e testemunho para ele.', points: -10, prenda: true },
+                    B: { text: 'Parar o que está fazendo e ajudá-lo.', result: 'Ele ficou grato e, ao saber que você é cristão, quis conhecer sua igreja.', points: 20, prenda: false }
+                },
+                4: {
+                    situation: 'Seu melhor amigo está te incentivando a fazer algo errado, mas que parece "inofensivo".',
+                    A: { text: 'Fazer junto, pois "todos fazem" e "é só uma vez".', result: 'O pecado te trouxe culpa, e você se afastou de Deus.', points: -15, prenda: true },
+                    B: { text: 'Recusar e alertar seu amigo sobre o perigo.', result: 'Você evitou o pecado e deu um bom testemunho.', points: 15, prenda: false }
+                },
+                5: {
+                    situation: 'Você percebe que um familiar está triste e isolado.',
+                    A: { text: 'Ignorar, achando que é passageiro.', result: 'A tristeza se transformou em depressão, e você não ajudou.', points: -10, prenda: true },
+                    B: { text: 'Abordar com amor e perguntar se pode orar por ele.', result: 'Você ofereceu apoio, e a conversa abriu portas para a cura e a restauração.', points: 20, prenda: false }
+                }
+            },
+            // Categoria 4: Vida na Igreja
+            4: {
+                1: {
+                    situation: 'Você foi convidado para servir em um ministério, mas não se sente pronto ou capaz.',
+                    A: { text: 'Recusar, dizendo que precisa de mais tempo e treinamento.', result: 'Você perdeu a oportunidade de crescer e ser usado por Deus. O ministério ficou desfalcado.', points: -5, prenda: true },
+                    B: { text: 'Aceitar em fé e pedir ajuda aos líderes.', result: 'Deus te capacitou no processo, e você se tornou um servo fiel e útil no Reino.', points: 15, prenda: false }
+                },
+                2: {
+                    situation: 'Você vê um irmão da igreja pecando abertamente e todos estão comentando.',
+                    A: { text: 'Fofocar sobre o assunto com os outros membros.', result: 'Você se tornou parte do problema, e a fofoca prejudicou a comunhão.', points: -15, prenda: true },
+                    B: { text: 'Ir ao irmão em amor e privacidade para admoestá-lo.', result: 'Você seguiu o princípio bíblico, e o irmão foi restaurado e grato.', points: 20, prenda: false }
+                },
+                3: {
+                    situation: 'Você chega atrasado para o culto e tem que se sentar na frente.',
+                    A: { text: 'Entrar e procurar um lugar no fundo para não incomodar.', result: 'Você perdeu a bênção de adorar a Deus no início do culto.', points: -5, prenda: true },
+                    B: { text: 'Entrar discretamente e sentar-se onde estiver disponível, mesmo na frente.', result: 'Você honrou a Deus e recebeu a Palavra em primeira mão.', points: 10, prenda: false }
+                },
+                4: {
+                    situation: 'Você percebe que o líder do seu ministério está fazendo algo que não concorda.',
+                    A: { text: 'Falar mal do líder para os outros membros do ministério.', result: 'Você causou divisão e confusão na igreja.', points: -15, prenda: true },
+                    B: { text: 'Conversar com o líder em particular, com amor e respeito.', result: 'O líder te ouviu e, juntos, encontraram uma solução melhor.', points: 15, prenda: false }
+                },
+                5: {
+                    situation: 'Seu celular toca durante a oração. O que você faz?',
+                    A: { text: 'Desligar rapidamente e se concentrar na oração.', result: 'Você evitou a distração e honrou a Deus.', points: 10, prenda: false },
+                    B: { text: 'Ignorar, deixando o celular tocar até parar.', result: 'Você distraiu toda a igreja e não honrou a Deus.', points: -10, prenda: true }
+                }
+            },
+            // Categoria 5: Decisões Difíceis
+            5: {
+                1: {
+                    situation: 'Você recebeu uma bolsa de estudos para uma universidade fora do país, mas sua família e igreja não concordam.',
+                    A: { text: 'Ignorar a opinião deles e ir em frente com o seu plano.', result: 'Você se afastou da cobertura e da comunhão, e a saudade e a solidão te fizeram mal.', points: -15, prenda: true },
+                    B: { text: 'Orar e buscar sabedoria com seus líderes e familiares. Se for de Deus, Ele abrirá as portas.', result: 'Você buscou a vontade de Deus, e a porta se fechou. Mas Deus te deu uma oportunidade melhor na sua cidade.', points: 20, prenda: false }
+                },
+                2: {
+                    situation: 'Um amigo não cristão te convida para uma festa que você sabe que haverá bebida e outras coisas ilícitas.',
+                    A: { text: 'Ir, mas prometer a si mesmo que não vai fazer nada de errado.', result: 'Você se sentiu pressionado, cedeu à tentação e entristeceu o Espírito Santo.', points: -20, prenda: true },
+                    B: { text: 'Recusar e convidar o amigo para fazerem algo diferente.', result: 'Você evitou o mal e abriu uma porta para o amigo ver um estilo de vida diferente.', points: 15, prenda: false }
+                },
+                3: {
+                    situation: 'Você testemunha um acidente de carro e é o único a ver tudo.',
+                    A: { text: 'Fugir rapidamente, pois não quer se envolver com a polícia.', result: 'Você se sentiu culpado e negligenciou a justiça.', points: -10, prenda: true },
+                    B: { text: 'Prestar socorro e falar a verdade à polícia.', result: 'Você agiu como um bom samaritano e cumpriu seu dever de cidadão.', points: 15, prenda: false }
+                },
+                4: {
+                    situation: 'Você está no mercado e o caixa te devolve R$ 5,00 a mais no troco.',
+                    A: { text: 'Guardar o dinheiro para si. Afinal, foi um erro deles.', result: 'Você cometeu um pequeno furto e perdeu sua paz.', points: -5, prenda: true },
+                    B: { text: 'Devolver o dinheiro e avisar o erro.', result: 'Você honrou a Deus com a sua honestidade.', points: 10, prenda: false }
+                },
+                5: {
+                    situation: 'Você tem a chance de se vingar de alguém que te fez muito mal no passado.',
+                    A: { text: 'Se vingar, afinal "olho por olho".', result: 'Você pecou contra Deus e contra o próximo. A vingança não te trouxe paz.', points: -20, prenda: true },
+                    B: { text: 'Perdoar e orar pela pessoa, entregando a situação nas mãos de Deus.', result: 'Você experimentou a liberdade do perdão e Deus te honrou.', points: 25, prenda: false }
+                }
+            }
+        };
+        
+        // --- LOCAL STORAGE PERSISTENCE ---
+
+        /**
+         * Carrega o estado do jogo do localStorage ou usa o estado inicial.
+         */
+        function loadGameStateLocal() {
+            const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (savedState) {
+                try {
+                    return JSON.parse(savedState);
+                } catch (e) {
+                    console.error("Erro ao parsear o estado salvo. Iniciando novo jogo.", e);
+                    return { ...INITIAL_STATE };
+                }
+            }
+            return { ...INITIAL_STATE };
+        }
+
+        /**
+         * Salva o estado atual do jogo no localStorage.
+         */
+        function saveGameState() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gameState));
+                renderUI(); // Atualiza a UI após salvar
+            } catch (error) {
+                console.error("Erro ao salvar o estado no localStorage:", error);
+            }
+        }
+        
+        /**
+         * Reseta o estado do jogo para o inicial e limpa o localStorage.
+         * @param {boolean} confirmed - True se o reset veio do botão de novo jogo.
+         */
+        function resetGameState(confirmed) {
+            if (confirmed) {
+                document.getElementById('new-game-modal').classList.add('hidden');
+            }
+
+            gameState = { ...INITIAL_STATE };
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            saveGameState(); // Salva o estado inicial (vazio)
+        }
+        
+        // --- UI RENDERING ---
+
+        /**
+         * Função principal de inicialização e renderização.
+         */
+        function initializeGame() {
+            gameState = loadGameStateLocal();
+            renderUI();
+        }
+
+        /**
+         * Renderiza a UI baseada no gameState.
+         */
+        function renderUI() {
+            if (gameState.isSetup) {
+                document.getElementById('setup-section').classList.remove('hidden');
+                document.getElementById('game-section').classList.add('hidden');
+                renderPlayerSetupList();
+                document.getElementById('start-game-btn').disabled = gameState.players.length < 2;
+            } else {
+                document.getElementById('setup-section').classList.add('hidden');
+                document.getElementById('game-section').classList.remove('hidden');
+                renderScoreboard();
+                renderGameBoard();
+                renderActionPanel();
+                checkGameEnd();
+            }
+        }
+
+        /**
+         * Renders the list of players during the setup phase.
+         */
+        function renderPlayerSetupList() {
+            const listEl = document.getElementById('player-list-setup');
+            listEl.innerHTML = '';
+            
+            gameState.players.forEach((player) => {
+                const playerEl = document.createElement('div');
+                playerEl.className = 'flex items-center justify-between p-3 bg-white rounded-lg border';
+                playerEl.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-4 h-4 rounded-full ${player.color} shadow-md"></span>
+                        <span class="font-medium text-gray-700">${player.name}</span>
+                    </div>
+                    <button onclick="removePlayer('${player.id}')" class="text-red-500 hover:text-red-700 transition">
+                        Remover
+                    </button>
+                `;
+                listEl.appendChild(playerEl);
+            });
+        }
+
+        /**
+         * Renders the scoreboard cards.
+         */
+        function renderScoreboard() {
+            const scoreboardEl = document.getElementById('scoreboard');
+            scoreboardEl.innerHTML = '';
+
+            const currentPlayer = getCurrentPlayer();
+
+            gameState.players.forEach(player => {
+                const isCurrent = currentPlayer && player.id === currentPlayer.id;
+                const cardClass = isCurrent 
+                    ? `border-4 border-blue-500 bg-blue-100 shadow-xl` 
+                    : `border border-gray-200 bg-white shadow-md`;
+                
+                const scoreCard = document.createElement('div');
+                scoreCard.className = `p-4 rounded-xl ${cardClass} transition duration-300`;
+                scoreCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-5 h-5 rounded-full ${player.color}"></span>
+                            <span class="text-lg font-bold text-gray-800">${player.name}</span>
+                        </div>
+                        <span class="text-2xl font-extrabold text-blue-700">${player.score}</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-1">Posição: Casa ${player.position === 0 ? 'INÍCIO' : player.position === NUM_CASAS + 1 ? 'CHEGADA' : player.position}</p>
+                `;
+                scoreboardEl.appendChild(scoreCard);
+            });
+        }
+
+        /**
+         * Renders the board with player tokens.
+         */
+        function renderGameBoard() {
+            const boardEl = document.getElementById('game-board');
+            boardEl.innerHTML = '';
+
+            // Add INÍCIO casa (Position 0)
+            boardEl.appendChild(createCasaElement(0, 'INÍCIO', 'success-casa', gameState.players.filter(p => p.position === 0)));
+
+            // Add Casas 1 to 20
+            for (let i = 1; i <= NUM_CASAS; i++) {
+                let text = i;
+                let classes = 'bg-white';
+                if ([5, 10, 15].includes(i)) {
+                    text += ' (BÔNUS)'; classes = 'special-casa';
+                } else if ([7, 14].includes(i)) {
+                    text += ' (SORTE)'; classes = 'success-casa';
+                } else if (i === 11) {
+                    text += ' (AZAR)'; classes = 'danger-casa';
+                }
+                
+                const playersAtPosition = gameState.players.filter(p => p.position === i);
+                boardEl.appendChild(createCasaElement(i, text, classes, playersAtPosition));
+            }
+
+            // Add CHEGADA casa (Position 21)
+            boardEl.appendChild(createCasaElement(NUM_CASAS + 1, 'CHEGADA', 'success-casa', gameState.players.filter(p => p.position === NUM_CASAS + 1)));
+        }
+
+        /**
+         * Creates a single board casa element.
+         */
+        function createCasaElement(position, text, classes, players) {
+            const casaEl = document.createElement('div');
+            const currentPlayer = getCurrentPlayer();
+            // A casa ativa só é relevante se o jogo não tiver acabado
+            const isActiveTurn = currentPlayer && currentPlayer.position === position && gameState.currentTurnState !== 'END' && !gameState.isSetup;
+            
+            casaEl.className = `board-casa ${classes} ${isActiveTurn ? 'active' : ''}`;
+            casaEl.innerHTML = `<span class="font-bold">${text}</span>`;
+            
+            // Add player tokens
+            players.forEach((player, index) => {
+                const token = document.createElement('div');
+                token.className = `player-token ${player.color}`;
+                // Offset tokens to show multiple players on the same square
+                const offset = index * 18; 
+                token.style.transform = `translate(${offset}px, -10px)`;
+                casaEl.appendChild(token);
+            });
+            
+            return casaEl;
+        }
+
+        /**
+         * Renders the action panel based on the current game state (MOVE, QUESTION, etc.).
+         */
+        function renderActionPanel() {
+            const currentPlayer = getCurrentPlayer();
+            const indicatorEl = document.getElementById('current-player-indicator');
+            indicatorEl.innerHTML = `Vez de: <span class="text-3xl font-extrabold text-blue-600">${currentPlayer.name}</span>`;
+
+            // Reset action panels visibility
+            document.getElementById('action-panel-move').classList.add('hidden');
+            document.getElementById('action-panel-question').classList.add('hidden');
+            
+            const movePanel = document.getElementById('action-panel-move');
+            const questionPanel = document.getElementById('action-panel-question');
+
+            // Populate New Position Select based on current position and theoretical dice roll (1-6)
+            const newPositionSelect = document.getElementById('new-position-select');
+            newPositionSelect.innerHTML = '';
+            
+            if(currentPlayer.position <= NUM_CASAS) { // Only allow movement if not finished
+                for(let i = 1; i <= 6; i++) {
+                    const newPos = Math.min(currentPlayer.position + i, NUM_CASAS + 1);
+                    const option = document.createElement('option');
+                    option.value = newPos;
+                    option.textContent = `Dado ${i} → Casa ${newPos === NUM_CASAS + 1 ? 'CHEGADA' : newPos}`;
+                    newPositionSelect.appendChild(option);
+                }
+            } else {
+                 const option = document.createElement('option');
+                 option.value = currentPlayer.position;
+                 option.textContent = `Aguardando o próximo turno`;
+                 newPositionSelect.appendChild(option);
+            }
+            
+            // Show appropriate panel
+            if (gameState.currentTurnState === 'MOVE') {
+                movePanel.classList.remove('hidden');
+            } else if (gameState.currentTurnState === 'QUESTION') {
+                questionPanel.classList.remove('hidden');
+                movePanel.classList.add('hidden');
+                // Reset select values
+                document.getElementById('category-select').value = "";
+                document.getElementById('question-number-select').value = "";
+                document.getElementById('display-question-btn').disabled = true;
+            } else if (gameState.currentTurnState === 'END') {
+                indicatorEl.innerHTML = '<span class="text-3xl font-extrabold text-red-600">FIM DE JOGO!</span>';
+                movePanel.classList.add('hidden');
+                questionPanel.classList.add('hidden');
+            }
+        }
+        
+        // --- GAME FLOW FUNCTIONS ---
+
+        /**
+         * Adds a new player during the setup phase.
+         */
+        function addPlayer() {
+            const nameInput = document.getElementById('player-name-input');
+            const colorSelect = document.getElementById('player-color-select');
+            const name = nameInput.value.trim();
+            const color = colorSelect.value;
+            
+            if (!name) return alert('Por favor, insira o nome do jogador/equipe.');
+            if (gameState.players.some(p => p.name.toLowerCase() === name.toLowerCase())) return alert('Este nome já está sendo usado.');
+            if (gameState.players.some(p => p.color === color)) return alert('Esta cor já está em uso. Escolha outra.');
+
+            const newPlayer = {
+                id: crypto.randomUUID(), // Usando UUID para ID local
+                name: name,
+                color: color,
+                score: 0,
+                position: 0 // Start position
+            };
+
+            gameState.players.push(newPlayer);
+            gameState.playerOrder.push(newPlayer.id); // Add to order
+            nameInput.value = '';
+            
+            saveGameState();
+        }
+
+        /**
+         * Removes a player during the setup phase.
+         * @param {string} playerId - ID of the player to remove.
+         */
+        function removePlayer(playerId) {
+            gameState.players = gameState.players.filter(p => p.id !== playerId);
+            gameState.playerOrder = gameState.playerOrder.filter(id => id !== playerId);
+            saveGameState();
+        }
+
+        /**
+         * Transitions from setup to the game phase.
+         */
+        function startGame() {
+            if (gameState.players.length < 2) {
+                return alert('Você precisa de pelo menos 2 jogadores para começar.');
+            }
+            // Não precisa embaralhar, mantemos a ordem de adição como ordem de jogo
+            
+            gameState.isSetup = false;
+            gameState.currentPlayerIndex = 0;
+            gameState.currentTurnState = 'MOVE';
+            saveGameState();
+        }
+
+        /**
+         * Aplica o movimento manual e verifica casas especiais.
+         */
+        function applyMove() {
+            const newPos = parseInt(document.getElementById('new-position-select').value);
+            let player = getCurrentPlayer();
+            
+            if (player.position > NUM_CASAS) { // Player already finished
+                nextTurn(false);
+                return;
+            }
+
+            // 1. Update Position
+            player.position = newPos;
+            
+            // 2. Check for CHEGADA (End)
+            if (player.position > NUM_CASAS) {
+                player.position = NUM_CASAS + 1; // Set to CHEGADA
+                
+                // Check if this player is the first to arrive (Bonus +30)
+                const finishedCount = gameState.players.filter(p => p.position > NUM_CASAS).length;
+                if (finishedCount === 1) {
+                    player.score += 30; // First to arrive bonus
+                    alert(`${player.name} chegou! BÔNUS DE +30 PONTOS!`);
+                }
+
+                // Check for game end before next turn
+                if (finishedCount === gameState.players.length) {
+                    gameState.currentTurnState = 'END'; 
+                    checkGameEnd(true); // Announce winner immediately
+                } else {
+                    nextTurn(false); // Next player's turn
+                }
+                saveGameState();
+                return;
+            }
+
+            // 3. Check for Special Houses
+            let extraTurn = false;
+            let message = '';
+            
+            if ([7, 14].includes(newPos)) {
+                // CASA DA SORTE (Joga dado de novo)
+                message = `${player.name} caiu na CASA DA SORTE! Joga de novo!`;
+                extraTurn = true;
+            } else if (newPos === 11) {
+                // CASA DO AZAR (Volta 3 casas)
+                const oldPos = player.position;
+                player.position = Math.max(1, player.position - 3);
+                message = `${player.name} caiu na CASA DO AZAR! Volta 3 casas: ${oldPos} -> ${player.position}!`;
+            } else if ([5, 10, 15].includes(newPos)) {
+                // DESAFIO BÔNUS (Points in DOUBLE)
+                message = `${player.name} caiu no DESAFIO BÔNUS! Pontos em DOBRO nesta rodada!`;
+            }
+            
+            if (message) alert(message);
+
+            gameState.currentTurnState = 'QUESTION';
+            player.extraTurn = extraTurn; // Store extra turn flag on player for nextTurn
+            saveGameState();
+        }
+
+        /**
+         * Displays the selected question in the modal.
+         */
+        function displayQuestion() {
+            const category = parseInt(document.getElementById('category-select').value);
+            const qNumber = parseInt(document.getElementById('question-number-select').value);
+            
+            if (isNaN(category) || isNaN(qNumber)) {
+                return alert('Por favor, selecione a Categoria e o número da Pergunta.');
+            }
+
+            const qData = QUESTIONS[category][qNumber];
+            if (!qData) {
+                return alert('Pergunta não encontrada para a categoria selecionada.');
+            }
+            
+            // Store the question data for use in the result phase
+            gameState.currentQuestion = { 
+                category: category, 
+                qNumber: qNumber, 
+                qData: qData 
+            };
+
+            // Display modal
+            document.getElementById('modal-title').textContent = `${CATEGORIES[category]} - Pergunta ${qNumber}`;
+            document.getElementById('modal-situation').textContent = qData.situation;
+            
+            document.getElementById('option-a-btn').textContent = `A) ${qData.A.text}`;
+            document.getElementById('option-b-btn').textContent = `B) ${qData.B.text}`;
+            
+            document.getElementById('modal-options').classList.remove('hidden');
+            document.getElementById('modal-result').classList.add('hidden');
+            
+            document.getElementById('question-modal').classList.remove('hidden');
+            document.getElementById('question-modal').classList.add('flex');
+            
+            saveGameState();
+        }
+
+        /**
+         * Processes the player's choice (A or B), applies score, and shows result.
+         * @param {string} choice - 'A' or 'B'.
+         */
+        function chooseOption(choice) {
+            const qState = gameState.currentQuestion;
+            const resultData = qState.qData[choice];
+            const player = getCurrentPlayer();
+            const currentPosition = player.position;
+
+            let points = resultData.points;
+
+            // Check for DESAFIO BÔNUS (5, 10, 15)
+            const isBonus = [5, 10, 15].includes(currentPosition);
+            if (isBonus) {
+                points *= 2;
+                if (points !== 0) alert('PONTOS EM DOBRO aplicados!');
+            }
+            
+            player.score += points;
+            
+            // Update question state with final result details
+            qState.choice = choice;
+            qState.pointsApplied = points;
+            qState.prendaRequired = points < 0;
+
+            // Update UI in modal
+            document.getElementById('modal-options').classList.add('hidden');
+            document.getElementById('modal-result').classList.remove('hidden');
+            
+            document.getElementById('modal-consequence').textContent = resultData.result;
+            document.getElementById('modal-points').innerHTML = points >= 0
+                ? `<span class="text-green-600">✅ Ganhou ${points} pontos!</span>`
+                : `<span class="text-red-600">❌ Perdeu ${Math.abs(points)} pontos!</span>`;
+            
+            gameState.currentTurnState = 'RESULT';
+            saveGameState();
+        }
+
+        /**
+         * Closes the question modal and determines the next step (Prenda or Next Turn).
+         */
+        function closeQuestionModal() {
+            document.getElementById('question-modal').classList.add('hidden');
+
+            const qState = gameState.currentQuestion;
+            const player = getCurrentPlayer();
+            
+            // Log the question result
+            gameState.questionLog.push({
+                playerName: player.name,
+                category: qState.category,
+                qNumber: qState.qNumber,
+                choice: qState.choice,
+                points: qState.pointsApplied,
+                position: player.position,
+                prendaRequired: qState.prendaRequired,
+                timestamp: new Date().toLocaleTimeString()
+            });
+
+            if (qState.prendaRequired) {
+                // Go to Prenda phase
+                gameState.currentTurnState = 'PRENDA';
+                showPrendaModal();
+            } else {
+                // Advance turn immediately
+                nextTurn(player.extraTurn || false);
+            }
+
+            // Clear temporary turn state
+            player.extraTurn = false;
+            gameState.currentQuestion = null;
+            saveGameState();
+        }
+
+        /**
+         * Displays the Prenda modal with a random punishment.
+         */
+        function showPrendaModal() {
+            const player = getCurrentPlayer();
+            
+            // Select a random prenda
+            const randomIndex = Math.floor(Math.random() * PRENDAS.length);
+            const prendaText = PRENDAS[randomIndex];
+
+            document.getElementById('prenda-display').textContent = prendaText;
+            
+            document.getElementById('prenda-modal').classList.remove('hidden');
+            document.getElementById('prenda-modal').classList.add('flex');
+
+            // Store prenda in state for logging (will be fully logged in endPrenda)
+            gameState.currentPrenda = {
+                text: prendaText,
+                playerName: player.name,
+                prendaIndex: randomIndex
+            };
+            saveGameState();
+        }
+
+        /**
+         * Concludes the Prenda phase and advances to the next player.
+         */
+        function endPrenda() {
+            document.getElementById('prenda-modal').classList.add('hidden');
+            const player = getCurrentPlayer();
+
+            // Log the prenda execution
+            if (gameState.currentPrenda) {
+                gameState.prendaLog.push({
+                    playerName: gameState.currentPrenda.playerName,
+                    prendaText: gameState.currentPrenda.text,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                gameState.currentPrenda = null;
+            }
+            
+            // Advance turn
+            nextTurn(player.extraTurn || false);
+
+            // Clear temporary turn state
+            player.extraTurn = false;
+            saveGameState();
+        }
+
+        /**
+         * Advances to the next player in the game order.
+         * @param {boolean} extraTurn - If true, the same player plays again.
+         */
+        function nextTurn(extraTurn) {
+            if (!extraTurn) {
+                // Se não for um turno extra, move para o próximo jogador
+                let nextIndex = gameState.currentPlayerIndex;
+                let foundNext = false;
+                
+                // Busca o próximo jogador que ainda não terminou
+                for(let i = 1; i <= gameState.playerOrder.length; i++) {
+                    nextIndex = (gameState.currentPlayerIndex + i) % gameState.playerOrder.length;
+                    const nextPlayerId = gameState.playerOrder[nextIndex];
+                    const nextPlayer = gameState.players.find(p => p.id === nextPlayerId);
+                    
+                    if (nextPlayer && nextPlayer.position <= NUM_CASAS) {
+                        gameState.currentPlayerIndex = nextIndex;
+                        foundNext = true;
+                        break;
+                    }
+                }
+                
+                if (!foundNext) {
+                    // Todos terminaram
+                    checkGameEnd(true);
+                    return;
+                }
+            }
+            
+            gameState.currentTurnState = 'MOVE';
+            saveGameState();
+        }
+        
+        /**
+         * Checks if the game has ended and updates the UI accordingly.
+         * @param {boolean} forceAnnounce - Force winner announcement.
+         */
+        function checkGameEnd(forceAnnounce = false) {
+            const finishedPlayers = gameState.players.filter(p => p.position > NUM_CASAS);
+            
+            if (finishedPlayers.length === gameState.players.length && gameState.players.length > 0) {
+                gameState.currentTurnState = 'END';
+                // Find winner
+                const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
+                const winner = sortedPlayers[0];
+                
+                if (forceAnnounce) {
+                    alert(`FIM DE JOGO! O vencedor é ${winner.name} com ${winner.score} pontos!`);
+                    document.getElementById('export-btn').classList.remove('hidden'); // Show export button
+                }
+                saveGameState();
+            }
+        }
+        
+        /**
+         * Gera e inicia o download do relatório do jogo em TXT.
+         */
+        function exportGameState() {
+            const date = new Date().toLocaleDateString('pt-BR');
+            
+            let report = `CAMINHOS DA VIDA - RELATÓRIO DO JOGO\n`;
+            report += `Data do Relatório: ${date}\n`;
+            report += `--------------------------------------------------\n\n`;
+
+            // 1. Resumo da Pontuação Final
+            report += `1. PONTUAÇÃO FINAL:\n`;
+            
+            const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
+            if (sortedPlayers.length > 0) {
+                 report += `Vencedor: ${sortedPlayers[0].name} com ${sortedPlayers[0].score} pontos.\n`;
+            }
+
+            sortedPlayers.forEach((player, index) => {
+                report += `   ${index + 1}. ${player.name} (Cor: ${player.color.replace('bg-', '')}) - ${player.score} pontos (Posição final: Casa ${player.position === NUM_CASAS + 1 ? 'CHEGADA' : player.position})\n`;
+            });
+            report += `\n`;
+
+            // 2. Log de Perguntas e Respostas
+            report += `2. LOG DE PERGUNTAS E PONTUAÇÃO:\n`;
+            if (gameState.questionLog.length === 0) {
+                report += `   Nenhuma pergunta respondida.\n`;
+            } else {
+                gameState.questionLog.forEach((log, index) => {
+                    const categoryName = CATEGORIES[log.category];
+                    const pointsText = log.points >= 0 ? `Ganhou +${log.points}` : `Perdeu ${Math.abs(log.points)}`;
+                    report += `   ${index + 1}. [${log.timestamp}] ${log.playerName} na Casa ${log.position}:\n`;
+                    report += `      - Categoria/Pergunta: ${categoryName} - ${log.qNumber}\n`;
+                    report += `      - Escolha: ${log.choice} (${pointsText} pontos)\n`;
+                    report += `      - Prenda: ${log.prendaRequired ? 'SIM' : 'NÃO'}\n`;
+                });
+            }
+            report += `\n`;
+
+            // 3. Log de Prendas
+            report += `3. LOG DE PRENDAS PAGAS:\n`;
+            if (gameState.prendaLog.length === 0) {
+                report += `   Nenhuma prenda registrada.\n`;
+            } else {
+                gameState.prendaLog.forEach((log, index) => {
+                    report += `   ${index + 1}. [${log.timestamp}] ${log.playerName} pagou a prenda:\n`;
+                    report += `      - Prenda: ${log.prendaText}\n`;
+                });
+            }
+            report += `\n`;
+
+            // Cria o arquivo TXT e inicia o download
+            const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Relatorio_Caminhos_da_Vida_${date.replace(/\//g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // --- UTILITY FUNCTIONS ---
+
+        function getCurrentPlayer() {
+            const currentId = gameState.playerOrder[gameState.currentPlayerIndex];
+            return gameState.players.find(p => p.id === currentId);
+        }
+
+        function showNewGameConfirmation() {
+            document.getElementById('new-game-modal').classList.remove('hidden');
+            document.getElementById('new-game-modal').classList.add('flex');
+        }
+
+        // Listener for category/question select to enable button
+        document.addEventListener('DOMContentLoaded', () => {
+            const categorySelect = document.getElementById('category-select');
+            const questionNumberSelect = document.getElementById('question-number-select');
+            const displayQuestionBtn = document.getElementById('display-question-btn');
+
+            const checkSelection = () => {
+                const category = categorySelect.value;
+                const qNumber = questionNumberSelect.value;
+                displayQuestionBtn.disabled = !(category && qNumber);
+            };
+
+            if(categorySelect) categorySelect.addEventListener('change', checkSelection);
+            if(questionNumberSelect) questionNumberSelect.addEventListener('change', checkSelection);
+            
+            initializeGame();
+        });
+    </script>
+</body>
+</html>

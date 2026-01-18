@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caça ao Tesouro Bíblico - Dashboard</title>
+    <style>
+        body {
+            background-color: #f5f5dc; /* Bege antigo */
+            color: #4b0082; /* Roxo bíblico */
+            font-family: serif;
+            margin: 20px;
+            padding: 0;
+            font-size: 1.2em;
+        }
+        h1, h2, h3 {
+            color: #8b4513; /* Marrom terra */
+        }
+        #header {
+            text-align: center;
+            border-bottom: 2px solid #d4af37; /* Dourado */
+            padding-bottom: 10px;
+        }
+        #timer {
+            font-size: 2em;
+            font-weight: bold;
+            transition: color 0.5s;
+        }
+        #admin-controls {
+            background: #fffacd; /* Amarelo claro */
+            padding: 20px;
+            border: 1px solid #d4af37;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        button {
+            background: #8b4513;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #a0522d;
+        }
+        input, select {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #d4af37;
+            border-radius: 5px;
+        }
+        #teams-section, #ranking-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .team-card {
+            background: #fffacd;
+            border: 1px solid #d4af37;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .team-card:hover {
+            transform: scale(1.05);
+        }
+        .progress-bar {
+            height: 10px;
+            background: #228b22; /* Verde oliva */
+            margin-bottom: 10px;
+            transition: width 0.5s;
+        }
+        #ranking-list p {
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+        #final-scores {
+            background: #f0e68c;
+            padding: 20px;
+            border: 1px solid #d4af37;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>Caça ao Tesouro Bíblico: A Jornada dos Exilados</h1>
+        <div id="timer">Tempo Restante: 90:00</div>
+    </div>
+
+    <div id="admin-controls">
+        <button onclick="startGame()">Iniciar Jogo</button>
+        <button onclick="pauseGame()">Pausar Jogo</button>
+        <button onclick="resetGame()">Reiniciar Jogo</button>
+        <button onclick="calculateFinal()">Calcular Pontuações Finais</button>
+        <hr>
+        <h2>Adicionar Equipe</h2>
+        <input id="team-name" placeholder="Nome da Equipe">
+        <button onclick="addTeam()">Adicionar</button>
+        <hr>
+        <h2>Atualizar Progresso</h2>
+        <select id="select-team"></select>
+        <select id="select-survivor"></select>
+        <select id="select-card">
+            <option value="A">Carta A</option>
+            <option value="B">Carta B</option>
+            <option value="C">Carta C</option>
+            <option value="D">Carta D (rara)</option>
+            <option value="E">Carta E</option>
+        </select>
+        <button onclick="addFragment()">Adicionar Fragmento</button>
+        <hr>
+        <h2>Marcar Conclusão</h2>
+        <select id="finish-team"></select>
+        <label>Frase Montada Corretamente: <input type="checkbox" id="assembled-correct"></label>
+        <button onclick="finishTeam()">Marcar como Finalizado</button>
+        <hr>
+        <h2>Ajustes Manuais</h2>
+        <select id="adjust-team"></select>
+        <input id="adjust-amount" type="number" placeholder="Pontos a adicionar/subtrair">
+        <button onclick="adjustScore()">Ajustar Pontuação</button>
+        <hr>
+        <h2>Adicionar Penalidade</h2>
+        <select id="penalty-team"></select>
+        <select id="penalty-type">
+            <option value="10">Separou-se (-10)</option>
+            <option value="20">Desrespeito (-20)</option>
+            <option value="50">Trapaça (-50)</option>
+            <option value="other">Outro</option>
+        </select>
+        <input id="penalty-amount" type="number" placeholder="Valor personalizado" style="display:none;">
+        <button onclick="applyPenalty()">Aplicar Penalidade</button>
+    </div>
+
+    <div id="teams-section">
+        <h2>Equipes</h2>
+        <div id="teams-list"></div>
+    </div>
+
+    <div id="ranking-section">
+        <h2>Ranking Dinâmico</h2>
+        <div id="ranking-list"></div>
+    </div>
+
+    <script>
+        const survivors = [
+            {
+                name: 'DANIEL (O Sábio)',
+                fragment: 'EM JERUSALÉM',
+                cards: [
+                    {id: 'A', points: 25, stars: 3},
+                    {id: 'B', points: 20, stars: 2},
+                    {id: 'C', points: 15, stars: 1},
+                    {id: 'D', points: 30, stars: 4},
+                    {id: 'E', points: 10, stars: 1}
+                ]
+            },
+            {
+                name: 'ESTER (A Corajosa)',
+                fragment: 'O CORAÇÃO PURO',
+                cards: [
+                    {id: 'A', points: 22, stars: 3},
+                    {id: 'B', points: 18, stars: 2},
+                    {id: 'C', points: 12, stars: 1},
+                    {id: 'D', points: 28, stars: 4},
+                    {id: 'E', points: 8, stars: 1}
+                ]
+            },
+            {
+                name: 'NEEMIAS (O Reconstrutor)',
+                fragment: 'SERÁ TRANSFORMADO',
+                cards: [
+                    {id: 'A', points: 24, stars: 3},
+                    {id: 'B', points: 19, stars: 2},
+                    {id: 'C', points: 14, stars: 1},
+                    {id: 'D', points: 32, stars: 4},
+                    {id: 'E', points: 9, stars: 1}
+                ]
+            },
+            {
+                name: 'MIRIÃ (A Adoradora)',
+                fragment: 'PELO PODER',
+                cards: [
+                    {id: 'A', points: 21, stars: 3},
+                    {id: 'B', points: 16, stars: 2},
+                    {id: 'C', points: 11, stars: 1},
+                    {id: 'D', points: 27, stars: 4},
+                    {id: 'E', points: 6, stars: 1}
+                ]
+            },
+            {
+                name: 'ESDRAS (O Escriba)',
+                fragment: 'DO ESPÍRITO SANTO',
+                cards: [
+                    {id: 'A', points: 23, stars: 3},
+                    {id: 'B', points: 17, stars: 2},
+                    {id: 'C', points: 13, stars: 1},
+                    {id: 'D', points: 29, stars: 4},
+                    {id: 'E', points: 7, stars: 1}
+                ]
+            },
+            {
+                name: 'ZOROBABEL (O Líder)',
+                fragment: 'E PELA PALAVRA',
+                cards: [
+                    {id: 'A', points: 26, stars: 3},
+                    {id: 'B', points: 20, stars: 2},
+                    {id: 'C', points: 15, stars: 1},
+                    {id: 'D', points: 35, stars: 5},
+                    {id: 'E', points: 10, stars: 1}
+                ]
+            }
+        ];
+
+        let teams = [];
+        let timerInterval;
+        let timeLeft = 90 * 60;
+        let gameStarted = false;
+        let paused = false;
+        let finishOrder = [];
+
+        function updateTimer() {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timer').innerText = "Tempo Esgotado! 'O tempo se cumpriu.'";
+                teams.forEach(t => {
+                    if (t.status === 'playing') t.status = 'exceeded';
+                });
+                updateDisplays();
+                return;
+            }
+            let min = Math.floor(timeLeft / 60);
+            let sec = timeLeft % 60;
+            document.getElementById('timer').innerText = `Tempo Restante: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+            let timerEl = document.getElementById('timer');
+            if (timeLeft > 30 * 60) timerEl.style.color = 'green';
+            else if (timeLeft > 15 * 60) timerEl.style.color = 'orange';
+            else timerEl.style.color = 'red';
+            if (timeLeft === 30 * 60) alert("30 minutos restantes! 'Vigiai, pois não sabeis o dia nem a hora.' - Mateus 25:13");
+            if (timeLeft === 15 * 60) alert("15 minutos restantes! 'O tempo é curto.' - 1 Coríntios 7:29");
+            if (timeLeft === 5 * 60) alert("5 minutos restantes! 'Apressai-vos!' - Inspirado em 2 Pedro 3:12");
+            if (!paused) timeLeft--;
+        }
+
+        function startGame() {
+            if (!gameStarted || paused) {
+                timerInterval = setInterval(updateTimer, 1000);
+                gameStarted = true;
+                paused = false;
+            }
+        }
+
+        function pauseGame() {
+            clearInterval(timerInterval);
+            paused = true;
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            timeLeft = 90 * 60;
+            updateTimer();
+            gameStarted = false;
+            paused = false;
+            teams = [];
+            finishOrder = [];
+            updateDisplays();
+            let finalDiv = document.getElementById('final-scores');
+            if (finalDiv) finalDiv.remove();
+        }
+
+        function addTeam() {
+            let name = document.getElementById('team-name').value.trim();
+            if (name) {
+                teams.push({
+                    id: teams.length + 1,
+                    name,
+                    status: 'playing',
+                    collected: [],
+                    finishTime: null,
+                    assembled: false,
+                    penalties: 0,
+                    manual: 0,
+                    finalScore: null
+                });
+                document.getElementById('team-name').value = '';
+                updateSelects();
+                updateDisplays();
+            }
+        }
+
+        function updateSelects() {
+            let teamOptions = teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            document.getElementById('select-team').innerHTML = teamOptions;
+            document.getElementById('finish-team').innerHTML = teamOptions;
+            document.getElementById('adjust-team').innerHTML = teamOptions;
+            document.getElementById('penalty-team').innerHTML = teamOptions;
+            let survivorOptions = survivors.map((s, i) => `<option value="${i}">${s.name} - ${s.fragment}</option>`).join('');
+            document.getElementById('select-survivor').innerHTML = survivorOptions;
+        }
+
+        document.getElementById('penalty-type').addEventListener('change', (e) => {
+            document.getElementById('penalty-amount').style.display = e.target.value === 'other' ? 'block' : 'none';
+        });
+
+        function addFragment() {
+            let teamId = parseInt(document.getElementById('select-team').value);
+            let survIdx = parseInt(document.getElementById('select-survivor').value);
+            let cardId = document.getElementById('select-card').value;
+            let team = teams.find(t => t.id === teamId);
+            if (team && team.status === 'playing') {
+                if (team.collected.some(c => c.surv === survIdx)) {
+                    alert('Equipe já coletou esse fragmento!');
+                    return;
+                }
+                let card = survivors[survIdx].cards.find(c => c.id === cardId);
+                if (card) {
+                    team.collected.push({surv: survIdx, card: cardId, points: card.points});
+                    updateDisplays();
+                }
+            }
+        }
+
+        function finishTeam() {
+            let teamId = parseInt(document.getElementById('finish-team').value);
+            let assembled = document.getElementById('assembled-correct').checked;
+            let team = teams.find(t => t.id === teamId);
+            if (team && team.status === 'playing') {
+                if (team.collected.length < 6 && !confirm('Equipe tem menos de 6 fragmentos. Marcar como finalizado mesmo assim?')) return;
+                team.status = 'finished';
+                team.finishTime = 90 * 60 - timeLeft;
+                team.assembled = assembled;
+                finishOrder.push(team.id);
+                updateDisplays();
+            }
+        }
+
+        function adjustScore() {
+            let teamId = parseInt(document.getElementById('adjust-team').value);
+            let amount = parseInt(document.getElementById('adjust-amount').value) || 0;
+            let team = teams.find(t => t.id === teamId);
+            if (team) {
+                team.manual += amount;
+                updateDisplays();
+            }
+        }
+
+        function applyPenalty() {
+            let teamId = parseInt(document.getElementById('penalty-team').value);
+            let type = document.getElementById('penalty-type').value;
+            let amount = type !== 'other' ? parseInt(type) : parseInt(document.getElementById('penalty-amount').value) || 0;
+            let team = teams.find(t => t.id === teamId);
+            if (team) {
+                team.penalties += amount;
+                updateDisplays();
+            }
+        }
+
+        function getProvisionalScore(team) {
+            let base = team.collected.reduce((sum, c) => sum + c.points, 0);
+            return base + team.manual - team.penalties;
+        }
+
+        function updateDisplays() {
+            updateTeamsList();
+            updateRanking();
+        }
+
+        function updateTeamsList() {
+            let list = '';
+            teams.forEach(team => {
+                let frags = team.collected.map(c => {
+                    let surv = survivors[c.surv];
+                    let card = surv.cards.find(cc => cc.id === c.card);
+                    return `${surv.fragment} (${c.points} pontos, ${'⭐'.repeat(card.stars)})`;
+                }).join('<br>');
+                let progressWidth = (team.collected.length / 6 * 100) + '%';
+                let statusColor = team.status === 'finished' ? 'green' : team.status === 'exceeded' ? 'red' : 'blue';
+                list += `
+                    <div class="team-card">
+                        <h3>${team.name}</h3>
+                        <p>Status: <span style="color: ${statusColor};">${team.status.toUpperCase()}</span></p>
+                        <p>Fragmentos: ${team.collected.length}/6</p>
+                        <div class="progress-bar" style="width: ${progressWidth};"></div>
+                        <p>Pontos Atuais: ${getProvisionalScore(team)}</p>
+                        <p>Fragmentos Coletados:<br>${frags}</p>
+                        ${team.finishTime ? `<p>Tempo de Conclusão: ${Math.floor(team.finishTime / 60)}:${(team.finishTime % 60).toString().padStart(2, '0')}</p>` : ''}
+                        ${team.finishTime ? `<p>Frase Correta: ${team.assembled ? 'Sim' : 'Não'}</p>` : ''}
+                        <p>Penalidades: -${team.penalties}</p>
+                        <p>Ajustes Manuais: +${team.manual}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('teams-list').innerHTML = list;
+        }
+
+        function updateRanking() {
+            let sorted = [...teams].sort((a, b) => {
+                let fragA = a.collected.length;
+                let fragB = b.collected.length;
+                if (fragA !== fragB) return fragB - fragA;
+                return getProvisionalScore(b) - getProvisionalScore(a);
+            });
+            let list = '';
+            sorted.forEach((team, idx) => {
+                let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+                list += `<p>${medal} ${team.name} - Pontos: ${getProvisionalScore(team)} - Fragmentos: ${team.collected.length} - Status: ${team.status}</p>`;
+            });
+            document.getElementById('ranking-list').innerHTML = list;
+        }
+
+        function calculateFinal() {
+            if (timeLeft > 0 && !confirm('Jogo ainda não acabou. Calcular pontuações finais mesmo assim?')) return;
+            teams.forEach(t => { if (t.status === 'playing') t.status = 'exceeded'; });
+            let finishedTeams = teams.filter(t => t.status === 'finished');
+            let allFinished = finishedTeams.length === teams.length;
+            let noneFinished = finishedTeams.length === 0;
+            let mixed = !allFinished && !noneFinished;
+            let sortedFinished = [...finishedTeams].sort((a, b) => a.finishTime - b.finishTime);
+            sortedFinished.forEach((team, idx) => { team.order = idx + 1; });
+            teams.forEach(team => {
+                let base = team.collected.reduce((sum, c) => sum + c.points, 0);
+                let frags = team.collected.length;
+                let finalScore = base;
+                if (noneFinished) {
+                    finalScore -= 30;
+                    let fragPenalty = frags === 6 ? -10 : frags === 5 ? -15 : frags === 4 ? -20 : -30;
+                    finalScore += fragPenalty;
+                } else if (allFinished || (mixed && team.status === 'finished')) {
+                    if (frags === 6) {
+                        finalScore += team.assembled ? 20 : -20;
+                    } else if (frags === 5) {
+                        finalScore -= 15;
+                    } else {
+                        finalScore -= 30;
+                    }
+                    let orderBonus = team.order === 1 ? 50 : team.order === 2 ? 35 : team.order === 3 ? 20 : 10;
+                    finalScore += orderBonus;
+                    let minTime = team.finishTime / 60;
+                    let timeBonus = minTime <= 60 ? 40 : minTime <= 75 ? 25 : minTime <= 90 ? 15 : 0;
+                    finalScore += timeBonus;
+                    if (mixed) finalScore += 20;
+                } else if (mixed && team.status !== 'finished') {
+                    finalScore -= 20;
+                    finalScore -= 5 * (6 - frags);
+                }
+                finalScore += team.manual - team.penalties;
+                team.finalScore = finalScore;
+            });
+            let sortedFinal = [...teams].sort((a, b) => b.finalScore - a.finalScore);
+            let finalList = '';
+            sortedFinal.forEach((team, idx) => {
+                let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+                finalList += `<p>${medal} ${team.name} - Pontuação Final: ${team.finalScore}</p>`;
+            });
+            let finalDiv = document.getElementById('final-scores');
+            if (!finalDiv) {
+                finalDiv = document.createElement('div');
+                finalDiv.id = 'final-scores';
+                document.body.appendChild(finalDiv);
+            }
+            finalDiv.innerHTML = '<h2>Pontuações Finais</h2>' + finalList;
+        }
+
+        updateTimer();
+        updateSelects();
+    </script>
+</body>
+</html>

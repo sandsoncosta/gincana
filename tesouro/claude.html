@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caça ao Tesouro Bíblico: A Jornada dos Exilados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #2c1810, #4a3728, #6b4e3d);
+            color: #f4e4c1;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(139, 69, 19, 0.3);
+            border-radius: 15px;
+            border: 3px solid #cd853f;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            font-size: 1.3rem;
+            color: #daa520;
+            font-style: italic;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .timer-section {
+            background: rgba(139, 69, 19, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #cd853f;
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer.warning {
+            color: #ff6347;
+            animation: pulse 1s infinite;
+        }
+
+        .timer.critical {
+            color: #ff0000;
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: #228b22;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ff8c00;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc143c;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #708090;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .teams-section {
+            background: rgba(139, 69, 19, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #cd853f;
+        }
+
+        .teams-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .teams-header h3 {
+            color: #ffd700;
+            font-size: 1.5rem;
+        }
+
+        .add-team {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .add-team input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #cd853f;
+            border-radius: 8px;
+            background: rgba(244, 228, 193, 0.9);
+            color: #2c1810;
+            font-weight: bold;
+        }
+
+        .team {
+            background: rgba(244, 228, 193, 0.1);
+            border: 2px solid #daa520;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .team:hover {
+            background: rgba(244, 228, 193, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .team-score {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #32cd32;
+        }
+
+        .team-status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .status-playing {
+            background: #32cd32;
+            color: white;
+        }
+
+        .status-finished {
+            background: #4169e1;
+            color: white;
+        }
+
+        .status-timeout {
+            background: #ff4500;
+            color: white;
+        }
+
+        .fragments-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .fragment {
+            background: rgba(139, 69, 19, 0.6);
+            border: 1px solid #cd853f;
+            border-radius: 5px;
+            padding: 5px;
+            text-align: center;
+            font-size: 0.8rem;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fragment.collected {
+            background: #228b22;
+            border-color: #32cd32;
+            color: white;
+        }
+
+        .team-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .team-controls .btn {
+            padding: 5px 12px;
+            font-size: 0.9rem;
+        }
+
+        .ranking-section {
+            background: rgba(139, 69, 19, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #cd853f;
+        }
+
+        .ranking-section h3 {
+            color: #ffd700;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .podium-place {
+            background: rgba(244, 228, 193, 0.1);
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            border: 2px solid;
+        }
+
+        .podium-place.first {
+            border-color: #ffd700;
+            height: 120px;
+        }
+
+        .podium-place.second {
+            border-color: #c0c0c0;
+            height: 100px;
+        }
+
+        .podium-place.third {
+            border-color: #cd7f32;
+            height: 80px;
+        }
+
+        .medal {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .message-board {
+            background: rgba(139, 69, 19, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #cd853f;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .bible-message {
+            font-size: 1.1rem;
+            color: #daa520;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .admin-controls {
+            background: rgba(139, 69, 19, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #cd853f;
+            margin-top: 30px;
+        }
+
+        .admin-controls h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .admin-section {
+            background: rgba(244, 228, 193, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #daa520;
+        }
+
+        .admin-section h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .survivors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .survivor {
+            background: rgba(244, 228, 193, 0.1);
+            border: 2px solid #daa520;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .survivor h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .survivor .fragment-text {
+            color: #daa520;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .cards-info {
+            font-size: 0.9rem;
+            color: #f4e4c1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: #2c1810;
+            margin: 15% auto;
+            padding: 20px;
+            border: 3px solid #cd853f;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 500px;
+            color: #f4e4c1;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #ffd700;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(139, 69, 19, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #32cd32, #228b22);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .timer {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏺 CAÇA AO TESOURO BÍBLICO 🏺</h1>
+            <h2>A Jornada dos Exilados</h2>
+        </div>
+
+        <div class="dashboard">
+            <!-- Timer Section -->
+            <div class="timer-section">
+                <h3>⏰ TEMPO RESTANTE</h3>
+                <div class="timer" id="timer">90:00</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="timeProgress"></div>
+                </div>
+                <div class="timer-controls">
+                    <button class="btn btn-primary" id="startBtn">Iniciar</button>
+                    <button class="btn btn-warning" id="pauseBtn">Pausar</button>
+                    <button class="btn btn-danger" id="resetBtn">Reiniciar</button>
+                </div>
+                <div class="bible-message" id="timerMessage">
+                    "Tudo tem o seu tempo determinado..." - Eclesiastes 3:1
+                </div>
+            </div>
+
+            <!-- Teams Section -->
+            <div class="teams-section">
+                <div class="teams-header">
+                    <h3>👥 EQUIPES</h3>
+                    <div id="totalTeams">0 equipes</div>
+                </div>
+                
+                <div class="add-team">
+                    <input type="text" id="teamNameInput" placeholder="Nome da equipe" maxlength="20">
+                    <button class="btn btn-primary" id="addTeamBtn">Adicionar</button>
+                </div>
+
+                <div id="teamsList"></div>
+            </div>
+
+            <!-- Ranking Section -->
+            <div class="ranking-section">
+                <h3>🏆 RANKING</h3>
+                <div class="podium" id="podium"></div>
+                <div id="fullRanking"></div>
+            </div>
+        </div>
+
+        <!-- Survivors Info -->
+        <div class="survivors">
+            <div class="survivor">
+                <h4>DANIEL (O Sábio)</h4>
+                <div class="fragment-text">"EM JERUSALÉM"</div>
+                <div class="cards-info">
+                    ⭐ 10pts | ⭐⭐ 20pts | ⭐⭐⭐ 25pts<br>
+                    ⭐⭐⭐⭐ 30pts (rara!) | ⭐ 15pts
+                </div>
+            </div>
+            <div class="survivor">
+                <h4>ESTER (A Corajosa)</h4>
+                <div class="fragment-text">"O CORAÇÃO PURO"</div>
+                <div class="cards-info">
+                    ⭐ 8pts | ⭐⭐ 18pts | ⭐⭐⭐ 22pts<br>
+                    ⭐⭐⭐⭐ 28pts (rara!) | ⭐ 12pts
+                </div>
+            </div>
+            <div class="survivor">
+                <h4>NEEMIAS (O Reconstrutor)</h4>
+                <div class="fragment-text">"SERÁ TRANSFORMADO"</div>
+                <div class="cards-info">
+                    ⭐ 9pts | ⭐⭐ 19pts | ⭐⭐⭐ 24pts<br>
+                    ⭐⭐⭐⭐ 32pts (rara!) | ⭐ 14pts
+                </div>
+            </div>
+            <div class="survivor">
+                <h4>MIRIÃ (A Adoradora)</h4>
+                <div class="fragment-text">"PELO PODER"</div>
+                <div class="cards-info">
+                    ⭐ 6pts | ⭐⭐ 16pts | ⭐⭐⭐ 21pts<br>
+                    ⭐⭐⭐⭐ 27pts (rara!) | ⭐ 11pts
+                </div>
+            </div>
+            <div class="survivor">
+                <h4>ESDRAS (O Escriba)</h4>
+                <div class="fragment-text">"DO ESPÍRITO SANTO"</div>
+                <div class="cards-info">
+                    ⭐ 7pts | ⭐⭐ 17pts | ⭐⭐⭐ 23pts<br>
+                    ⭐⭐⭐⭐ 29pts (rara!) | ⭐ 13pts
+                </div>
+            </div>
+            <div class="survivor">
+                <h4>ZOROBABEL (O Líder)</h4>
+                <div class="fragment-text">"E PELA PALAVRA"</div>
+                <div class="cards-info">
+                    ⭐ 10pts | ⭐⭐ 20pts | ⭐⭐⭐ 26pts<br>
+                    ⭐⭐⭐⭐⭐ 35pts (super rara!) | ⭐ 15pts
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Controls -->
+        <div class="admin-controls">
+            <h3>⚙️ CONTROLES ADMINISTRATIVOS</h3>
+            <div class="admin-grid">
+                <div class="admin-section">
+                    <h4>Gestão Global</h4>
+                    <button class="btn btn-danger" id="resetAllBtn">Resetar Tudo</button>
+                    <button class="btn btn-secondary" id="exportBtn">Exportar Dados</button>
+                </div>
+                <div class="admin-section">
+                    <h4>Pontuação Manual</h4>
+                    <select id="teamSelect">
+                        <option value="">Selecione uma equipe</option>
+                    </select>
+                    <input type="number" id="pointsInput" placeholder="Pontos (+/-)">
+                    <button class="btn btn-primary" id="addPointsBtn">Aplicar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Board -->
+        <div class="message-board">
+            <div class="bible-message" id="messageBoard">
+                "Porque sou eu que conheço os planos que tenho para vocês, diz o Senhor..." - Jeremias 29:11
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Edit Modal -->
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h3>Editar Equipe</h3>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        class BiblicalTreasureHunt {
+            constructor() {
+                this.teams = [];
+                this.gameTime = 90 * 60; // 90 minutes in seconds
+                this.currentTime = this.gameTime;
+                this.isRunning = false;
+                this.timer = null;
+                this.completionOrder = [];
+                
+                this.fragments = [
+                    "EM JERUSALÉM",
+                    "O CORAÇÃO PURO", 
+                    "SERÁ TRANSFORMADO",
+                    "PELO PODER",
+                    "DO ESPÍRITO SANTO",
+                    "E PELA PALAVRA"
+                ];
+
+                this.survivalCards = {
+                    "EM JERUSALÉM": [25, 20, 15, 30, 10],
+                    "O CORAÇÃO PURO": [22, 18, 12, 28, 8],
+                    "SERÁ TRANSFORMADO": [24, 19, 14, 32, 9],
+                    "PELO PODER": [21, 16, 11, 27, 6],
+                    "DO ESPÍRITO SANTO": [23, 17, 13, 29, 7],
+                    "E PELA PALAVRA": [26, 20, 15, 35, 10]
+                };
+
+                this.messages = [
+                    "Confie no Senhor de todo o coração... - Provérbios 3:5",
+                    "O Senhor é meu pastor, nada me faltará... - Salmos 23:1",
+                    "Tudo posso naquele que me fortalece... - Filipenses 4:13",
+                    "O amor do Senhor dura para sempre... - Salmos 136:1",
+                    "Seja forte e corajoso! - Josué 1:9"
+                ];
+
+                this.initializeEventListeners();
+                this.updateDisplay();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('startBtn').addEventListener('click', () => this.startTimer());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pauseTimer());
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetTimer());
+                document.getElementById('addTeamBtn').addEventListener('click', () => this.addTeam());
+                document.getElementById('teamNameInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addTeam();
+                });
+                document.getElementById('resetAllBtn').addEventListener('click', () => this.resetAll());
+                document.getElementById('addPointsBtn').addEventListener('click', () => this.addManualPoints());
+                document.getElementById('closeModal').addEventListener('click', () => this.closeModal());
+                
+                // Auto-change messages every 30 seconds
+                setInterval(() => this.changeMessage(), 30000);
+            }
+
+            addTeam() {
+                const input = document.getElementById('teamNameInput');
+                const teamName = input.value.trim();
+                
+                if (!teamName) {
+                    alert('Por favor, digite um nome para a equipe!');
+                    return;
+                }
+
+                if (this.teams.find(t => t.name.toLowerCase() === teamName.toLowerCase())) {
+                    alert('Já existe uma equipe com esse nome!');
+                    return;
+                }
+
+                const team = {
+                    id: Date.now(),
+                    name: teamName,
+                    score: 0,
+                    status: 'playing',
+                    fragments: Array(6).fill(null),
+                    collectedFragments: 0,
+                    finishTime: null,
+                    completionPosition: null
+                };
+
+                this.teams.push(team);
+                input.value = '';
+                this.updateDisplay();
+                this.updateTeamSelect();
+            }
+
+            updateTeamSelect() {
+                const select = document.getElementById('teamSelect');
+                select.innerHTML = '<option value="">Selecione uma equipe</option>';
+                
+                this.teams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team.id;
+                    option.textContent = team.name;
+                    select.appendChild(option);
+                });
+            }
+
+            addManualPoints() {
+                const teamId = document.getElementById('teamSelect').value;
+                const points = parseInt(document.getElementById('pointsInput').value);
+                
+                if (!teamId || isNaN(points)) {
+                    alert('Selecione uma equipe e digite os pontos!');
+                    return;
+                }
+
+                const team = this.teams.find(t => t.id == teamId);
+                if (team) {
+                    team.score += points;
+                    document.getElementById('pointsInput').value = '';
+                    this.updateDisplay();
+                    
+                    const action = points > 0 ? 'adicionados' : 'removidos';
+                    alert(`${Math.abs(points)} pontos ${action} para ${team.name}!`);
+                }
+            }
+
+            editTeam(teamId) {
+                const team = this.teams.find(t => t.id === teamId);
+                if (!team) return;
+
+                const modal = document.getElementById('teamModal');
+                const modalContent = document.getElementById('modalContent');
+                
+                modalContent.innerHTML = `
+                    <h4>${team.name}</h4>
+                    <div style="margin: 15px 0;">
+                        <label>Status:</label>
+                        <select id="teamStatusEdit" style="margin: 5px; padding: 5px;">
+                            <option value="playing" ${team.status === 'playing' ? 'selected' : ''}>Jogando</option>
+                            <option value="finished" ${team.status === 'finished' ? 'selected' : ''}>Finalizado</option>
+                            <option value="timeout" ${team.status === 'timeout' ? 'selected' : ''}>Tempo Esgotado</option>
+                        </select>
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <label>Fragmentos Coletados:</label>
+                        <div id="fragmentsEdit" style="margin-top: 10px;"></div>
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <label>Pontuação Manual:</label>
+                        <input type="number" id="scoreEdit" value="${team.score}" style="margin: 5px; padding: 5px;">
+                    </div>
+                    <button class="btn btn-primary" onclick="game.saveTeamEdit(${teamId})">Salvar</button>
+                    <button class="btn btn-danger" onclick="game.deleteTeam(${teamId})" style="margin-left: 10px;">Excluir Equipe</button>
+                `;
+
+                const fragmentsDiv = document.getElementById('fragmentsEdit');
+                this.fragments.forEach((fragment, index) => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <label style="display: flex; align-items: center; margin: 5px 0;">
+                            <input type="checkbox" ${team.fragments[index] ? 'checked' : ''} 
+                                   onchange="game.updateFragmentEdit(${teamId}, ${index}, this.checked)">
+                            <span style="margin-left: 10px;">${fragment}</span>
+                            ${team.fragments[index] ? `<span style="color: #32cd32; margin-left: 10px;">(${team.fragments[index]} pts)</span>` : ''}
+                        </label>
+                        ${team.fragments[index] ? '' : `
+                            <select id="points_${index}" style="margin-left: 25px; display: none;">
+                                ${this.survivalCards[fragment].map(points => 
+                                    `<option value="${points}">${points} pontos</option>`
+                                ).join('')}
+                            </select>
+                        `}
+                    `;
+                    fragmentsDiv.appendChild(div);
+                });
+
+                modal.style.display = 'block';
+            }
+
+            updateFragmentEdit(teamId, fragmentIndex, isChecked) {
+                const team = this.teams.find(t => t.id === teamId);
+                const pointsSelect = document.getElementById(`points_${fragmentIndex}`);
+                
+                if (isChecked) {
+                    if (pointsSelect) {
+                        pointsSelect.style.display = 'block';
+                        const points = parseInt(pointsSelect.value);
+                        team.fragments[fragmentIndex] = points;
+                    }
+                } else {
+                    team.fragments[fragmentIndex] = null;
+                    if (pointsSelect) {
+                        pointsSelect.style.display = 'none';
+                    }
+                }
+
+                team.collectedFragments = team.fragments.filter(f => f !== null).length;
+                this.calculateTeamScore(team);
+            }
+
+            saveTeamEdit(teamId) {
+                const team = this.teams.find(t => t.id === teamId);
+                const newStatus = document.getElementById('teamStatusEdit').value;
+                const newScore = parseInt(document.getElementById('scoreEdit').value);
+                
+                team.status = newStatus;
+                team.score = newScore;
+                
+                // Handle completion logic
+                if (newStatus === 'finished' && team.status !== 'finished') {
+                    if (!this.completionOrder.includes(teamId)) {
+                        this.completionOrder.push(teamId);
+                        team.completionPosition = this.completionOrder.length;
+                        team.finishTime = this.gameTime - this.currentTime;
+                    }
+                }
+                
+                this.closeModal();
+                this.updateDisplay();
+            }
+
+            deleteTeam(teamId) {
+                if (confirm('Tem certeza que deseja excluir esta equipe?')) {
+                    this.teams = this.teams.filter(t => t.id !== teamId);
+                    this.completionOrder = this.completionOrder.filter(id => id !== teamId);
+                    this.closeModal();
+                    this.updateDisplay();
+                    this.updateTeamSelect();
+                }
+            }
+
+            closeModal() {
+                document.getElementById('teamModal').style.display = 'none';
+            }
+
+            calculateTeamScore(team) {
+                let baseScore = team.fragments.reduce((sum, points) => sum + (points || 0), 0);
+                let bonuses = 0;
+                let penalties = 0;
+
+                // Fragment completion penalties
+                if (team.collectedFragments === 5) {
+                    penalties += 15;
+                } else if (team.collectedFragments <= 4) {
+                    penalties += 30;
+                }
+
+                // Phrase bonus (only with 6 fragments)
+                if (team.collectedFragments === 6) {
+                    bonuses += 20; // Assuming correct phrase
+                }
+
+                // Completion bonuses
+                if (team.status === 'finished' && team.completionPosition) {
+                    if (team.completionPosition === 1) bonuses += 50;
+                    else if (team.completionPosition === 2) bonuses += 35;
+                    else if (team.completionPosition === 3) bonuses += 20;
+                    else bonuses += 10;
+
+                    // Time bonuses
+                    const finishMinutes = team.finishTime / 60;
+                    if (finishMinutes <= 60) bonuses += 40;
+                    else if (finishMinutes <= 75) bonuses += 25;
+                    else if (finishMinutes <= 90) bonuses += 15;
+                }
+
+                // Timeout penalties
+                if (team.status === 'timeout') {
+                    penalties += 30;
+                }
+
+                team.score = Math.max(0, baseScore + bonuses - penalties);
+            }
+
+            startTimer() {
+                if (!this.isRunning) {
+                    this.isRunning = true;
+                    this.timer = setInterval(() => {
+                        this.currentTime--;
+                        this.updateTimerDisplay();
+                        
+                        if (this.currentTime <= 0) {
+                            this.timeUp();
+                        }
+                    }, 1000);
+                }
+            }
+
+            pauseTimer() {
+                this.isRunning = false;
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
+            }
+
+            resetTimer() {
+                this.pauseTimer();
+                this.currentTime = this.gameTime;
+                this.completionOrder = [];
+                this.teams.forEach(team => {
+                    team.status = 'playing';
+                    team.finishTime = null;
+                    team.completionPosition = null;
+                });
+                this.updateDisplay();
+            }
+
+            timeUp() {
+                this.pauseTimer();
+                this.teams.forEach(team => {
+                    if (team.status === 'playing') {
+                        team.status = 'timeout';
+                        this.calculateTeamScore(team);
+                    }
+                });
+                this.updateDisplay();
+                alert('⏰ TEMPO ESGOTADO! O jogo terminou!');
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.currentTime / 60);
+                const seconds = this.currentTime % 60;
+                const timerElement = document.getElementById('timer');
+                const progressElement = document.getElementById('timeProgress');
+                const messageElement = document.getElementById('timerMessage');
+                
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Progress bar
+                const progress = ((this.gameTime - this.currentTime) / this.gameTime) * 100;
+                progressElement.style.width = `${progress}%`;
+                
+                // Timer styling and messages
+                timerElement.className = 'timer';
+                if (this.currentTime <= 300) { // 5 minutes
+                    timerElement.classList.add('critical');
+                    messageElement.textContent = '🔥 "Aproveitem bem o tempo..." - Efésios 5:16';
+                } else if (this.currentTime <= 900) { // 15 minutes
+                    timerElement.classList.add('warning');
+                    messageElement.textContent = '⚠️ "O tempo está se esgotando..." - 1 Coríntios 7:29';
+                } else if (this.currentTime <= 1800) { // 30 minutes
+                    messageElement.textContent = '⏳ "Há tempo para todo propósito..." - Eclesiastes 3:1';
+                } else {
+                    messageElement.textContent = '🕊️ "Confie no tempo do Senhor..." - Salmos 27:14';
+                }
+            }
+
+            updateDisplay() {
+                this.updateTimerDisplay();
+                this.updateTeamsList();
+                this.updateRanking();
+                this.updateTotalTeams();
+            }
+
+            updateTotalTeams() {
+                const total = this.teams.length;
+                document.getElementById('totalTeams').textContent = `${total} equipe${total !== 1 ? 's' : ''}`;
+            }
+
+            updateTeamsList() {
+                const container = document.getElementById('teamsList');
+                container.innerHTML = '';
+
+                this.teams.forEach(team => {
+                    const teamDiv = document.createElement('div');
+                    teamDiv.className = 'team';
+                    teamDiv.innerHTML = `
+                        <div class="team-header">
+                            <div class="team-name">${team.name}</div>
+                            <div class="team-score">${team.score} pts</div>
+                            <div class="team-status status-${team.status}">
+                                ${team.status === 'playing' ? 'Jogando' : 
+                                  team.status === 'finished' ? 'Finalizado' : 'Tempo Esgotado'}
+                            </div>
+                        </div>
+                        
+                        <div class="fragments-grid">
+                            ${this.fragments.map((fragment, index) => `
+                                <div class="fragment ${team.fragments[index] ? 'collected' : ''}">
+                                    ${team.fragments[index] ? 
+                                        `${fragment.split(' ')[0]}... (${team.fragments[index]}pts)` : 
+                                        '???'
+                                    }
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(team.collectedFragments / 6) * 100}%"></div>
+                        </div>
+                        
+                        <div class="team-controls">
+                            <button class="btn btn-secondary" onclick="game.editTeam(${team.id})">
+                                Editar
+                            </button>
+                            <button class="btn btn-primary" onclick="game.addRandomFragment(${team.id})">
+                                Adicionar Fragmento
+                            </button>
+                            <button class="btn btn-warning" onclick="game.finishTeam(${team.id})">
+                                Finalizar
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(teamDiv);
+                });
+            }
+
+            addRandomFragment(teamId) {
+                const team = this.teams.find(t => t.id === teamId);
+                if (!team || team.collectedFragments >= 6) return;
+
+                // Find available fragments
+                const availableIndexes = [];
+                team.fragments.forEach((fragment, index) => {
+                    if (fragment === null) availableIndexes.push(index);
+                });
+
+                if (availableIndexes.length === 0) return;
+
+                // Select random fragment
+                const randomIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+                const fragmentName = this.fragments[randomIndex];
+                const possiblePoints = this.survivalCards[fragmentName];
+                const randomPoints = possiblePoints[Math.floor(Math.random() * possiblePoints.length)];
+
+                team.fragments[randomIndex] = randomPoints;
+                team.collectedFragments++;
+                this.calculateTeamScore(team);
+                this.updateDisplay();
+            }
+
+            finishTeam(teamId) {
+                const team = this.teams.find(t => t.id === teamId);
+                if (!team || team.status !== 'playing') return;
+
+                if (!this.completionOrder.includes(teamId)) {
+                    this.completionOrder.push(teamId);
+                    team.completionPosition = this.completionOrder.length;
+                    team.finishTime = this.gameTime - this.currentTime;
+                }
+
+                team.status = 'finished';
+                this.calculateTeamScore(team);
+                this.updateDisplay();
+            }
+
+            updateRanking() {
+                const sortedTeams = [...this.teams].sort((a, b) => {
+                    // First by status (finished > playing > timeout)
+                    const statusOrder = { 'finished': 3, 'playing': 2, 'timeout': 1 };
+                    if (statusOrder[a.status] !== statusOrder[b.status]) {
+                        return statusOrder[b.status] - statusOrder[a.status];
+                    }
+                    // Then by score
+                    return b.score - a.score;
+                });
+
+                // Update podium
+                const podium = document.getElementById('podium');
+                podium.innerHTML = '';
+
+                const topThree = sortedTeams.slice(0, 3);
+                const positions = ['first', 'second', 'third'];
+                const medals = ['🥇', '🥈', '🥉'];
+
+                topThree.forEach((team, index) => {
+                    if (team) {
+                        const place = document.createElement('div');
+                        place.className = `podium-place ${positions[index]}`;
+                        place.innerHTML = `
+                            <div class="medal">${medals[index]}</div>
+                            <div style="font-weight: bold; color: #ffd700;">${team.name}</div>
+                            <div style="font-size: 1.2rem; color: #32cd32;">${team.score} pts</div>
+                            <div style="font-size: 0.8rem; margin-top: 5px;">
+                                ${team.collectedFragments}/6 fragmentos
+                            </div>
+                        `;
+                        podium.appendChild(place);
+                    }
+                });
+
+                // Update full ranking
+                const fullRanking = document.getElementById('fullRanking');
+                fullRanking.innerHTML = '';
+
+                sortedTeams.forEach((team, index) => {
+                    const rankDiv = document.createElement('div');
+                    rankDiv.style.cssText = `
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 10px;
+                        margin: 5px 0;
+                        background: rgba(244, 228, 193, 0.1);
+                        border-radius: 8px;
+                        border-left: 4px solid ${index < 3 ? '#ffd700' : '#daa520'};
+                    `;
+                    
+                    const medal = index < 3 ? ['🥇', '🥈', '🥉'][index] : `${index + 1}º`;
+                    
+                    rankDiv.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.2rem; font-weight: bold;">${medal}</span>
+                            <span style="font-weight: bold;">${team.name}</span>
+                            <span class="team-status status-${team.status}" style="font-size: 0.8rem;">
+                                ${team.status === 'playing' ? 'Jogando' : 
+                                  team.status === 'finished' ? 'Finalizado' : 'Tempo Esgotado'}
+                            </span>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.2rem; font-weight: bold; color: #32cd32;">
+                                ${team.score} pts
+                            </div>
+                            <div style="font-size: 0.9rem; color: #daa520;">
+                                ${team.collectedFragments}/6 fragmentos
+                            </div>
+                        </div>
+                    `;
+                    fullRanking.appendChild(rankDiv);
+                });
+            }
+
+            changeMessage() {
+                const messageElement = document.getElementById('messageBoard');
+                const randomMessage = this.messages[Math.floor(Math.random() * this.messages.length)];
+                messageElement.textContent = randomMessage;
+            }
+
+            resetAll() {
+                if (confirm('Tem certeza que deseja resetar TUDO? Esta ação não pode ser desfeita!')) {
+                    this.teams = [];
+                    this.resetTimer();
+                    this.updateDisplay();
+                    this.updateTeamSelect();
+                    alert('Tudo foi resetado! Pronto para um novo jogo.');
+                }
+            }
+
+            exportData() {
+                const data = {
+                    teams: this.teams,
+                    currentTime: this.currentTime,
+                    completionOrder: this.completionOrder,
+                    gameTime: this.gameTime,
+                    timestamp: new Date().toISOString()
+                };
+
+                const jsonString = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `caca-tesouro-biblico-${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Initialize the game
+        const game = new BiblicalTreasureHunt();
+
+        // Export functionality
+        document.getElementById('exportBtn').addEventListener('click', () => game.exportData());
+
+        // Modal click outside to close
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('teamModal');
+            if (e.target === modal) {
+                game.closeModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                game.closeModal();
+            }
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                game.exportData();
+            }
+        });
+
+        // Auto-save to localStorage every 30 seconds
+        setInterval(() => {
+            const gameState = {
+                teams: game.teams,
+                currentTime: game.currentTime,
+                completionOrder: game.completionOrder
+            };
+            // Note: localStorage is not available in Claude.ai environment
+            console.log('Game state:', gameState);
+        }, 30000);
+
+        console.log('🏺 Caça ao Tesouro Bíblico inicializado com sucesso! 🏺');
+    </script>
+</body>
+</html>

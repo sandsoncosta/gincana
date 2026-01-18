@@ -3,110 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gincana 2026 - Coming Soon</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <title>Countdown - Gincana EBD 2025</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #000 0%, #764ba2 100%);
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #074801 0%, #000000 100%);
             min-height: 100vh;
+            position: relative;
         }
-
-        .background-animation {
+        
+        .team-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            background: linear-gradient(135deg, #000 0%, #6b8e23 100%);
-        }
-
-        .floating-shapes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
             overflow: hidden;
+            z-index: 1;
+            opacity: 0.15;
         }
-
-        .shape {
+        
+        .team-name {
             position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            animation: float 20s infinite ease-in-out;
+            font-size: 4rem;
+            font-weight: 800;
+            color: #fff;
+            white-space: nowrap;
+            animation: float-up 15s linear infinite;
         }
-
-        .shape:nth-child(1) {
-            width: 80px;
-            height: 80px;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) translateZ(0) scale(0.8);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateZ(0) scale(1.2);
+                opacity: 0;
+            }
         }
-
-        .shape:nth-child(2) {
-            width: 60px;
-            height: 60px;
-            top: 20%;
-            right: 20%;
-            animation-delay: 2s;
-        }
-
-        .shape:nth-child(3) {
-            width: 100px;
-            height: 100px;
-            bottom: 20%;
-            left: 20%;
-            animation-delay: 4s;
-        }
-
-        .shape:nth-child(4) {
-            width: 40px;
-            height: 40px;
-            bottom: 30%;
-            right: 30%;
-            animation-delay: 6s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-30px) rotate(120deg); }
-            66% { transform: translateY(30px) rotate(240deg); }
-        }
-
-        .main-container {
+        
+        .container-main {
+            position: relative;
+            z-index: 2;
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            position: relative;
-            z-index: 1;
-            overflow-y: auto;
-            padding: 2rem 0;
+            align-items: center;
+            padding: 2rem;
         }
-
-        .content-card {
-            background: rgba(255, 255, 255, 0.95);
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header-section h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-section .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .countdown-container {
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
             border-radius: 30px;
-            padding: 3rem;
-            text-align: center;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
-            width: 90%;
-            animation: slideUp 1s ease-out;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeInUp 1s ease-out 0.3s both;
         }
-
-        @keyframes slideUp {
+        
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(50px);
@@ -116,293 +123,238 @@
                 transform: translateY(0);
             }
         }
-
-        .trophy-icon {
-            font-size: 4rem;
-            color: #f39c12;
-            margin-bottom: 1.5rem;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-10px);
-            }
-            60% {
-                transform: translateY(-5px);
-            }
-        }
-
-        .main-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .subtitle {
-            font-size: 1.25rem;
-            color: #7f8c8d;
-            margin-bottom: 2rem;
-            font-weight: 400;
-        }
-
-        .year-highlight {
-            font-size: 3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #000, #6b8e23);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 1.5rem 0;
-            animation: glow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from {
-                filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.5));
-            }
-            to {
-                filter: drop-shadow(0 0 20px rgba(107, 142, 35, 0.8));
-            }
-        }
-
-        .social-links {
-            margin-top: 2rem;
+        
+        .countdown-display {
             display: flex;
+            gap: 1.5rem;
             justify-content: center;
-            gap: 2rem;
             flex-wrap: wrap;
         }
-
-        .social-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .social-label {
-            font-size: 0.9rem;
-            color: #5a6c8a;
-            font-weight: 500;
-            text-align: center;
-            transition: color 0.3s ease;
-        }
-
-        .social-item:hover .social-label {
-            color: #6b8e23;
-        }
-
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #000, #6b8e23);
-            color: white;
-            border-radius: 50%;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 1.25rem;
-        }
-
-        .social-link:hover {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 10px 25px rgba(107, 142, 35, 0.4);
-            color: white;
-        }
-
-        .countdown-container {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: rgba(102, 126, 234, 0.1);
+        
+        .time-unit {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 2rem 1.5rem;
+            min-width: 140px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .countdown-text {
-            font-size: 1.1rem;
-            color: #5a6c8a;
+        
+        .time-unit:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        
+        .time-value {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            display: block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .time-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+        }
+        
+        .event-info {
+            text-align: center;
+            margin-top: 3rem;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .event-date {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 1rem;
         }
-
-        .fun-fact {
-            background: linear-gradient(135deg, #6b8e23 0%, #85a83a 100%);
-            color: white;
-            padding: 1rem;
-            border-radius: 15px;
-            margin-top: 2rem;
-            font-weight: 500;
+        
+        .event-icon {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            animation: bounce 2s ease-in-out infinite;
         }
-
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
         }
-
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            animation: particle-float 8s infinite ease-in-out;
-        }
-
-        .particle:nth-child(odd) {
-            animation-direction: reverse;
-        }
-
-        @keyframes particle-float {
-            0%, 100% { transform: translateY(100vh) scale(0); }
-            50% { transform: translateY(-10vh) scale(1); }
-        }
-
+        
         @media (max-width: 768px) {
-            .content-card {
-                padding: 2rem;
-                margin: 1rem;
-            }
-            
-            .main-title {
-                font-size: 2rem;
-            }
-            
-            .year-highlight {
+            .header-section h1 {
                 font-size: 2.5rem;
             }
             
-            .trophy-icon {
+            .header-section .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .team-name {
+                font-size: 2.5rem;
+            }
+            
+            .time-unit {
+                min-width: 100px;
+                padding: 1.5rem 1rem;
+            }
+            
+            .time-value {
                 font-size: 3rem;
             }
             
-            .social-links {
-                gap: 1.5rem;
-            }
-            
-            .social-label {
+            .time-label {
                 font-size: 0.8rem;
             }
+            
+            .countdown-container {
+                padding: 2rem 1rem;
+            }
         }
-
-        @media (max-width: 600px) {
-            .main-container {
-                padding: 0.5rem 0;
+        
+        @media (max-width: 480px) {
+            .time-unit {
+                min-width: 70px;
+                padding: 1rem 0.5rem;
             }
-            .content-card {
-                padding: 1rem;
-                border-radius: 16px;
+            
+            .time-value {
+                font-size: 2rem;
             }
-            .year-highlight {
-                font-size: 1.5rem;
+            
+            .countdown-display {
+                gap: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="background-animation">
-        <div class="floating-shapes">
-            <div class="shape"></div>
-            <div class="shape"></div>
-            <div class="shape"></div>
-            <div class="shape"></div>
+    <div class="team-background" id="teamBackground"></div>
+    
+    <div class="container-main">
+        <div class="header-section">
+            <h1><i class="fas fa-church"></i> Gincana EBD 2025</h1>
+            <p class="subtitle">Prepare-se para a aventura!</p>
         </div>
-    </div>
-
-    <div class="particles" id="particles"></div>
-
-    <div class="main-container">
-        <div class="content-card">
-            <div class="trophy-icon">
+        
+        <div class="countdown-container">
+            <div class="countdown-display">
+                <div class="time-unit">
+                    <span class="time-value" id="days">00</span>
+                    <div class="time-label">Dias</div>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="hours">00</span>
+                    <div class="time-label">Horas</div>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="minutes">00</span>
+                    <div class="time-label">Minutos</div>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="seconds">00</span>
+                    <div class="time-label">Segundos</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="event-info">
+            <div class="event-icon">
                 <i class="fas fa-trophy"></i>
             </div>
-            
-            <h1 class="main-title">Igreja Batista Ágape<br>Horizonte</h1>
-            <p class="subtitle">Nossa Gincana EBD 2025 acabou! Obrigado por todos os momentos incríveis!</p>
-            
-            <div class="countdown-container">
-                <p class="countdown-text">🎉 Nos encontraremos novamente em</p>
-                <div class="year-highlight">2026</div>
-            </div>
-            
-            <div class="fun-fact">
-                <i class="fas fa-heart"></i>
-                Até lá, guardem as memórias e preparem-se para mais desafios ano que vem! Tudo foi muito incrível! Continuem lendo a Bíblia e estudando a Palavra de Deus. Que Deus abençoe a todos!
-            </div>
-            
-            <div class="social-links">
-                <div class="social-item">
-                    <a href="https://www.instagram.com/agapehorizonte/" class="social-link" title="Instagram Oficial">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <span class="social-label">Instagram Oficial</span>
-                </div>
-                <div class="social-item">
-                    <a href="https://www.instagram.com/ligaagapehorizontee/" class="social-link" title="Instagram Liga">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <span class="social-label">Instagram Liga</span>
-                </div>
-                <div class="social-item">
-                    <a href="https://www.youtube.com/@igrejabatistaagapehorizonte" class="social-link" title="Canal YouTube">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                    <span class="social-label">Canal Oficial no YouTube</span>
-                </div>
+            <div class="event-date">
+                <i class="far fa-calendar-alt"></i> 1º de Março de 2025
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Criar partículas flutuantes
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 15;
+        // Nomes das equipes
+        const teams = [
+            'Novos Membros', 'Novos Convertidos', 'Liga', 
+            'Liga Teen', 'Adultos', 'Semente Ágape'
+        ];
+        
+        // Criar nomes de equipes flutuantes
+        function createFloatingTeams() {
+            const background = document.getElementById('teamBackground');
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.width = Math.random() * 4 + 2 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.animationDelay = Math.random() * 8 + 's';
-                particle.style.animationDuration = (Math.random() * 10 + 8) + 's';
-                particlesContainer.appendChild(particle);
+            setInterval(() => {
+                const teamName = document.createElement('div');
+                teamName.className = 'team-name';
+                teamName.textContent = teams[Math.floor(Math.random() * teams.length)];
+                teamName.style.left = Math.random() * 100 + '%';
+                teamName.style.animationDuration = (5 + Math.random() * 3) + 's';
+                teamName.style.animationDelay = '0s';
+                
+                background.appendChild(teamName);
+                
+                setTimeout(() => {
+                    teamName.remove();
+                }, 15000);
+            }, 2000);
+        }
+        
+        // Countdown
+        const countdownDate = new Date('March 1, 2026 00:00:00').getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.querySelector('.countdown-display').innerHTML = 
+                    '<div style="color: #fff; font-size: 2rem; text-align: center; width: 100%;"><i class="fas fa-star"></i> A Gincana Começou! <i class="fas fa-star"></i></div>';
             }
         }
-
-        // Efeito de hover nos elementos
-        document.addEventListener('DOMContentLoaded', function() {
-            createParticles();
-            
-            // Adicionar efeito de movimento do mouse com limitação
-            document.addEventListener('mousemove', function(e) {
-                const shapes = document.querySelectorAll('.shape');
-                const mouseX = e.clientX / window.innerWidth;
-                const mouseY = e.clientY / window.innerHeight;
-                
-                shapes.forEach((shape, index) => {
-                    const speed = (index + 1) * 0.3; // Reduzido para menor movimento
-                    const x = (mouseX - 0.5) * speed;
-                    const y = (mouseY - 0.5) * speed;
-                    shape.style.transform = `translate(${x}px, ${y}px)`;
-                });
-            });
-        });
-
-        // Animação de entrada suave
-        window.addEventListener('load', function() {
-            document.body.style.opacity = '1';
-        });
+        
+        createFloatingTeams();
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
     </script>
 </body>
 </html>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Caça ao Tesouro Bíblico • A Jornada dos Exilados</title>
+  <style>
+    :root{
+      /* Paleta temática (tons terrosos e dourados) */
+      --bg:#0f0d0a;
+      --paper:#15120e;
+      --ink:#e9dfc7;
+      --gold:#e2b857;
+      --accent:#8c5a2f;
+      --accent-2:#2f4f4f;
+      --danger:#c73a2c;
+      --success:#2fa36b;
+      --warning:#d6a10f;
+      --muted:#8a877c;
+      --shadow: 0 10px 25px rgba(0,0,0,.45);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 20% -10%, #1c160f 0%, var(--bg) 60%);
+      color: var(--ink);
+    }
+
+    header{
+      position: sticky; top:0; z-index:10;
+      background: linear-gradient(180deg, rgba(20,16,12,.9), rgba(20,16,12,.6));
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(226, 184, 87, .15);
+    }
+    .wrap{max-width:1200px; margin:0 auto; padding:16px;}
+    .title{display:flex; gap:12px; align-items:center;}
+    .title h1{font-weight:800; letter-spacing:.5px; margin:0; font-size: clamp(20px, 3vw, 32px)}
+    .tag{padding:4px 10px; border-radius:999px; font-size:12px; background: rgba(226,184,87,.12); border:1px solid rgba(226,184,87,.35); color:var(--gold)}
+
+    .layout{display:grid; grid-template-columns: 330px 1fr; gap:18px; padding:18px}
+    @media (max-width: 980px){ .layout{ grid-template-columns: 1fr; } }
+
+    .card{background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(226,184,87,.12); border-radius:18px; box-shadow: var(--shadow);}
+    .card .card-h{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid rgba(226,184,87,.1)}
+    .card .card-h h3{margin:0; font-size:15px; letter-spacing:.4px; text-transform:uppercase; color:var(--gold)}
+    .card .card-b{padding:14px 16px}
+
+    button, .btn{
+      appearance:none; border:none; background: linear-gradient(180deg, #3a2b18, #2b2115); color:var(--ink); padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; letter-spacing:.3px; border:1px solid rgba(226,184,87,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 4px 12px rgba(0,0,0,.25);
+      transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+    }
+    button:hover{ transform: translateY(-1px); }
+    button:active{ transform: translateY(0); }
+    .btn-ghost{ background: transparent; border-color: rgba(226,184,87,.18); }
+    .btn-danger{ background: linear-gradient(180deg, #5a1f18, #3a1410); border-color: rgba(199,58,44,.6)}
+    .btn-success{ background: linear-gradient(180deg, #1f4b3a, #16382c); border-color: rgba(47,163,107,.6)}
+    .btn-warning{ background: linear-gradient(180deg, #5a4a18, #3a2f10); border-color: rgba(214,161,15,.6)}
+
+    .timer{
+      display:grid; grid-template-columns: 1fr auto; gap:12px; align-items:center;
+      padding:12px; border-radius:14px; background: rgba(226,184,87,.08); border:1px solid rgba(226,184,87,.2)
+    }
+    .time-big{ font-variant-numeric: tabular-nums; font-weight:800; font-size:42px; letter-spacing:1px}
+    .time-status{ font-size:12px; opacity:.9}
+    .beacon{ width:10px; height:10px; border-radius:999px; background:var(--success); box-shadow:0 0 0 6px rgba(47,163,107,.1)}
+    .beacon.warn{ background:var(--warning); box-shadow:0 0 0 6px rgba(214,161,15,.12)}
+    .beacon.danger{ background:var(--danger); box-shadow:0 0 0 6px rgba(199,58,44,.12)}
+
+    .controls{ display:flex; flex-wrap:wrap; gap:8px }
+
+    .teams{
+      display:grid; gap:16px;
+    }
+    .teams-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    .teams-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:14px}
+    @media (max-width: 980px){ .teams-grid{ grid-template-columns: 1fr; } }
+
+    .team{ padding:12px; border-radius:16px; border:1px solid rgba(226,184,87,.12); background: rgba(255,255,255,.02); display:grid; gap:10px}
+    .team-h{ display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:center }
+    .status{ font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid; text-transform:uppercase; letter-spacing:.4px }
+    .status.play{ color:#8fd7b8; border-color: rgba(47,163,107,.45); background: rgba(47,163,107,.08)}
+    .status.done{ color:#f2d787; border-color: rgba(226,184,87,.45); background: rgba(226,184,87,.08)}
+    .status.timeout{ color:#f0a79b; border-color: rgba(199,58,44,.45); background: rgba(199,58,44,.08)}
+
+    .frag-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px }
+    @media (max-width: 680px){ .frag-grid{ grid-template-columns: 1fr; } }
+
+    .frag{
+      border:1px solid rgba(226,184,87,.2); border-radius:12px; padding:8px; background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)); display:grid; gap:6px
+    }
+    .frag-h{ display:flex; align-items: center; justify-content: space-between; gap:8px }
+    .frag h4{ margin:0; font-size:13px; color:var(--gold); letter-spacing:.3px }
+    .frag small{ color:var(--muted) }
+    .frag .row{ display:flex; gap:6px; align-items:center; flex-wrap:wrap }
+    select, input[type="number"], input[type="text"], input[type="checkbox"], .inline-input{
+      background: rgba(255,255,255,.04); border:1px solid rgba(226,184,87,.2); color:var(--ink); padding:8px 10px; border-radius:10px; outline:none; font-size:13px
+    }
+    .inline-input{ display:inline-flex; align-items:center; gap:6px }
+    .pill{ padding:4px 8px; border-radius:999px; background: rgba(226,184,87,.1); border:1px solid rgba(226,184,87,.25); font-size:12px }
+    .stars{ letter-spacing:1px }
+
+    .rank{ display:grid; grid-template-columns: 1fr; gap:8px }
+    .rank-item{ display:grid; grid-template-columns: 40px 1fr auto; align-items:center; gap:10px; padding:8px 10px; border-radius:12px; border:1px solid rgba(226,184,87,.15); background: rgba(255,255,255,.02)}
+    .medal{ width:30px; height:30px; border-radius:999px; display:grid; place-items:center; font-weight:800; color:#1a140c; }
+    .m1{ background: linear-gradient(180deg, #ffd36b, #c7972c) }
+    .m2{ background: linear-gradient(180deg, #dbe0e6, #aeb4bd) }
+    .m3{ background: linear-gradient(180deg, #f1c7a3, #b57a3c) }
+
+    .foot{ text-align:center; color:var(--muted); font-size:12px; padding:14px }
+    .blink{ animation: blink 1s infinite }
+    @keyframes blink{ 50%{ opacity:.25 } }
+    .pulse{ animation: pulse 1.6s infinite }
+    @keyframes pulse { 0%{ transform:scale(1)} 50%{ transform:scale(1.02)} 100%{ transform:scale(1)} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap title">
+      <div style="display:flex; align-items:center; gap:10px">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16v2H4zM6 8h12v2H6zM8 12h8v2H8zM10 16h4v2h-4z" fill="#e2b857"/></svg>
+        <h1>Caça ao Tesouro Bíblico • <span style="color:var(--gold)">A Jornada dos Exilados</span></h1>
+      </div>
+      <span class="tag">Painel de Controle</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Coluna esquerda: Timer + Controles + Ranking -->
+    <section class="card">
+      <div class="card-h"><h3>Timer Inteligente</h3></div>
+      <div class="card-b" id="timerCard">
+        <div class="timer">
+          <div>
+            <div class="time-big" id="time">90:00</div>
+            <div class="time-status" id="timeStatus">Pronto para iniciar</div>
+          </div>
+          <div class="beacon" id="beacon"></div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:10px" class="controls">
+          <button id="btnStart" class="btn-success">Iniciar</button>
+          <button id="btnPause" class="btn-warning">Pausar</button>
+          <button id="btnReset" class="btn-danger">Reiniciar</button>
+          <button id="btnAddTeam" class="btn-ghost">Adicionar equipe</button>
+        </div>
+        <div style="margin-top:12px; font-size:12px; color:var(--muted)">Avisos automáticos em <strong>30</strong>, <strong>15</strong> e <strong>5</strong> minutos. Mensagens temáticas aparecerão aqui.</div>
+      </div>
+    </section>
+
+    <section class="teams">
+      <div class="card">
+        <div class="card-h">
+          <h3>Gestão de Equipes</h3>
+          <div class="inline-input"><label for="filterStatus">Filtro:</label>
+            <select id="filterStatus">
+              <option value="all">Todos</option>
+              <option value="playing">Jogando</option>
+              <option value="done">Finalizado</option>
+              <option value="timeout">Tempo Esgotado</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-b">
+          <div id="teams" class="teams-grid"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h3>Ranking Dinâmico</h3></div>
+        <div class="card-b">
+          <div class="rank" id="ranking"></div>
+        </div>
+      </div>
+
+      <div class="foot">“E conhecerão a verdade, e a verdade os libertará.” — João 8:32</div>
+    </section>
+  </main>
+
+  <template id="teamTemplate">
+    <div class="team">
+      <div class="team-h">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <input type="text" class="team-name" placeholder="Nome da equipe" />
+          <span class="pill score">0 pts</span>
+          <span class="status play">Jogando</span>
+        </div>
+        <div class="controls">
+          <button class="btn-success btnFinish">Finalizar</button>
+          <button class="btn-warning btnTimeout">Tempo esgotou</button>
+          <button class="btn-ghost btnEdit">Editar</button>
+          <button class="btn-danger btnRemove">Remover</button>
+        </div>
+      </div>
+
+      <div class="frag-grid"></div>
+
+      <div style="display:grid; gap:8px">
+        <div class="row" style="display:flex; gap:10px; flex-wrap:wrap">
+          <label class="inline-input"><input type="checkbox" class="chkPhraseCorrect"/> Frase montada corretamente</label>
+          <label class="inline-input"><input type="checkbox" class="chkPhraseIncorrect"/> Frase montada incorretamente</label>
+          <span class="pill collected">Fragmentos: 0/6</span>
+        </div>
+        <div class="row" style="display:flex; gap:10px; flex-wrap:wrap">
+          <label class="inline-input"><input type="checkbox" class="penaltySplit"/> Penalidade: Equipe se separou (-10)</label>
+          <label class="inline-input"><input type="checkbox" class="penaltyRude"/> Desrespeito (-20)</label>
+          <label class="inline-input"><input type="checkbox" class="penaltyCheat"/> Trapaça (-50)</label>
+        </div>
+        <div class="row" style="display:flex; gap:10px; flex-wrap:wrap">
+          <label class="inline-input">Ajuste manual: <input type="number" class="manualAdjust" value="0" step="1" style="width:90px"/></label>
+          <button class="btn-ghost btnApplyAdjust">Aplicar ao placar</button>
+          <span class="pill finishedAt">—</span>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    // ====== Dados das cartas por sobrevivente ======
+    const SURVIVORS = [
+      { key:'daniel', name:'DANIEL (O Sábio)', fragment:'EM JERUSALÉM', cards:[
+        { id:'A', label:'Carta A', points:25, stars:'⭐⭐⭐' },
+        { id:'B', label:'Carta B', points:20, stars:'⭐⭐' },
+        { id:'C', label:'Carta C', points:15, stars:'⭐' },
+        { id:'D', label:'Carta D (rara!)', points:30, stars:'⭐⭐⭐⭐' },
+        { id:'E', label:'Carta E', points:10, stars:'⭐' },
+      ]},
+      { key:'ester', name:'ESTER (A Corajosa)', fragment:'O CORAÇÃO PURO', cards:[
+        { id:'A', label:'Carta A', points:22, stars:'⭐⭐⭐' },
+        { id:'B', label:'Carta B', points:18, stars:'⭐⭐' },
+        { id:'C', label:'Carta C', points:12, stars:'⭐' },
+        { id:'D', label:'Carta D (rara!)', points:28, stars:'⭐⭐⭐⭐' },
+        { id:'E', label:'Carta E', points:8, stars:'⭐' },
+      ]},
+      { key:'neemias', name:'NEEMIAS (O Reconstrutor)', fragment:'SERÁ TRANSFORMADO', cards:[
+        { id:'A', label:'Carta A', points:24, stars:'⭐⭐⭐' },
+        { id:'B', label:'Carta B', points:19, stars:'⭐⭐' },
+        { id:'C', label:'Carta C', points:14, stars:'⭐' },
+        { id:'D', label:'Carta D (rara!)', points:32, stars:'⭐⭐⭐⭐' },
+        { id:'E', label:'Carta E', points:9, stars:'⭐' },
+      ]},
+      { key:'miria', name:'MIRIÃ (A Adoradora)', fragment:'PELO PODER', cards:[
+        { id:'A', label:'Carta A', points:21, stars:'⭐⭐⭐' },
+        { id:'B', label:'Carta B', points:16, stars:'⭐⭐' },
+        { id:'C', label:'Carta C', points:11, stars:'⭐' },
+        { id:'D', label:'Carta D (rara!)', points:27, stars:'⭐⭐⭐⭐' },
+        { id:'E', label:'Carta E', points:6, stars:'⭐' },
+      ]},
+      { key:'esdras', name:'ESDRAS (O Escriba)', fragment:'DO ESPÍRITO SANTO', cards:[
+        { id:'A', label:'Carta A', points:23, stars:'⭐⭐⭐' },
+        { id:'B', label:'Carta B', points:17, stars:'⭐⭐' },
+        { id:'C', label:'Carta C', points:13, stars:'⭐' },
+        { id:'D', label:'Carta D (rara!)', points:29, stars:'⭐⭐⭐⭐' },
+        { id:'E', label:'Carta E', points:7, stars:'⭐' },
+      ]},
+      { key:'zorobabel', name:'ZOROBABEL (O Líder)', fragment:'E PELA PALAVRA', cards:[
+        { id:'A', label:'Carta A', points:26, stars:'⭐⭐⭐' },
+        { id:'B', label:'Carta B', points:20, stars:'⭐⭐' },
+        { id:'C', label:'Carta C', points:15, stars:'⭐' },
+        { id:'D', label:'Carta D (super rara!)', points:35, stars:'⭐⭐⭐⭐⭐' },
+        { id:'E', label:'Carta E', points:10, stars:'⭐' },
+      ]},
+    ];
+
+    // ====== Estado da aplicação ======
+    const state = {
+      durationSec: 90 * 60,
+      remainingSec: 90 * 60,
+      startedAt: null,
+      paused: true,
+      tickHandle: null,
+      teams: [], // {id, name, status, finishedAtSec, orderFinish, frags:{[key]:{cardId, points}}, phrase:{correct, incorrect}, penalties:{split,rude,cheat}, manualAdjust}
+    };
+
+    const el = {
+      time: document.getElementById('time'),
+      timeStatus: document.getElementById('timeStatus'),
+      beacon: document.getElementById('beacon'),
+      btnStart: document.getElementById('btnStart'),
+      btnPause: document.getElementById('btnPause'),
+      btnReset: document.getElementById('btnReset'),
+      btnAddTeam: document.getElementById('btnAddTeam'),
+      teams: document.getElementById('teams'),
+      ranking: document.getElementById('ranking'),
+      filterStatus: document.getElementById('filterStatus')
+    };
+
+    // ====== Utilidades ======
+    const fmt = n => n.toString().padStart(2,'0');
+    function formatTime(sec){ const m=Math.floor(sec/60), s=sec%60; return `${fmt(m)}:${fmt(s)}` }
+    function now(){ return Math.floor(Date.now()/1000) }
+
+    function speak(msg){
+      // Mensagens temáticas curtas no timeStatus
+      el.timeStatus.textContent = msg;
+      el.timeStatus.classList.add('pulse');
+      setTimeout(()=> el.timeStatus.classList.remove('pulse'), 1200);
+    }
+
+    // ====== Timer ======
+    function tick(){
+      if(state.paused) return;
+      const elapsed = now() - state.startedAt;
+      state.remainingSec = Math.max(state.durationSec - elapsed, 0);
+      drawTimer();
+      if(state.remainingSec === 0){
+        pauseTimer();
+        speak('⏰ Tempo esgotado! “Ensina-nos a contar os nossos dias...” (Sl 90:12)');
+      }
+    }
+
+    function drawTimer(){
+      el.time.textContent = formatTime(state.remainingSec);
+      // Beacon & avisos
+      const r = state.remainingSec;
+      if(r <= 5*60){ el.beacon.classList.add('danger'); el.beacon.classList.remove('warn'); }
+      else if(r <= 15*60){ el.beacon.classList.add('warn'); el.beacon.classList.remove('danger'); }
+      else { el.beacon.classList.remove('warn','danger'); }
+
+      if(r === 30*60) speak('⚠️ 30 minutos restantes — “Sede fortes e corajosos!”');
+      if(r === 15*60) speak('⚠️ 15 minutos! “Corramos com perseverança...” (Hb 12:1)');
+      if(r === 5*60) speak('⚠️ Últimos 5! “Redimindo o tempo...” (Ef 5:16)');
+    }
+
+    function startTimer(){
+      if(!state.startedAt){ state.startedAt = now(); }
+      else if(state.paused){ // retomar compensando pausa
+        state.startedAt = now() - (state.durationSec - state.remainingSec);
+      }
+      state.paused = false;
+      if(state.tickHandle) clearInterval(state.tickHandle);
+      state.tickHandle = setInterval(tick, 1000);
+      speak('⏳ Jogo iniciado! “O tempo é curto.” (1Co 7:29)');
+    }
+    function pauseTimer(){ state.paused = true; if(state.tickHandle) clearInterval(state.tickHandle); speak('⏸️ Pausado'); }
+    function resetTimer(){
+      state.startedAt = null; state.remainingSec = state.durationSec; state.paused = true; if(state.tickHandle) clearInterval(state.tickHandle);
+      el.time.textContent = formatTime(state.remainingSec); el.timeStatus.textContent = 'Pronto para iniciar'; el.beacon.classList.remove('warn','danger');
+      // Zera ordens de chegada
+      state.teams.forEach(t=>{ t.orderFinish = null; t.finishedAtSec = null; if(t.status!=='timeout') t.status='playing'; });
+      render();
+    }
+
+    el.btnStart.addEventListener('click', startTimer);
+    el.btnPause.addEventListener('click', pauseTimer);
+    el.btnReset.addEventListener('click', resetTimer);
+
+    // ====== Equipes ======
+    function addTeam(name='Nova equipe'){
+      const id = Math.random().toString(36).slice(2,9);
+      const team = { id, name, status:'playing', finishedAtSec:null, orderFinish:null, frags:{}, phrase:{correct:false, incorrect:false}, penalties:{split:false, rude:false, cheat:false}, manualAdjust:0, manualApplied:0 };
+      state.teams.push(team);
+      render();
+    }
+
+    el.btnAddTeam.addEventListener('click', ()=> addTeam(`Equipe ${state.teams.length+1}`));
+    el.filterStatus.addEventListener('change', render);
+
+    function removeTeam(id){ state.teams = state.teams.filter(t=> t.id!==id); render(); }
+
+    function finishTeam(team){
+      if(team.status==='done') return;
+      team.status = 'done';
+      // Tempo de conclusão relativo ao início (em segundos)
+      const finishAbs = state.startedAt ? now() : null;
+      team.finishedAtSec = finishAbs ? (finishAbs - state.startedAt) : null;
+      // Ordem de chegada: baseado nos já concluídos dentro do tempo
+      const finishedInTime = state.teams.filter(t=> t.status==='done' && t.finishedAtSec!==null && t.finishedAtSec <= state.durationSec);
+      team.orderFinish = finishedInTime.length; // 1-based após soma abaixo
+      render();
+    }
+
+    function timeoutTeam(team){ team.status='timeout'; if(team.finishedAtSec===null) team.finishedAtSec = state.durationSec + 1; render(); }
+
+    // ====== UI de Fragments ======
+    function fragCard(sv, team){
+      const sel = team.frags[sv.key]?.cardId || '';
+      const points = team.frags[sv.key]?.points || 0;
+      return `
+        <div class="frag" data-frag="${sv.key}">
+          <div class="frag-h">
+            <h4>${sv.name}</h4>
+            <small>“${sv.fragment}”</small>
+          </div>
+          <div class="row">
+            <select class="selCard">
+              <option value="">— Carta não coletada —</option>
+              ${sv.cards.map(c=>`<option value="${c.id}" ${sel===c.id?'selected':''}>${c.label} • ${c.points} pts • ${c.stars}</option>`).join('')}
+            </select>
+            <button class="btn-ghost btnDraw">Sortear aleatório</button>
+            ${sel?`<span class="pill">${points} pts</span>`:''}
+          </div>
+        </div>`;
+    }
+
+    function renderTeams(){
+      const filter = el.filterStatus.value;
+      el.teams.innerHTML = '';
+      state.teams.forEach(team=>{
+        if(filter!=='all' && team.status!==filter) return;
+        const node = document.getElementById('teamTemplate').content.firstElementChild.cloneNode(true);
+        const nameEl = node.querySelector('.team-name');
+        const scoreEl = node.querySelector('.score');
+        const statusEl = node.querySelector('.status');
+        const fragGrid = node.querySelector('.frag-grid');
+        const btnFinish = node.querySelector('.btnFinish');
+        const btnTimeout = node.querySelector('.btnTimeout');
+        const btnRemove = node.querySelector('.btnRemove');
+        const btnEdit = node.querySelector('.btnEdit');
+        const chkPC = node.querySelector('.chkPhraseCorrect');
+        const chkPI = node.querySelector('.chkPhraseIncorrect');
+        const pSplit = node.querySelector('.penaltySplit');
+        const pRude  = node.querySelector('.penaltyRude');
+        const pCheat = node.querySelector('.penaltyCheat');
+        const collected = node.querySelector('.collected');
+        const manual = node.querySelector('.manualAdjust');
+        const btnApply = node.querySelector('.btnApplyAdjust');
+        const finishedAt = node.querySelector('.finishedAt');
+
+        nameEl.value = team.name;
+        nameEl.addEventListener('change', e=>{ team.name = e.target.value; render(); });
+
+        // Fragments
+        fragGrid.innerHTML = SURVIVORS.map(sv=> fragCard(sv, team)).join('');
+        fragGrid.querySelectorAll('.selCard').forEach((sel, idx)=>{
+          const sv = SURVIVORS[idx];
+          sel.addEventListener('change', e=>{
+            const id = e.target.value;
+            if(!id){ delete team.frags[sv.key]; }
+            else {
+              const card = SURVIVORS[idx].cards.find(c=> c.id===id);
+              team.frags[sv.key] = { cardId: id, points: card.points };
+            }
+            render();
+          });
+        });
+        fragGrid.querySelectorAll('.btnDraw').forEach((btn, idx)=>{
+          const sv = SURVIVORS[idx];
+          btn.addEventListener('click', ()=>{
+            const card = sv.cards[Math.floor(Math.random()*sv.cards.length)];
+            team.frags[sv.key] = { cardId: card.id, points: card.points };
+            render();
+          });
+        });
+
+        // Phrase toggles (exclusivos)
+        chkPC.checked = team.phrase.correct;
+        chkPI.checked = team.phrase.incorrect;
+        chkPC.addEventListener('change', e=>{ team.phrase.correct = e.target.checked; if(e.target.checked) team.phrase.incorrect=false; render(); });
+        chkPI.addEventListener('change', e=>{ team.phrase.incorrect = e.target.checked; if(e.target.checked) team.phrase.correct=false; render(); });
+
+        // Penalties
+        pSplit.checked = team.penalties.split; pRude.checked = team.penalties.rude; pCheat.checked = team.penalties.cheat;
+        pSplit.addEventListener('change', e=>{ team.penalties.split = e.target.checked; render(); });
+        pRude.addEventListener('change',  e=>{ team.penalties.rude  = e.target.checked; render(); });
+        pCheat.addEventListener('change', e=>{ team.penalties.cheat = e.target.checked; render(); });
+
+        // Manual adjust
+        manual.value = 0;
+        btnApply.addEventListener('click', ()=>{ const v = Number(manual.value||0); team.manualAdjust += v; manual.value = 0; render(); });
+
+        // Status
+        const collectedCount = Object.keys(team.frags).length;
+        collected.textContent = `Fragmentos: ${collectedCount}/6`;
+        statusEl.className = 'status ' + (team.status==='playing'?'play': team.status==='done'?'done':'timeout');
+        statusEl.textContent = team.status==='playing'?'Jogando': team.status==='done'?'Finalizado':'Tempo Esgotado';
+
+        // Ações
+        btnFinish.addEventListener('click', ()=> finishTeam(team));
+        btnTimeout.addEventListener('click', ()=> timeoutTeam(team));
+        btnRemove.addEventListener('click', ()=> removeTeam(team.id));
+        btnEdit.addEventListener('click', ()=>{ nameEl.focus(); nameEl.select(); });
+
+        // Finished time display
+        if(team.finishedAtSec!=null){
+          const within = team.finishedAtSec <= state.durationSec;
+          finishedAt.textContent = `Concluiu: ${team.finishedAtSec?formatTime(team.finishedAtSec):'—'} ${within?'(no prazo)':'(após o prazo)'}`;
+        } else { finishedAt.textContent = '—'; }
+
+        // Score
+        const score = computeScore(team);
+        scoreEl.textContent = `${score} pts`;
+
+        el.teams.appendChild(node);
+      });
+    }
+
+    // ====== Lógica de Pontuação ======
+    function scenario(){
+      const finished = state.teams.filter(t=> t.status==='done' && t.finishedAtSec!=null);
+      if(state.teams.length===0) return 'none';
+      const within = state.teams.filter(t=> t.status==='done' && t.finishedAtSec<=state.durationSec);
+      const allOver = state.teams.every(t=> t.status!=='done' || (t.finishedAtSec>state.durationSec));
+      if(allOver && finished.length>0) return 'allOvertime';
+      if(within.length>0 && state.teams.some(t=> t.status!=='done' || (t.finishedAtSec>state.durationSec))) return 'mixed';
+      if(within.length>0 && within.length===state.teams.length) return 'allWithin';
+      // Se ninguém terminou ainda, trate como none
+      if(finished.length===0) return 'none';
+      // Caso interino
+      return 'mixed';
+    }
+
+    function sumCards(team){ return Object.values(team.frags).reduce((a,b)=> a + (b?.points||0), 0); }
+    function fragCount(team){ return Object.keys(team.frags).length; }
+
+    function rankWithinOrder(team){
+      // Ordem de chegada entre os que terminaram NO PRAZO
+      const arr = state.teams.filter(t=> t.status==='done' && t.finishedAtSec!=null && t.finishedAtSec<=state.durationSec)
+        .sort((a,b)=> a.finishedAtSec - b.finishedAtSec);
+      const idx = arr.findIndex(t=> t.id===team.id);
+      return idx>=0 ? (idx+1) : null;
+    }
+
+    function speedBonus(rank){
+      if(rank===1) return 50;
+      if(rank===2) return 35;
+      if(rank===3) return 20;
+      if(rank>=4) return 10;
+      return 0;
+    }
+    function timeBonus(sec){
+      if(sec<=60*60) return 40;
+      if(sec<=75*60) return 25;
+      if(sec<=90*60) return 15;
+      return 0;
+    }
+
+    function computeScore(team){
+      let total = 0;
+      const sc = scenario();
+      const collected = fragCount(team);
+      const cardsSum = sumCards(team);
+
+      if(sc==='none'){
+        // Durante o jogo: exibir somente soma parcial + ajustes + penalidades já marcadas
+        total = cardsSum;
+      } else if(sc==='allOvertime'){
+        // Cenário 2: todos estouraram
+        total = -30; // penalização geral
+        if(collected>=6) total += cardsSum - 10;
+        else if(collected===5) total += cardsSum - 15;
+        else if(collected===4) total += cardsSum - 20;
+        else total += cardsSum - 30; // 3 ou menos
+      } else if(sc==='allWithin' || sc==='mixed'){
+        const finishedInTime = team.status==='done' && team.finishedAtSec!=null && team.finishedAtSec<=state.durationSec;
+        if(finishedInTime){
+          // Cenário 1, mais bônus extra se mixed
+          if(collected>=6) total += cardsSum; else if(collected===5) total += cardsSum - 15; else total += cardsSum - 30;
+          if(collected===6){
+            if(team.phrase.correct) total += 20;
+            if(team.phrase.incorrect) total -= 20;
+          }
+          const rk = rankWithinOrder(team);
+          total += speedBonus(rk);
+          total += timeBonus(team.finishedAtSec);
+          if(sc==='mixed') total += 20; // bônus extra de conclusão
+        } else {
+          // Não terminou no prazo (só ocorre em mixed)
+          if(sc==='mixed'){
+            total += cardsSum; // soma simples
+            total -= 20; // penalidade atraso
+            const missing = Math.max(0, 6 - collected);
+            total -= missing * 5; // -5 por fragmento faltando
+          } else {
+            // allWithin não deve cair aqui
+            total += cardsSum;
+          }
+        }
+      }
+
+      // Penalidades criativas
+      if(team.penalties.split) total -= 10;
+      if(team.penalties.rude) total -= 20;
+      if(team.penalties.cheat) total -= 50;
+
+      // Ajuste manual incremental
+      total += (team.manualAdjust || 0);
+
+      return total;
+    }
+
+    function renderRanking(){
+      // Recalcula todos e ordena: status (done -> playing -> timeout) e pontos desc
+      const entries = state.teams.map(t=> ({ team:t, score: computeScore(t) }));
+      entries.sort((a,b)=>{
+        const orderStatus = (t)=> t.team.status==='done'?0 : t.team.status==='playing'?1 : 2;
+        const os = orderStatus(a) - orderStatus(b);
+        if(os!==0) return os;
+        return b.score - a.score;
+      });
+
+      el.ranking.innerHTML = '';
+      entries.forEach((e,i)=>{
+        const r = document.createElement('div');
+        r.className = 'rank-item';
+        const medal = i===0?'m1': i===1?'m2': i===2?'m3': '';
+        r.innerHTML = `
+          <div class="medal ${medal}">${i+1}</div>
+          <div style="display:flex; flex-direction:column">
+            <strong>${e.team.name}</strong>
+            <small style="color:var(--muted)">
+              ${ e.team.status==='done' ? `Concluiu ${e.team.finishedAtSec?formatTime(e.team.finishedAtSec):''}` : e.team.status==='timeout' ? 'Tempo esgotado' : 'Jogando' }
+            </small>
+          </div>
+          <div><span class="pill">${e.score} pts</span></div>`;
+        el.ranking.appendChild(r);
+      });
+    }
+
+    function render(){
+      renderTeams();
+      renderRanking();
+    }
+
+    // ====== Inicialização ======
+    function demo(){
+      // Adiciona 3 equipes para começar
+      addTeam('Judá'); addTeam('Benjamim'); addTeam('Levi');
+    }
+
+    // Inicia
+    el.time.textContent = formatTime(state.remainingSec);
+    demo();
+    render();
+  </script>
+</body>
+</html>
